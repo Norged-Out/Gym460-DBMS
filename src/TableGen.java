@@ -87,7 +87,9 @@ public class TableGen {
         System.out.println("Pick from the following options:");
         System.out.println("1. Trainer\n2. Course\n3. Package\n"
         		+ "4. Member\n5. Equipment\n6. Transaction\n7. ALL");
-        System.out.print("Choose a number corresponding to a table:");
+        System.out.println("\nNOTE:  ONLY CREATE A TABLE "
+        		+ "IF ITS PRECEEDING TABLE EXISTS BECAUSE OF FKs\n");
+        System.out.print("Choose a number corresponding to a table: ");
         String userInput = sc.nextLine();
         int choice = Integer.valueOf(userInput);
         String query = null;
