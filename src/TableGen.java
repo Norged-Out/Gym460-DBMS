@@ -37,16 +37,26 @@ public class TableGen {
         }
         
         String[] tables = {
-                "create table Trainer (" 
+                "create table Trainer ("
+                + ""
                 + ")",
-        		"create table Course (" 
-        		+ ")",
-                "create table Package (" 
+                
+                "create table Course ("
+                + ""
                 + ")",
-                "create table Member (" 
+                
+                "create table Package ("
+                + "" 
                 + ")",
-        		"create table Equipment (" 
+                
+                "create table Member ("
+                + "" 
                 + ")",
+                
+                "create table Equipment ("
+                + ""
+                + ")",
+                
                 "create table Transaction ("
                 + "X# integer not null,"
                 + "M# integer not null,"
