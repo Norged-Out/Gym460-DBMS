@@ -53,13 +53,10 @@ public class TableGen {
                 + "EnrollCount integer not null,"
                 + "Start_Date date not null,"
                 + "End_Date date not null,"
-                + "Start_Time INTERVAL DAY TO SECOND not null,"
-                + "End_Time INTERVAL DAY TO SECOND not null,"
                 + "Day varchar2(9) not null,"
                 + "PRIMARY KEY (CName),"
                 + "FOREIGN KEY (T#) REFERENCES Trainer,"
-                + "CHECK (End_Date > Start_Date),"
-                + "CHECK (End_Time > Start_Time)"
+                + "CHECK (End_Date > Start_Date)"
                 + ")",
                 
                 "create table Package ("
@@ -107,7 +104,7 @@ public class TableGen {
                 "create table Transaction ("
                 + "X# integer,"
                 + "M# integer not null,"
-                + "XDate timestamp not null,"
+                + "XDate date not null,"
                 + "Amount float not null,"
                 + "XType varchar2(10) not null,"
                 + "PRIMARY KEY (X#),"
