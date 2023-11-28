@@ -5,6 +5,8 @@ import java.sql.*;
  *  Course: CSC 460
  * Purpose: This Program generates the tables for the
  * 			Final Project on Priyansh's Oracle Database.
+ * 
+ * scp TableGen.java priyanshnayak@lectura.cs.arizona.edu:~/csc/460/p4
  *
  * */
 import java.util.Scanner;
@@ -73,6 +75,13 @@ public class TableGen {
                 + "CHECK (End_Date > Start_Date)" 
                 + ")",
                 
+                "create table Tier ("
+                + "Tier varchar2(10),"
+                + "MinAmount float not null,"
+                + "Discount float not null,"
+                + "PRIMARY KEY (Tier)"
+                + ")",
+                
                 "create table Member ("
                 + "M# integer,"
                 + "First_Name varchar2(20) not null,"
@@ -83,7 +92,8 @@ public class TableGen {
                 + "Consumption float not null,"
                 + "Tier varchar2(10),"
                 + "PRIMARY KEY (M#),"
-                + "FOREIGN KEY (PName) REFERENCES Package" 
+                + "FOREIGN KEY (PName) REFERENCES Package,"
+                + "FOREIGN KEY (Tier) REFERENCES Tier" 
                 + ")",
                 
                 "create table Equipment ("
@@ -97,7 +107,7 @@ public class TableGen {
                 "create table Transaction ("
                 + "X# integer,"
                 + "M# integer not null,"
-                + "XDate datetime not null,"
+                + "XDate timestamp not null,"
                 + "Amount float not null,"
                 + "XType varchar2(10) not null,"
                 + "PRIMARY KEY (X#),"
@@ -123,7 +133,8 @@ public class TableGen {
         System.out.println("LAUNCHING TABLE GENERATION PROCESS\n");
         System.out.println("Pick from the following options:");
         System.out.println("1. Trainer\n2. Course\n3. Package\n"
-        		+ "4. Member\n5. Equipment\n6. Transaction\n7. ALL");
+        		+ "4. Tier\n5. Member\n6. Equipment\n7. Transaction");
+        System.out.println("Press 9 to generate all tables.");
         System.out.println("\nNOTE:  ONLY CREATE A TABLE "
         		+ "IF ITS PRECEEDING TABLE EXISTS BECAUSE OF FKs\n");
         System.out.print("Choose a number corresponding to a table: ");
@@ -154,6 +165,9 @@ public class TableGen {
         	query = tables[5];
         	break;
         case 7:
+        	query = tables[6];
+        	break;
+        case 9:
         	allFlag = true;
         	break;
         default:
