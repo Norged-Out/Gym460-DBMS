@@ -1,5 +1,12 @@
 import java.io.*;
 import java.sql.*;
+/* 
+ *  Author: Priyansh Nayak
+ *  Course: CSC 460
+ * Purpose: This Program generates the tables for the
+ * 			Final Project on Priyansh's Oracle Database.
+ *
+ * */
 import java.util.Scanner;
 
 public class TableGen {
@@ -8,13 +15,13 @@ public class TableGen {
 		final String oracleURL =   // Magic lectura -> aloe access spell
                 "jdbc:oracle:thin:@aloe.cs.arizona.edu:1521:oracle";
 
-		String username = "priyanshnayak",    // Oracle DBMS username
-		       password = "a9379";    // Oracle DBMS password
+		String username = "priyanshnayak",	// Oracle DBMS username
+		       password = "a9379";    		// Oracle DBMS password
 		
 		Scanner sc = new Scanner(System.in);
 		
 		// load the (Oracle) JDBC driver by initializing its base
-            // class, 'oracle.jdbc.OracleDriver'.
+        // class, 'oracle.jdbc.OracleDriver'.
 
         try {
 
@@ -30,16 +37,26 @@ public class TableGen {
         }
         
         String[] tables = {
-                "create table Trainer (" 
+                "create table Trainer ("
+                + ""
                 + ")",
-        		"create table Course (" 
-        		+ ")",
-                "create table Package (" 
+                
+                "create table Course ("
+                + ""
                 + ")",
-                "create table Member (" 
+                
+                "create table Package ("
+                + "" 
                 + ")",
-        		"create table Equipment (" 
+                
+                "create table Member ("
+                + "" 
                 + ")",
+                
+                "create table Equipment ("
+                + ""
+                + ")",
+                
                 "create table Transaction ("
                 + "X# integer not null,"
                 + "M# integer not null,"
@@ -70,11 +87,16 @@ public class TableGen {
         System.out.println("Pick from the following options:");
         System.out.println("1. Trainer\n2. Course\n3. Package\n"
         		+ "4. Member\n5. Equipment\n6. Transaction\n7. ALL");
-        System.out.print("Choose a number corresponding to a table:");
+        System.out.println("\nNOTE:  ONLY CREATE A TABLE "
+        		+ "IF ITS PRECEEDING TABLE EXISTS BECAUSE OF FKs\n");
+        System.out.print("Choose a number corresponding to a table: ");
         String userInput = sc.nextLine();
         int choice = Integer.valueOf(userInput);
         String query = null;
         boolean allFlag = false;
+        
+        		// Choose a table to generate
+        
         switch (choice) {
         case 1:
         	query = tables[0];
@@ -102,6 +124,8 @@ public class TableGen {
         	sc.close();
         	System.exit(-1);
         }
+        
+        		// Execute the table creation query
         
         Statement stmt = null;
         try {
