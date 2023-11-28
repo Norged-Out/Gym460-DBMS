@@ -38,7 +38,11 @@ public class TableGen {
         
         String[] tables = {
                 "create table Trainer ("
-                + ""
+                + "T# integer,"
+                + "First_Name varchar2(20) not null,"
+                + "Last_Name varchar2(20) not null,"
+                + "Phone# varchar2(10) not null,"
+                + "PRIMARY KEY (T#)"
                 + ")",
                 
                 "create table Course ("
@@ -50,7 +54,16 @@ public class TableGen {
                 + ")",
                 
                 "create table Member ("
-                + "" 
+                + "M# integer,"
+                + "First_Name varchar2(20) not null,"
+                + "Last_Name varchar2(20) not null,"
+                + "Phone# varchar2(10) not null,"
+                + "P# varchar2(20) not null,"
+                + "Balance float not null,"
+                + "Consumption float not null,"
+                + "Tier varchar2(10),"
+                + "PRIMARY KEY (M#),"
+                + "FOREIGN KEY (P#) REFERENCES Package" 
                 + ")",
                 
                 "create table Equipment ("
@@ -58,7 +71,7 @@ public class TableGen {
                 + ")",
                 
                 "create table Transaction ("
-                + "X# integer not null,"
+                + "X# integer,"
                 + "M# integer not null,"
                 + "XDate date not null,"
                 + "Amount float not null,"
