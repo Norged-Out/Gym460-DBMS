@@ -46,11 +46,31 @@ public class TableGen {
                 + ")",
                 
                 "create table Course ("
-                + ""
+                + "CName varchar2(10),"
+                + "T# integer not null,"
+                + "EnrollCount integer not null,"
+                + "Start_Date date not null,"
+                + "End_Date date not null,"
+                + "Start_Time INTERVAL DAY TO SECOND not null,"
+                + "End_Time INTERVAL DAY TO SECOND not null,"
+                + "Day varchar2(9) not null,"
+                + "PRIMARY KEY (CName),"
+                + "FOREIGN KEY (T#) REFERENCES Trainer,"
+                + "CHECK (End_Date > Start_Date),"
+                + "CHECK (End_Time > Start_Time)"
                 + ")",
                 
                 "create table Package ("
-                + "" 
+                + "PName varchar2(30),"
+                + "C1 varchar2(10) not null,"
+                + "C2 varchar2(10) not null,"
+                + "Start_Date date not null,"
+                + "End_Date date not null,"
+                + "Price float not null,"
+                + "PRIMARY KEY (PName),"
+                + "FOREIGN KEY (C1) REFERENCES Course,"
+                + "FOREIGN KEY (C1) REFERENCES Course,"
+                + "CHECK (End_Date > Start_Date)" 
                 + ")",
                 
                 "create table Member ("
@@ -58,12 +78,12 @@ public class TableGen {
                 + "First_Name varchar2(20) not null,"
                 + "Last_Name varchar2(20) not null,"
                 + "Phone# varchar2(10) not null,"
-                + "P# varchar2(20) not null,"
+                + "PName varchar2(20) not null,"
                 + "Balance float not null,"
                 + "Consumption float not null,"
                 + "Tier varchar2(10),"
                 + "PRIMARY KEY (M#),"
-                + "FOREIGN KEY (P#) REFERENCES Package" 
+                + "FOREIGN KEY (PName) REFERENCES Package" 
                 + ")",
                 
                 "create table Equipment ("
