@@ -67,13 +67,17 @@ public class TableGen {
                 + ")",
                 
                 "create table Equipment ("
-                + ""
+                + "E# integer,"
+                + "EType varchar2(50),"
+                + "M# integer not null,"
+                + "PRIMARY KEY (E#, EType),"
+                + "FOREIGN KEY (M#) REFERENCES Member"
                 + ")",
                 
                 "create table Transaction ("
                 + "X# integer,"
                 + "M# integer not null,"
-                + "XDate date not null,"
+                + "XDate datetime not null,"
                 + "Amount float not null,"
                 + "XType varchar2(10) not null,"
                 + "PRIMARY KEY (X#),"
