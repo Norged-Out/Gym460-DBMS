@@ -51,9 +51,10 @@ public class TableGen {
                 + "CName varchar2(10),"
                 + "T# integer not null,"
                 + "EnrollCount integer not null,"
+                + "Capacity integer not null,"
                 + "Start_Date date not null,"
                 + "End_Date date not null,"
-                + "Day varchar2(9) not null,"
+                + "Day varchar2(3) not null,"
                 + "PRIMARY KEY (CName),"
                 + "FOREIGN KEY (T#) REFERENCES Trainer,"
                 + "CHECK (End_Date > Start_Date)"
@@ -95,8 +96,8 @@ public class TableGen {
                 
                 "create table Equipment ("
                 + "E# integer,"
-                + "EType varchar2(50),"
-                + "M# integer not null,"
+                + "EType varchar2(20),"
+                + "M# integer,"
                 + "PRIMARY KEY (E#, EType),"
                 + "FOREIGN KEY (M#) REFERENCES Member"
                 + ")",
@@ -107,9 +108,11 @@ public class TableGen {
                 + "XDate date not null,"
                 + "Amount float not null,"
                 + "XType varchar2(10) not null,"
+                + "EType varchar2(20),"
                 + "PRIMARY KEY (X#),"
                 + "FOREIGN KEY (M#) REFERENCES Member"
                 + ")"
+                
         };
         
         Connection dbconn = null;
@@ -131,7 +134,7 @@ public class TableGen {
         System.out.println("Pick from the following options:");
         System.out.println("1. Trainer\n2. Course\n3. Package\n"
         		+ "4. Tier\n5. Member\n6. Equipment\n7. Transaction");
-        System.out.println("Press 9 to generate all tables.");
+        System.out.println("Press 0 to generate all tables.");
         System.out.println("\nNOTE:  ONLY CREATE A TABLE "
         		+ "IF ITS PRECEEDING TABLE EXISTS BECAUSE OF FKs\n");
         System.out.print("Choose a number corresponding to a table: ");
@@ -143,6 +146,9 @@ public class TableGen {
         		// Choose a table to generate
         
         switch (choice) {
+        case 0:
+        	allFlag = true;
+        	break;
         case 1:
         	query = tables[0];
         	break;
@@ -163,9 +169,6 @@ public class TableGen {
         	break;
         case 7:
         	query = tables[6];
-        	break;
-        case 9:
-        	allFlag = true;
         	break;
         default:
         	System.out.println("Invalid choice, terminating.");
