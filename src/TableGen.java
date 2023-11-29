@@ -1,5 +1,3 @@
-import java.io.*;
-import java.sql.*;
 /* 
  *  Author: Priyansh Nayak
  *  Course: CSC 460
@@ -9,7 +7,9 @@ import java.sql.*;
  * scp TableGen.java priyanshnayak@lectura.cs.arizona.edu:~/csc/460/p4
  *
  * */
-import java.util.Scanner;
+
+import java.util.*;
+import java.sql.*;
 
 public class TableGen {
 
@@ -41,8 +41,8 @@ public class TableGen {
         String[] tables = {
                 "create table Trainer ("
                 + "T# integer,"
-                + "First_Name varchar2(20) not null,"
-                + "Last_Name varchar2(20) not null,"
+                + "FirstName varchar2(20) not null,"
+                + "LastName varchar2(20) not null,"
                 + "Phone# varchar2(10) not null,"
                 + "PRIMARY KEY (T#)"
                 + ")",
@@ -52,25 +52,25 @@ public class TableGen {
                 + "T# integer not null,"
                 + "EnrollCount integer not null,"
                 + "Capacity integer not null,"
-                + "Start_Date date not null,"
-                + "End_Date date not null,"
+                + "StartDate date not null,"
+                + "EndDate date not null,"
                 + "Day varchar2(3) not null,"
                 + "PRIMARY KEY (CName),"
                 + "FOREIGN KEY (T#) REFERENCES Trainer,"
-                + "CHECK (End_Date > Start_Date)"
+                + "CHECK (EndDate > StartDate)"
                 + ")",
                 
                 "create table Package ("
                 + "PName varchar2(30),"
                 + "C1 varchar2(10) not null,"
                 + "C2 varchar2(10) not null,"
-                + "Start_Date date not null,"
-                + "End_Date date not null,"
+                + "StartDate date not null,"
+                + "EndDate date not null,"
                 + "Price float not null,"
                 + "PRIMARY KEY (PName),"
                 + "FOREIGN KEY (C1) REFERENCES Course,"
                 + "FOREIGN KEY (C1) REFERENCES Course,"
-                + "CHECK (End_Date > Start_Date)" 
+                + "CHECK (EndDate > StartDate)" 
                 + ")",
                 
                 "create table Tier ("
@@ -82,8 +82,8 @@ public class TableGen {
                 
                 "create table Member ("
                 + "M# integer,"
-                + "First_Name varchar2(20) not null,"
-                + "Last_Name varchar2(20) not null,"
+                + "FirstName varchar2(20) not null,"
+                + "LastName varchar2(20) not null,"
                 + "Phone# varchar2(10) not null,"
                 + "PName varchar2(20) not null,"
                 + "Balance float not null,"
