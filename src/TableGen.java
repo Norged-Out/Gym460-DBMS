@@ -1,13 +1,15 @@
-import java.io.*;
-import java.sql.*;
 /* 
  *  Author: Priyansh Nayak
  *  Course: CSC 460
  * Purpose: This Program generates the tables for the
  * 			Final Project on Priyansh's Oracle Database.
+ * 
+ * scp TableGen.java priyanshnayak@lectura.cs.arizona.edu:~/csc/460/p4
  *
  * */
-import java.util.Scanner;
+
+import java.util.*;
+import java.sql.*;
 
 public class TableGen {
 
@@ -39,37 +41,63 @@ public class TableGen {
         String[] tables = {
                 "create table Trainer ("
                 + "T# integer,"
-                + "First_Name varchar2(20) not null,"
-                + "Last_Name varchar2(20) not null,"
+                + "FirstName varchar2(20) not null,"
+                + "LastName varchar2(20) not null,"
                 + "Phone# varchar2(10) not null,"
                 + "PRIMARY KEY (T#)"
                 + ")",
                 
                 "create table Course ("
-                + ""
+                + "CName varchar2(10),"
+                + "T# integer not null,"
+                + "EnrollCount integer not null,"
+                + "Capacity integer not null,"
+                + "StartDate date not null,"
+                + "EndDate date not null,"
+                + "Day varchar2(3) not null,"
+                + "PRIMARY KEY (CName),"
+                + "FOREIGN KEY (T#) REFERENCES Trainer,"
+                + "CHECK (EndDate > StartDate)"
                 + ")",
                 
                 "create table Package ("
-                + "" 
+                + "PName varchar2(30),"
+                + "C1 varchar2(10) not null,"
+                + "C2 varchar2(10) not null,"
+                + "StartDate date not null,"
+                + "EndDate date not null,"
+                + "Price float not null,"
+                + "PRIMARY KEY (PName),"
+                + "FOREIGN KEY (C1) REFERENCES Course,"
+                + "FOREIGN KEY (C1) REFERENCES Course,"
+                + "CHECK (EndDate > StartDate)" 
+                + ")",
+                
+                "create table Tier ("
+                + "Tier varchar2(10),"
+                + "MinAmount float not null,"
+                + "Discount float not null,"
+                + "PRIMARY KEY (Tier)"
                 + ")",
                 
                 "create table Member ("
                 + "M# integer,"
-                + "First_Name varchar2(20) not null,"
-                + "Last_Name varchar2(20) not null,"
+                + "FirstName varchar2(20) not null,"
+                + "LastName varchar2(20) not null,"
                 + "Phone# varchar2(10) not null,"
-                + "P# varchar2(20) not null,"
+                + "PName varchar2(20) not null,"
                 + "Balance float not null,"
                 + "Consumption float not null,"
                 + "Tier varchar2(10),"
                 + "PRIMARY KEY (M#),"
-                + "FOREIGN KEY (P#) REFERENCES Package" 
+                + "FOREIGN KEY (PName) REFERENCES Package,"
+                + "FOREIGN KEY (Tier) REFERENCES Tier" 
                 + ")",
                 
                 "create table Equipment ("
                 + "E# integer,"
-                + "EType varchar2(50),"
-                + "M# integer not null,"
+                + "EType varchar2(20),"
+                + "M# integer,"
                 + "PRIMARY KEY (E#, EType),"
                 + "FOREIGN KEY (M#) REFERENCES Member"
                 + ")",
@@ -77,12 +105,14 @@ public class TableGen {
                 "create table Transaction ("
                 + "X# integer,"
                 + "M# integer not null,"
-                + "XDate datetime not null,"
+                + "XDate date not null,"
                 + "Amount float not null,"
                 + "XType varchar2(10) not null,"
+                + "EType varchar2(20),"
                 + "PRIMARY KEY (X#),"
                 + "FOREIGN KEY (M#) REFERENCES Member"
                 + ")"
+                
         };
         
         Connection dbconn = null;
@@ -103,7 +133,8 @@ public class TableGen {
         System.out.println("LAUNCHING TABLE GENERATION PROCESS\n");
         System.out.println("Pick from the following options:");
         System.out.println("1. Trainer\n2. Course\n3. Package\n"
-        		+ "4. Member\n5. Equipment\n6. Transaction\n7. ALL");
+        		+ "4. Tier\n5. Member\n6. Equipment\n7. Transaction");
+        System.out.println("Press 0 to generate all tables.");
         System.out.println("\nNOTE:  ONLY CREATE A TABLE "
         		+ "IF ITS PRECEEDING TABLE EXISTS BECAUSE OF FKs\n");
         System.out.print("Choose a number corresponding to a table: ");
@@ -115,6 +146,9 @@ public class TableGen {
         		// Choose a table to generate
         
         switch (choice) {
+        case 0:
+        	allFlag = true;
+        	break;
         case 1:
         	query = tables[0];
         	break;
@@ -134,7 +168,7 @@ public class TableGen {
         	query = tables[5];
         	break;
         case 7:
-        	allFlag = true;
+        	query = tables[6];
         	break;
         default:
         	System.out.println("Invalid choice, terminating.");
