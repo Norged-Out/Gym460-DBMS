@@ -23,9 +23,9 @@ public class Gym460 {
 		switch (userInput) {
 		case "1":
 			String firstName = null,
-				    lastName = null,
-				     phoneNo = null,
-				       pName = null;
+					lastName = null,
+					 phoneNo = null,
+					   pName = null;
 			
 			System.out.print("Enter First Name: ");
 			firstName = sc.nextLine();
@@ -64,13 +64,13 @@ public class Gym460 {
 		switch (userInput) {
 		case "1":
 			String     cName = null,
-				         tno = null,
-				    capacity = null,
+						 tno = null,
+					capacity = null,
 				   startDate = null,
 				     endDate = null,
 				   startTime = null,
-					 endTime = null,
-				    	 day = null;
+				     endTime = null,
+				     	 day = null;
 			
 			System.out.print("Enter Course Name: ");
 			cName = sc.nextLine();
@@ -115,10 +115,10 @@ public class Gym460 {
 		userInput = sc.nextLine();
 		switch (userInput) {
 		case "1":
-			String  pName = null,
-					   c1 = null,
-					   c2 = null,
-					price = null;
+			String pName = null,
+					  c1 = null,
+					  c2 = null,
+				   price = null;
 			System.out.print("Enter Package Name: ");
 			pName = sc.nextLine();
 
@@ -154,7 +154,42 @@ public class Gym460 {
 	}
 	
 	private static boolean handleQueries(Scanner sc, String userInput) {
-		System.out.println("TODO QUERY SYSTEM");
+		System.out.println("\nHere are some queries you may use:");
+		System.out.println("\n1. List all member's names and phone numbers who"
+    			+ "\n   now has a negative balance.");
+		System.out.println("\n2. Check and see a member's class schedule for"
+    			+ "\n   November.");
+		System.out.println("\n3. Check and see a trainer's working hours for"
+    			+ "\n   December.");
+		System.out.println("\n4. TODO");
+		
+		System.out.print("\nPlease enter your choice (1/2/3)"
+				+ "\nEnter any other key to quit: ");
+		userInput = sc.nextLine();
+		switch (userInput) {
+		case "1":
+			System.out.println("\n-----------------");
+			System.out.println("Exectuing Query 1");
+			System.out.println("-----------------\n");
+			break;
+		case "2":
+			System.out.println("\n-----------------");
+			System.out.println("Exectuing Query 2");
+			System.out.println("-----------------\n");
+			break;
+		case "3":
+			System.out.println("\n-----------------");
+			System.out.println("Exectuing Query 3");
+			System.out.println("-----------------\n");
+			break;
+		case "4":
+			System.out.println("\n-----------------");
+			System.out.println("Exectuing Query 4");
+			System.out.println("-----------------\n");
+			break;
+		default:
+			return false;
+		}
 		
 		return true;
 	}
@@ -184,16 +219,18 @@ public class Gym460 {
                 System.exit(-1);
 
         }
- */       
+ */     
+		System.out.println("----------------------"
+			+ "----------------------------------");
         System.out.println("\n\tWELCOME TO THE GYM 460 MANAGEMENT SYSTEM");
-    	System.out.println("------------------------"
-    			+ "--------------------------------");
     	boolean executeFlag = true;
     	
     	while(executeFlag) {
 
 				// Print out the menu
-    		
+
+        	System.out.println("\n-----------------------"
+        			+ "---------------------------------");   		
     		System.out.println("\nWhat would you like to do today?"
     				+ "\n\nHere are your options:");
     		System.out.println("\t1. Add or Delete a Member");
@@ -220,6 +257,9 @@ public class Gym460 {
         		executeFlag = false;
         	}
         	
+        	System.out.println("\n-----------------------"
+        			+ "---------------------------------"); 
+        	
         			// Ask the user if they want to continue
         	
         	if(executeFlag) {        	
@@ -227,10 +267,6 @@ public class Gym460 {
 	        	userInput = sc.nextLine();
 	        	if(!userInput.equals("y")) {
 	        		executeFlag = false;
-	        	}
-	        	else {
-	            	System.out.println("\n-----------------------"
-	            			+ "---------------------------------");
 	        	}
         	}
         	
@@ -241,7 +277,7 @@ public class Gym460 {
         	}
         	
     	}
-
+    	
 	}
 
 }
