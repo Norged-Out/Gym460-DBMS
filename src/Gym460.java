@@ -44,7 +44,8 @@ public class Gym460 {
         		
 	}
 	
-	private static boolean handleMember(Scanner sc, String userInput) {
+	private static boolean handleMember(
+			Scanner sc, String userInput, Connection dbconn) {
 		System.out.println("\nPlease choose from the following:");
 		System.out.println("\t1. Add a new Member");
 		System.out.println("\t2. Delete a Member");
@@ -85,7 +86,8 @@ public class Gym460 {
 		return true;
 	}
 	
-	private static boolean handleCourse(Scanner sc, String userInput) {
+	private static boolean handleCourse(
+			Scanner sc, String userInput, Connection dbconn) {
 		System.out.println("\nPlease choose from the following:");
 		System.out.println("\t1. Add a new Course");
 		System.out.println("\t2. Delete a Course");
@@ -136,7 +138,8 @@ public class Gym460 {
 		return true;
 	}
 	
-	private static boolean handlePackage(Scanner sc, String userInput) {
+	private static boolean handlePackage(
+			Scanner sc, String userInput, Connection dbconn) {
 		System.out.println("\nPlease choose from the following:");
 		System.out.println("\t1. Add a new Package");
 		System.out.println("\t2. Update a Package");
@@ -184,7 +187,8 @@ public class Gym460 {
 		return true;
 	}
 	
-	private static boolean handleQueries(Scanner sc, String userInput) {
+	private static boolean handleQueries(
+			Scanner sc, String userInput, Connection dbconn) {
 		System.out.println("\nHere are some queries you may use:");
 		System.out.println("\n1. List all member's names and phone numbers who"
     			+ "\n   now has a negative balance.");
@@ -202,16 +206,21 @@ public class Gym460 {
 			System.out.println("\n-----------------");
 			System.out.println("Exectuing Query 1");
 			System.out.println("-----------------\n");
+			QueryManager.query1(dbconn);
 			break;
 		case "2":
 			System.out.println("\n-----------------");
 			System.out.println("Exectuing Query 2");
 			System.out.println("-----------------\n");
+			System.out.print("Enter the member id: ");
+			userInput = sc.nextLine();
+			QueryManager.query2(dbconn, userInput);
 			break;
 		case "3":
 			System.out.println("\n-----------------");
 			System.out.println("Exectuing Query 3");
 			System.out.println("-----------------\n");
+			QueryManager.query3(dbconn);
 			break;
 		case "4":
 			System.out.println("\n-----------------");
@@ -296,16 +305,16 @@ public class Gym460 {
         	userInput = sc.nextLine();
         	switch (userInput) {
         	case "1":
-        		executeFlag = handleMember(sc, userInput);
+        		executeFlag = handleMember(sc, userInput, dbconn);
         		break;
         	case "2":
-        		executeFlag = handleCourse(sc, userInput);
+        		executeFlag = handleCourse(sc, userInput, dbconn);
         		break;
         	case "3":
-        		executeFlag = handlePackage(sc, userInput);
+        		executeFlag = handlePackage(sc, userInput, dbconn);
         		break;
         	case "4":
-        		executeFlag = handleQueries(sc, userInput);
+        		executeFlag = handleQueries(sc, userInput, dbconn);
         		break;
         	default:
         		executeFlag = false;
