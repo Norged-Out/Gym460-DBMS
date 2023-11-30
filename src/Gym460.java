@@ -233,8 +233,7 @@ public class Gym460 {
 		String username = "priyanshnayak",	// Oracle DBMS username
 		       password = "a9379";    		// Oracle DBMS password
 		
-		/*
-		
+				
 		
 		// load the (Oracle) JDBC driver by initializing its base
         // class, 'oracle.jdbc.OracleDriver'.
@@ -244,35 +243,33 @@ public class Gym460 {
                 Class.forName("oracle.jdbc.OracleDriver");
 
         } catch (ClassNotFoundException e) {
-
-                System.err.println("*** ClassNotFoundException:  "
+        	System.err.println("*** ClassNotFoundException:  "
                     + "Error loading Oracle JDBC driver.  \n"
                     + "\tPerhaps the driver is not on the Classpath?");
-                System.exit(-1);
-
+        	System.exit(-1);
+        	
         }
 		
 		        // make and return a database connection to the user's
 		        // Oracle database
 		
-	    Connection dbconn = null;
-	
-	    try {
-	            dbconn = DriverManager.getConnection
+		Connection dbconn = null;
+		
+		try {
+			
+			dbconn = DriverManager.getConnection
 	                           (oracleURL,username,password);
-	
-	    } catch (SQLException e) {
-	
-	            System.err.println("*** SQLException:  "
+			
+		} catch (SQLException e) {
+			System.err.println("*** SQLException:  "
 	                + "Could not open JDBC connection.");
-	            System.err.println("\tMessage:   " + e.getMessage());
-	            System.err.println("\tSQLState:  " + e.getSQLState());
-	            System.err.println("\tErrorCode: " + e.getErrorCode());
-	            System.exit(-1);
-	
-	    }
-	    
-	    */		
+			System.err.println("\tMessage:   " + e.getMessage());
+			System.err.println("\tSQLState:  " + e.getSQLState());
+			System.err.println("\tErrorCode: " + e.getErrorCode());
+			System.exit(-1);
+			
+		}
+	    	    		
 		
 		Scanner sc = new Scanner(System.in);
 		String userInput = null;
@@ -334,24 +331,21 @@ public class Gym460 {
         	}
         	
     	}
-		    	
-		/*
-				
-				// Shut down the connection to the DBMS.
+    	
+    			// Shut down the connection to the DBMS.
 		
-		try {
-			dbconn.close();
-		} catch (SQLException e) {
-		        System.err.println("*** SQLException:  "
+    	try {
+    		dbconn.close();
+    		
+    	} catch (SQLException e) {
+    		System.err.println("*** SQLException:  "
 		            + "Could not close connection.");
-		        System.err.println("\tMessage:   " + e.getMessage());
-		        System.err.println("\tSQLState:  " + e.getSQLState());
-		        System.err.println("\tErrorCode: " + e.getErrorCode());
-		        System.exit(-1);
-		
-		}
-		
-		*/
+    		System.err.println("\tMessage:   " + e.getMessage());
+    		System.err.println("\tSQLState:  " + e.getSQLState());
+    		System.err.println("\tErrorCode: " + e.getErrorCode());
+    		System.exit(-1);
+    		
+    	}
     	
 	}
 
