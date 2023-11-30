@@ -13,6 +13,37 @@ import java.sql.*;
 
 public class Gym460 {
 	
+	public static ResultSet doQuery(Connection dbconn, String query) {
+	    
+	    // create variables to execute a query
+	    Statement stmt = null;
+	    ResultSet answer = null;
+
+		// attempt to execute the query
+	    try {
+	    	
+	    	// initialize the variables to execute a query
+			stmt = dbconn.createStatement();
+			answer = stmt.executeQuery(query);
+
+			// close the statement
+			stmt.close();
+	    	
+	    } catch (SQLException e) {
+    		System.out.println("Query that crashed => " + query);
+            System.err.println("*** SQLException:  "
+                + "Could not fetch query results.");
+            System.err.println("\tMessage:   " + e.getMessage());
+            System.err.println("\tSQLState:  " + e.getSQLState());
+            System.err.println("\tErrorCode: " + e.getErrorCode());
+            System.exit(-1);
+
+	    }
+        
+        return answer;
+        		
+	}
+	
 	private static boolean handleMember(Scanner sc, String userInput) {
 		System.out.println("\nPlease choose from the following:");
 		System.out.println("\t1. Add a new Member");
@@ -195,18 +226,19 @@ public class Gym460 {
 	}
 
 	public static void main(String[] args) {
+
 		final String oracleURL =   // Magic lectura -> aloe access spell
                 "jdbc:oracle:thin:@aloe.cs.arizona.edu:1521:oracle";
 
 		String username = "priyanshnayak",	// Oracle DBMS username
 		       password = "a9379";    		// Oracle DBMS password
 		
-		Scanner sc = new Scanner(System.in);
-		String userInput = null;
+		/*
+		
 		
 		// load the (Oracle) JDBC driver by initializing its base
         // class, 'oracle.jdbc.OracleDriver'.
-/*
+
         try {
 
                 Class.forName("oracle.jdbc.OracleDriver");
@@ -219,7 +251,32 @@ public class Gym460 {
                 System.exit(-1);
 
         }
- */     
+		
+		        // make and return a database connection to the user's
+		        // Oracle database
+		
+	    Connection dbconn = null;
+	
+	    try {
+	            dbconn = DriverManager.getConnection
+	                           (oracleURL,username,password);
+	
+	    } catch (SQLException e) {
+	
+	            System.err.println("*** SQLException:  "
+	                + "Could not open JDBC connection.");
+	            System.err.println("\tMessage:   " + e.getMessage());
+	            System.err.println("\tSQLState:  " + e.getSQLState());
+	            System.err.println("\tErrorCode: " + e.getErrorCode());
+	            System.exit(-1);
+	
+	    }
+	    
+	    */		
+		
+		Scanner sc = new Scanner(System.in);
+		String userInput = null;
+   
 		System.out.println("----------------------"
 			+ "----------------------------------");
         System.out.println("\n\tWELCOME TO THE GYM 460 MANAGEMENT SYSTEM");
@@ -277,6 +334,24 @@ public class Gym460 {
         	}
         	
     	}
+		    	
+		/*
+				
+				// Shut down the connection to the DBMS.
+		
+		try {
+			dbconn.close();
+		} catch (SQLException e) {
+		        System.err.println("*** SQLException:  "
+		            + "Could not close connection.");
+		        System.err.println("\tMessage:   " + e.getMessage());
+		        System.err.println("\tSQLState:  " + e.getSQLState());
+		        System.err.println("\tErrorCode: " + e.getErrorCode());
+		        System.exit(-1);
+		
+		}
+		
+		*/
     	
 	}
 
