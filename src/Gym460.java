@@ -44,6 +44,36 @@ public class Gym460 {
         		
 	}
 	
+	public static int updateDB(Connection dbconn, String query) {
+		int retval = -1;
+		
+		// create variables to execute a query
+	    Statement stmt = null;
+
+		// attempt to execute the update
+	    try {
+	    	
+	    	// update the database
+			stmt = dbconn.createStatement();
+			retval = stmt.executeUpdate(query);
+
+			// close the statement
+			stmt.close();
+	    	
+	    } catch (SQLException e) {
+    		System.out.println("Query that crashed => " + query);
+            System.err.println("*** SQLException:  "
+                + "Could not fetch query results.");
+            System.err.println("\tMessage:   " + e.getMessage());
+            System.err.println("\tSQLState:  " + e.getSQLState());
+            System.err.println("\tErrorCode: " + e.getErrorCode());
+            System.exit(-1);
+
+	    }
+		
+		return retval;
+	}
+	
 	private static boolean handleMember(
 			Scanner sc, String userInput, Connection dbconn) {
 		System.out.println("\nPlease choose from the following:");
