@@ -152,6 +152,12 @@ public class Gym460 {
 		}		
 		return true;
 	}
+	
+	private static boolean handleQueries(Scanner sc, String userInput) {
+		System.out.println("TODO QUERY SYSTEM");
+		
+		return true;
+	}
 
 	public static void main(String[] args) {
 		final String oracleURL =   // Magic lectura -> aloe access spell
@@ -208,7 +214,7 @@ public class Gym460 {
         		executeFlag = handlePackage(sc, userInput);
         		break;
         	case "4":
-        		System.out.println("\nTODO Query System");
+        		executeFlag = handleQueries(sc, userInput);
         		break;
         	default:
         		executeFlag = false;
