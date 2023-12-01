@@ -21,11 +21,14 @@ public class Gym460 {
 				+ "\nEnter any other key to quit: ");
 		userInput = sc.nextLine();
 		switch (userInput) {
+		
 		case "1":
 			String firstName = null,
 					lastName = null,
 					 phoneNo = null,
 					   pName = null;
+			
+			boolean validData = false;
 			
 			System.out.print("Enter First Name: ");
 			firstName = sc.nextLine();
@@ -42,12 +45,14 @@ public class Gym460 {
 			System.out.println("Added Member");
 			System.out.println("Member id is <insert M#>");
 			break;
+			
 		case "2":
 			System.out.print("Enter the M# to delete: ");
 			userInput = sc.nextLine();
 			int mno = Integer.parseInt(userInput);
 			System.out.println("M# " + mno + " is deleted");
 			break;
+			
 		default:
 			return false;
 		}		
@@ -62,6 +67,7 @@ public class Gym460 {
 				+ "\nEnter any other key to quit: ");
 		userInput = sc.nextLine();
 		switch (userInput) {
+		
 		case "1":
 			String     cName = null,
 						 tno = null,
@@ -71,6 +77,8 @@ public class Gym460 {
 				   startTime = null,
 				     endTime = null,
 				     	 day = null;
+			
+			boolean validData = false;
 			
 			System.out.print("Enter Course Name: ");
 			cName = sc.nextLine();
@@ -94,11 +102,13 @@ public class Gym460 {
 			
 			System.out.println("Added Course " + cName);
 			break;
+			
 		case "2":
 			System.out.print("Enter the Course to delete: ");
 			userInput = sc.nextLine();
 			System.out.println("Course " + userInput + " is deleted");
 			break;
+			
 		default:
 			return false;
 		}		
@@ -114,14 +124,18 @@ public class Gym460 {
 				+ "\nEnter any other key to quit: ");
 		userInput = sc.nextLine();
 		switch (userInput) {
+		
 		case "1":
 			String pName = null,
 					  c1 = null,
 					  c2 = null,
 				   price = null;
+			
+			boolean validData = false;
+			
+			
 			System.out.print("Enter Package Name: ");
 			pName = sc.nextLine();
-
 			
 			// TODO: print all courses
 			
@@ -134,12 +148,14 @@ public class Gym460 {
 			
 			System.out.println("Added Package " + pName);
 			break;
+			
 		case "2":
 			System.out.print("Enter the Package Name: ");
 			userInput = sc.nextLine();
 			
 			System.out.println("idek");
 			break;
+			
 		case "3":
 			System.out.print("Enter the Package to delete: ");
 			userInput = sc.nextLine();
