@@ -62,8 +62,8 @@ public class TableGen {
                 
                 "create table Package ("
                 + "PName varchar2(30),"
-                + "C1 varchar2(10) not null,"
-                + "C2 varchar2(10) not null,"
+                + "C1 varchar2(10),"
+                + "C2 varchar2(10),"
                 + "StartDate date not null,"
                 + "EndDate date not null,"
                 + "Price float not null,"
