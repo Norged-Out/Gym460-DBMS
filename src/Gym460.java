@@ -4,7 +4,7 @@
  * Purpose: This Program generates the tables for the
  * 			Final Project on Priyansh's Oracle Database.
  * 
- * scp GymManagement.java priyanshnayak@lectura.cs.arizona.edu:~/csc/460/p4
+ * scp -r ./* priyanshnayak@lectura.cs.arizona.edu:~/csc/460/p4
  *
  * */
 
@@ -375,7 +375,6 @@ public class Gym460 {
 		
     	try {
     		dbconn.close();
-    		
     	} catch (SQLException e) {
     		System.err.println("*** SQLException:  "
 		            + "Could not close connection.");

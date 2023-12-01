@@ -40,9 +40,11 @@ public class QueryManager {
 	
 	public static void query2(Connection dbconn, String mno) {
 		final String query = 
-				"SELECT c.CName, c.StartDate, c.EndDate, c.Day"
-				+ " FROM Course c JOIN Package p ON c.CName = p.C1 OR c.CName = p.C2"
-				+ " JOIN Member m ON p.PName = m.PName"
+				"SELECT m.FirstName, m.LastName, c.CName, c.StartDate, c.EndDate, c.Day"
+				+ " FROM Member m"
+				+ " JOIN Package p"
+				+ " ON p.PName = m.PName"
+				+ " JOIN Course c"
 				+ " WHERE m.M# = " + mno
 				+ " AND EXTRACT(MONTH FROM c.StartDate) = 11"
 				+ " AND EXTRACT(YEAR FROM c.StartDate) = 2023";
@@ -82,7 +84,9 @@ public class QueryManager {
 		
 		final String query =
 				"SELECT t.FirstName, t.LastName, c.CName, c.StartDate, c.EndDate, c.Day" 
-				+ " FROM Trainer t JOIN Course c ON t.T# = c.T#"
+				+ " FROM Trainer t"
+				+ " JOIN Course c"
+				+ " ON t.T# = c.T#"
 				+ " WHERE EXTRACT(MONTH FROM c.StartDate) = 12"
 				+ " AND EXTRACT(YEAR FROM c.StartDate) = 2023";
 			
