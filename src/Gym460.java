@@ -137,6 +137,7 @@ public class Gym460 {
 			
 			System.out.print("Enter Course Name: ");
 			cName = sc.nextLine();
+			System.out.println(cName);
 			System.out.print("Enter Capacity: ");
 			capacity = sc.nextLine();
 			System.out.print("Enter Start Date (YYYY-MM-DD): ");
