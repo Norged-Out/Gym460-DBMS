@@ -9,6 +9,7 @@ import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.LinkedList;
 
+import entities.Course;
 import entities.Equipment;
 import entities.Member;
 
@@ -86,6 +87,13 @@ public class Validation {
 	 * @return true if the course is active, else return false.
 	 */
 	protected static boolean isCourseActive(Course course) {
+
+		// if the course is null, return false
+		if (course == null) {
+
+			return false;
+
+		}// end if
 		
 		// create a date object for the current date
 		Date currentDate = new Date();
@@ -359,6 +367,48 @@ public class Validation {
 		
 		// create a linked list to hold the date strings
 		LinkedList<String> dates = new LinkedList<>();
+
+		// check if c1 is null and c2 is not null
+		if (c1 == null && c2 != null) {
+
+			// add c2's startDate to the LinkedList at index 0
+			dates.add(0, dateToString(c2.startDate));
+
+			// add c2's endDate to the LinkedList at index 1
+			dates.add(1, dateToString(c2.endDate));
+
+			// return the dates
+			return dates;
+
+		}// end if
+
+		// check if c2 is null and c1 is not null
+		if (c2 == null && c1 != null) {
+
+			// add c2's startDate to the LinkedList at index 0
+			dates.add(0, dateToString(c1.startDate));
+
+			// add c2's endDate to the LinkedList at index 1
+			dates.add(1, dateToString(c1.endDate));
+
+			// return the dates
+			return dates;
+
+		}// end if
+
+		// check if c2 is null and c1 is not null
+		if (c2 == null && c1 == null) {
+
+			// add c2's startDate to the LinkedList at index 0
+			dates.add(null);
+
+			// add c2's endDate to the LinkedList at index 1
+			dates.add(null);
+
+			// return the dates
+			return dates;
+
+		}// end if
 
 		// if c1 starts before c2
 		if (c1.startDate.before(c2.startDate)) {
