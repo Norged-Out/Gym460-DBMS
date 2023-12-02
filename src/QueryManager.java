@@ -1,5 +1,10 @@
+import entities.Equipment;
+import entities.Course;
+import entities.Member;
+import entities.Package;
 
 import java.sql.*;
+import java.util.LinkedList;
 
 public class QueryManager {
 	
@@ -20,7 +25,6 @@ public class QueryManager {
 			}
 
 			// Displaying the result
-			System.out.println("Membthe files that I used to live where are going to where leave me alone see your bad guy is not workingers with Negative Balance:");
 			while (answer.next()) {
 				String firstName = answer.getString("FirstName");
 				String lastName = answer.getString("LastName");
@@ -29,11 +33,7 @@ public class QueryManager {
 			}
 			stmt.close();
 		} catch (SQLException e) {
-			System.err.println("*** SQLException:  " + "Could not fetch query results.");
-			System.err.println("\tMessage:   " + e.getMessage());
-			System.err.println("\tSQLState:  " + e.getSQLState());
-			System.err.println("\tErrorCode: " + e.getErrorCode());
-			System.exit(-1);
+			handleSQLException(e, query);
 		}
 	}
 	
@@ -73,11 +73,7 @@ public class QueryManager {
             } 
 			stmt.close();
 		} catch (SQLException e) {
-			System.err.println("*** SQLException:  " + "Could not fetch query results.");
-			System.err.println("\tMessage:   " + e.getMessage());
-			System.err.println("\tSQLState:  " + e.getSQLState());
-			System.err.println("\tErrorCode: " + e.getErrorCode());
-			System.exit(-1);
+			handleSQLException(e, query);
 		}
 	}
 	
@@ -113,12 +109,257 @@ public class QueryManager {
 			}
 			stmt.close();
 		} catch (SQLException e) {
-			System.err.println("*** SQLException:  " + "Could not fetch query results.");
-			System.err.println("\tMessage:   " + e.getMessage());
-			System.err.println("\tSQLState:  " + e.getSQLState());
-			System.err.println("\tErrorCode: " + e.getErrorCode());
-			System.exit(-1);
+			handleSQLException(e, query);
 		}
+	}
+	
+	protected static void showAllMembers(Connection dbconn) {
+		final String query = "SELECT M#, FirstName, LastName FROM Member";
+		Statement stmt = null;
+		ResultSet answer = null;
+		try {
+			stmt = dbconn.createStatement();
+			answer = stmt.executeQuery(query);
+
+			if (!answer.next()) {
+				System.out.println("No members found.");
+				return;
+			}
+
+			// Displaying the results
+			System.out.println(String.format("%-10s %-20s %-20s", "Member ID", "First Name", "Last Name"));
+			while (answer.next()) {
+				int memberId = answer.getInt("M#");
+				String firstName = answer.getString("FirstName");
+				String lastName = answer.getString("LastName");
+				System.out.println(String.format("%-10d %-20s %-20s", memberId, firstName, lastName));
+			}
+			stmt.close();
+		} catch (SQLException e) {
+			handleSQLException(e, query);
+		}
+	}
+
+	protected static void showAllTrainers(Connection dbconn) {
+		final String query = "SELECT T#, FirstName, LastName FROM Trainer";
+		Statement stmt = null;
+		ResultSet answer = null;
+		try {
+			stmt = dbconn.createStatement();
+			answer = stmt.executeQuery(query);
+
+			if (!answer.next()) {
+				System.out.println("No trainers found.");
+				return;
+			}
+
+			// Displaying the results
+			System.out.println(String.format("%-10s %-20s %-20s", "Trainer ID", "First Name", "Last Name"));
+			while (answer.next()) {
+				int trainerId = answer.getInt("T#");
+				String firstName = answer.getString("FirstName");
+				String lastName = answer.getString("LastName");
+				System.out.println(String.format("%-10d %-20s %-20s", trainerId, firstName, lastName));
+			}
+			stmt.close();
+		} catch (SQLException e) {
+			handleSQLException(e, query);
+		}
+	}
+
+	protected static void showAllCourses(Connection dbconn) {
+		final String query = "SELECT CName FROM Course";
+		Statement stmt = null;
+		ResultSet answer = null;
+		try {
+			stmt = dbconn.createStatement();
+			answer = stmt.executeQuery(query);
+
+			if (!answer.next()) {
+				System.out.println("No courses found.");
+				return;
+			}
+
+			// Displaying the results
+			System.out.println(String.format("%-20s", "Course Name"));
+			while (answer.next()) {
+				String courseName = answer.getString("CName");
+				System.out.println(String.format("%-20s", courseName));
+			}
+			stmt.close();
+		} catch (SQLException e) {
+			handleSQLException(e, query);
+		}
+	}
+	
+	protected static void showAllPackages(Connection dbconn) {
+		final String query = "SELECT PName, C1, C2 FROM Package";
+		Statement stmt = null;
+		ResultSet answer = null;
+		try {
+			stmt = dbconn.createStatement();
+			answer = stmt.executeQuery(query);
+
+			if (!answer.next()) {
+				System.out.println("No packages found.");
+				return;
+			}
+
+			// Displaying the results
+			System.out.println(String.format("%-30s %-10s %-10s", "Package Name", "Course 1", "Course 2"));
+
+			while (answer.next()) {
+				String packageName = answer.getString("PName");
+				String course1 = answer.getString("C1");
+				String course2 = answer.getString("C2");
+				System.out.println(String.format("%-30s %-10s %-10s", packageName, course1, course2));
+			}
+			stmt.close();
+		} catch (SQLException e) {
+			handleSQLException(e, query);
+		}
+	}
+
+	protected static void showAllEquipment(Connection dbconn) {
+		final String query = "SELECT DISTINCT EType FROM Equipment";
+		Statement stmt = null;
+		ResultSet answer = null;
+		try {
+			stmt = dbconn.createStatement();
+			answer = stmt.executeQuery(query);
+
+			if (!answer.next()) {
+				System.out.println("No equipment types found.");
+				return;
+			}
+
+			// Displaying the results
+			System.out.println(String.format("%-20s", "Equipment Type"));
+
+			while (answer.next()) {
+				String equipmentType = answer.getString("EType");
+				System.out.println(String.format("%-20s", equipmentType));
+			}
+
+			stmt.close();
+		} catch (SQLException e) {
+			handleSQLException(e, query);
+		}
+	}
+	
+	protected static Course getCourse(Connection dbconn, String cName) {
+		final String query = "SELECT * FROM Course WHERE CName = '" + cName + "'";
+		Statement stmt = null;
+		ResultSet answer = null;
+	    try {
+	        stmt = dbconn.createStatement();
+	        answer = stmt.executeQuery(query);
+
+	        if (answer.next()) {
+	            return new Course(
+	            		answer.getString("CName"),
+	            		answer.getInt("T#"),
+	            		answer.getInt("EnrollCount"),
+	            		answer.getInt("Capacity"),
+	            		answer.getDate("StartDate"),
+	            		answer.getDate("EndDate"),
+	            		answer.getString("Day")
+	            		);
+	        } else {
+	            return null; // No course found
+	        }
+	    } catch (SQLException e) {
+	    	handleSQLException(e, query);
+	        return null;
+	    }
+	}
+	
+	protected static Package getPackage(Connection dbconn, String pName) {
+		final String query = "SELECT * FROM Package WHERE PName = '" + pName + "'";
+		Statement stmt = null;
+		ResultSet answer = null;
+	    try {
+	        stmt = dbconn.createStatement();
+	        answer = stmt.executeQuery(query);
+
+	        if (answer.next()) {
+	            return new Package(
+	            		answer.getString("PName"),
+	            		answer.getString("C1"),
+	            		answer.getString("C2"),
+	            		answer.getDate("StartDate"),
+	            		answer.getDate("EndDate"),
+	            		answer.getDouble("Price")
+	            		);
+	        } else {
+	        	System.out.println("No Package found");
+	            return null; // No package found
+	        }
+	    } catch (SQLException e) {
+	    	handleSQLException(e, query);
+	        return null;
+	    }
+	}
+
+	protected static Member getMember(Connection dbconn, int mno) {
+		final String query = "SELECT * FROM Member WHERE M# = " + mno;
+		Statement stmt = null;
+		ResultSet answer = null;
+	    try {
+	        stmt = dbconn.createStatement();
+	        answer = stmt.executeQuery(query);
+
+	        if (answer.next()) {
+	            return new Member(
+	            		answer.getInt("M#"),
+	            		answer.getString("FirstName"),
+	            		answer.getString("LastName"),
+	            		answer.getString("Phone#"),
+	            		answer.getString("PName"),
+	            		answer.getDouble("Balance"),
+	            		answer.getDouble("Consumption")
+	            		);
+	        } else {
+	        	System.out.println("No Member found");
+	            return null; // No member found
+	        }
+	    } catch (SQLException e) {
+	    	handleSQLException(e, query);
+	        return null;
+	    }
+	}
+
+	
+	protected static LinkedList<Equipment> getEquipment(Connection dbconn, String eType) {
+		final String query = "SELECT * FROM Equipment WHERE EType = '" + eType + "'";
+		Statement stmt = null;
+		ResultSet answer = null;
+	    LinkedList<Equipment> equipmentList = new LinkedList<>();
+	    try {
+	        stmt = dbconn.createStatement();
+	        answer = stmt.executeQuery(query);
+
+	        while (answer.next()) {
+	        	Integer mNumber = (Integer) answer.getObject("M#"); // This will be null if the column is SQL NULL
+	            equipmentList.add(new Equipment(
+	            		answer.getInt("E#"),
+	            		answer.getString("EType"),
+	            		mNumber // Can be null
+	            		));
+	        }
+	    } catch (SQLException e) {
+	    	handleSQLException(e, query);
+	    }
+	    return equipmentList;
+	}
+
+	private static void handleSQLException(SQLException e, String query) {
+		System.err.println("*** SQLException:  " + "Could not fetch query results.");
+		System.out.println("Query that crashed => " + query);
+		System.err.println("\tMessage:   " + e.getMessage());
+		System.err.println("\tSQLState:  " + e.getSQLState());
+		System.err.println("\tErrorCode: " + e.getErrorCode());
+		System.exit(-1);
 	}
 			
 
