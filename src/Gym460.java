@@ -13,67 +13,6 @@ import java.sql.*;
 
 public class Gym460 {
 	
-	public static ResultSet doQuery(Connection dbconn, String query) {
-	    
-	    // create variables to execute a query
-	    Statement stmt = null;
-	    ResultSet answer = null;
-
-		// attempt to execute the query
-	    try {
-	    	
-	    	// initialize the variables to execute a query
-			stmt = dbconn.createStatement();
-			answer = stmt.executeQuery(query);
-
-			// close the statement
-			stmt.close();
-	    	
-	    } catch (SQLException e) {
-    		System.out.println("Query that crashed => " + query);
-            System.err.println("*** SQLException:  "
-                + "Could not fetch query results.");
-            System.err.println("\tMessage:   " + e.getMessage());
-            System.err.println("\tSQLState:  " + e.getSQLState());
-            System.err.println("\tErrorCode: " + e.getErrorCode());
-            System.exit(-1);
-
-	    }
-        
-        return answer;
-        		
-	}
-	
-	public static int updateDB(Connection dbconn, String query) {
-		int retval = -1;
-		
-		// create variables to execute a query
-	    Statement stmt = null;
-
-		// attempt to execute the update
-	    try {
-	    	
-	    	// update the database
-			stmt = dbconn.createStatement();
-			retval = stmt.executeUpdate(query);
-
-			// close the statement
-			stmt.close();
-	    	
-	    } catch (SQLException e) {
-    		System.out.println("Query that crashed => " + query);
-            System.err.println("*** SQLException:  "
-                + "Could not fetch query results.");
-            System.err.println("\tMessage:   " + e.getMessage());
-            System.err.println("\tSQLState:  " + e.getSQLState());
-            System.err.println("\tErrorCode: " + e.getErrorCode());
-            System.exit(-1);
-
-	    }
-		
-		return retval;
-	}
-	
 	private static boolean handleMember(
 			Scanner sc, String userInput, Connection dbconn) {
 		System.out.println("\nPlease choose from the following:");
@@ -153,6 +92,10 @@ public class Gym460 {
 			
 			System.out.print("Choose a trainer for the course: ");
 			tNo = sc.nextLine().strip();
+			
+			
+			
+			// TODO: Call Insert method with filtered data
 			
 			System.out.println("Added Course " + cName);
 			break;

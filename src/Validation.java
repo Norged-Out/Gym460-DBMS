@@ -1,16 +1,10 @@
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.LinkedList;
 
-import entities.Equipment;
-import entities.Member;
+import entities.*;
 
 
 public class Validation {
