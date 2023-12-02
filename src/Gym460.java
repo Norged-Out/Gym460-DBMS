@@ -13,67 +13,6 @@ import java.sql.*;
 
 public class Gym460 {
 	
-	public static ResultSet doQuery(Connection dbconn, String query) {
-	    
-	    // create variables to execute a query
-	    Statement stmt = null;
-	    ResultSet answer = null;
-
-		// attempt to execute the query
-	    try {
-	    	
-	    	// initialize the variables to execute a query
-			stmt = dbconn.createStatement();
-			answer = stmt.executeQuery(query);
-
-			// close the statement
-			stmt.close();
-	    	
-	    } catch (SQLException e) {
-    		System.out.println("Query that crashed => " + query);
-            System.err.println("*** SQLException:  "
-                + "Could not fetch query results.");
-            System.err.println("\tMessage:   " + e.getMessage());
-            System.err.println("\tSQLState:  " + e.getSQLState());
-            System.err.println("\tErrorCode: " + e.getErrorCode());
-            System.exit(-1);
-
-	    }
-        
-        return answer;
-        		
-	}
-	
-	public static int updateDB(Connection dbconn, String query) {
-		int retval = -1;
-		
-		// create variables to execute a query
-	    Statement stmt = null;
-
-		// attempt to execute the update
-	    try {
-	    	
-	    	// update the database
-			stmt = dbconn.createStatement();
-			retval = stmt.executeUpdate(query);
-
-			// close the statement
-			stmt.close();
-	    	
-	    } catch (SQLException e) {
-    		System.out.println("Query that crashed => " + query);
-            System.err.println("*** SQLException:  "
-                + "Could not fetch query results.");
-            System.err.println("\tMessage:   " + e.getMessage());
-            System.err.println("\tSQLState:  " + e.getSQLState());
-            System.err.println("\tErrorCode: " + e.getErrorCode());
-            System.exit(-1);
-
-	    }
-		
-		return retval;
-	}
-	
 	private static boolean handleMember(
 			Scanner sc, String userInput, Connection dbconn) {
 		System.out.println("\nPlease choose from the following:");
@@ -81,7 +20,7 @@ public class Gym460 {
 		System.out.println("\t2. Delete a Member");
 		System.out.print("\nPlease enter your choice (1/2)"
 				+ "\nEnter any other key to quit: ");
-		userInput = sc.nextLine();
+		userInput = sc.nextLine().strip();
 		switch (userInput) {
 		case "1":
 			String firstName = null,
@@ -90,25 +29,25 @@ public class Gym460 {
 					   pName = null;
 			
 			System.out.print("Enter First Name: ");
-			firstName = sc.nextLine();
+			firstName = sc.nextLine().strip();
 			System.out.print("Enter Last Name: ");
-			lastName = sc.nextLine();
+			lastName = sc.nextLine().strip();
 			System.out.print("Enter 10-digit Phone Number: ");
-			phoneNo = sc.nextLine();
+			phoneNo = sc.nextLine().strip();
 			
 			// TODO: print all packages
 			
 			System.out.print("Enter Package name to enroll into: ");
-			pName = sc.nextLine();
+			pName = sc.nextLine().strip();
 			
 			System.out.println("Added Member");
 			System.out.println("Member id is <insert M#>");
 			break;
 		case "2":
 			System.out.print("Enter the M# to delete: ");
-			userInput = sc.nextLine();
-			int mno = Integer.parseInt(userInput);
-			System.out.println("M# " + mno + " is deleted");
+			userInput = sc.nextLine().strip();
+			int mNo = Integer.parseInt(userInput);
+			System.out.println("M# " + mNo + " is deleted");
 			break;
 		default:
 			return false;
@@ -123,11 +62,11 @@ public class Gym460 {
 		System.out.println("\t2. Delete a Course");
 		System.out.print("\nPlease enter your choice (1/2)"
 				+ "\nEnter any other key to quit: ");
-		userInput = sc.nextLine();
+		userInput = sc.nextLine().strip();
 		switch (userInput) {
 		case "1":
 			String     cName = null,
-						 tno = null,
+						 tNo = null,
 					capacity = null,
 				   startDate = null,
 				     endDate = null,
@@ -136,30 +75,33 @@ public class Gym460 {
 				     	 day = null;
 			
 			System.out.print("Enter Course Name: ");
-			cName = sc.nextLine();
 			System.out.print("Enter Capacity: ");
-			capacity = sc.nextLine();
+			capacity = sc.nextLine().strip();
 			System.out.print("Enter Start Date (YYYY-MM-DD): ");
-			startDate = sc.nextLine();
+			startDate = sc.nextLine().strip();
 			System.out.print("Enter End Date (YYYY-MM-DD): ");
-			endDate = sc.nextLine();
+			endDate = sc.nextLine().strip();
 			System.out.print("Enter Start Time (HH24:MI): ");
-			startTime = sc.nextLine();
+			startTime = sc.nextLine().strip();
 			System.out.print("Enter End Time (HH24:MI): ");
-			endTime = sc.nextLine();
+			endTime = sc.nextLine().strip();
 			System.out.print("Enter the Day the course will be taught: ");
-			day = sc.nextLine();
+			day = sc.nextLine().strip();
 			
 			// TODO: print all trainers
 			
 			System.out.print("Choose a trainer for the course: ");
-			tno = sc.nextLine();
+			tNo = sc.nextLine().strip();
+			
+			
+			
+			// TODO: Call Insert method with filtered data
 			
 			System.out.println("Added Course " + cName);
 			break;
 		case "2":
 			System.out.print("Enter the Course to delete: ");
-			userInput = sc.nextLine();
+			userInput = sc.nextLine().strip();
 			System.out.println("Course " + userInput + " is deleted");
 			break;
 		default:
@@ -176,7 +118,7 @@ public class Gym460 {
 		System.out.println("\t2. Delete a Package");
 		System.out.print("\nPlease enter your choice (1/2/3)"
 				+ "\nEnter any other key to quit: ");
-		userInput = sc.nextLine();
+		userInput = sc.nextLine().strip();
 		switch (userInput) {
 		case "1":
 			String pName = null,
@@ -184,29 +126,38 @@ public class Gym460 {
 					  c2 = null,
 				   price = null;
 			System.out.print("Enter Package Name: ");
-			pName = sc.nextLine();
+			pName = sc.nextLine().strip();
 
 			
 			// TODO: print all courses
 			
 			System.out.print("Choose Course 1: ");
-			c1 = sc.nextLine();
+			c1 = sc.nextLine().strip();
 			System.out.print("Choose Course 2: ");
-			c2 = sc.nextLine();
+			c2 = sc.nextLine().strip();
 			System.out.print("Enter a price for the package: ");
-			price = sc.nextLine();
+			price = sc.nextLine().strip();
 			
 			System.out.println("Added Package " + pName);
 			break;
 		case "2":
-			System.out.print("Enter the Package Name: ");
-			userInput = sc.nextLine();
+			// TODO list all packages
+			String oldPName = null,
+				   newPName = null,
+				   newC1 = null,
+				   newC2 = null,
+				   newPrice = null;
 			
-			System.out.println("idek");
+			System.out.print("Which package would you like to update? ");
+			oldPName = sc.nextLine().strip();
+			
+			// TODO if package name is correct, return an object
+			// Obtain new details
+			
 			break;
 		case "3":
 			System.out.print("Enter the Package to delete: ");
-			userInput = sc.nextLine();
+			userInput = sc.nextLine().strip();
 			int mno = Integer.parseInt(userInput);
 			System.out.println("M# " + mno + " is deleted");
 			
@@ -230,7 +181,7 @@ public class Gym460 {
 		
 		System.out.print("\nPlease enter your choice (1/2/3)"
 				+ "\nEnter any other key to quit: ");
-		userInput = sc.nextLine();
+		userInput = sc.nextLine().strip();
 		switch (userInput) {
 		case "1":
 			System.out.println("\n-----------------");
@@ -243,7 +194,7 @@ public class Gym460 {
 			System.out.println("Exectuing Query 2");
 			System.out.println("-----------------\n");
 			System.out.print("Enter the member id: ");
-			userInput = sc.nextLine();
+			userInput = sc.nextLine().strip();
 			QueryManager.query2(dbconn, userInput);
 			break;
 		case "3":
@@ -332,7 +283,7 @@ public class Gym460 {
     		System.out.println("\t4. Investigate some general queries");
     		System.out.print("\nPlease enter your choice (1/2/3/4)"
     				+ "\nEnter any other key to quit: ");
-        	userInput = sc.nextLine();
+        	userInput = sc.nextLine().strip();
         	switch (userInput) {
         	case "1":
         		executeFlag = handleMember(sc, userInput, dbconn);
@@ -357,7 +308,7 @@ public class Gym460 {
         	
         	if(executeFlag) {        	
 	        	System.out.print("\nContinue using the system? (y/n) ");
-	        	userInput = sc.nextLine();
+	        	userInput = sc.nextLine().strip();
 	        	if(!userInput.equals("y")) {
 	        		executeFlag = false;
 	        	}
