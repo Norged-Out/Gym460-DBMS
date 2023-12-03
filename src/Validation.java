@@ -3,7 +3,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
+// import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.LinkedList;
 
@@ -201,8 +201,10 @@ public class Validation {
 	protected static boolean noTrainerScheduleConflict(LinkedList<Course> courses, String dow, String start, String end) {
 
 		// create LocalDateTime objects for the new course start date and end date
-		LocalDateTime newStartDateTime	= dateToLocalDateTime(stringToDate(start));
-		LocalDateTime newEndDateTime	= dateToLocalDateTime(stringToDate(end));
+//		LocalDateTime newStartDateTime	= dateToLocalDateTime(stringToDate(start));
+//		LocalDateTime newEndDateTime	= dateToLocalDateTime(stringToDate(end));
+		LocalDateTime newStartDateTime	= stringToLocalDateTime(start);
+		LocalDateTime newEndDateTime	= stringToLocalDateTime(end);
 
 		// loop through the courses to check for conflicts
 		for (Course course : courses) {
@@ -809,15 +811,19 @@ public class Validation {
 
 
 	/**
-	 * This method takes a string representation of a date and returns a date 
-	 * 	object similar to the SQL toDate() function.
+//	 * This method takes a string representation of a date and returns a date 
+//	 * 	object similar to the SQL toDate() function.
+	 * This method takes a string representation of a date and returns a  
+	 * 	LocalDateTime object similar to the SQL toDate() function.
 	 * The date string format is YYYY-MM-DD HH:MI.
 	 * 
 	 * @param date is the string representation of the date to be converted.
 	 * 
-	 * @return a date object.
+//	 * @return a date object.
+	 * @return a LocalDateTime object.
 	 */
-	protected static Date stringToDate(String date) {
+	// protected static Date stringToDate(String date) {
+	protected static LocalDateTime stringToLocalDateTime(String date) {
 
 		int year	= Integer.parseInt(date.substring(0, 4));
 		int month	= Integer.parseInt(date.substring(5, 7));
@@ -825,14 +831,16 @@ public class Validation {
 		int hour	= Integer.parseInt(date.substring(11, 13));
 		int minute	= Integer.parseInt(date.substring(14, 16));
 
-		// create a date object
-		LocalDateTime tempLDT = LocalDateTime.of(year, month, day, hour, minute);
-		ZonedDateTime tempZDT = tempLDT.atZone(ZoneOffset.ofHours(0));
+//		// // create a date object
+//		// LocalDateTime tempLDT = LocalDateTime.of(year, month, day, hour, minute);
+//		// ZonedDateTime tempZDT = tempLDT.atZone(ZoneOffset.ofHours(0));
 
 		// return the converted date object
-		return new Date(tempZDT.toInstant().toEpochMilli());
+//		// return new Date(tempZDT.toInstant().toEpochMilli());
+		return LocalDateTime.of(year, month, day, hour, minute);
 
-	}// end stringToDate
+//	}// end stringToDate
+	}// end stringToLocalDateTime
 
 
 	/**
