@@ -1,7 +1,9 @@
 import java.sql.*;
 
 public class DataManipulation {
-	protected static int insertMember(Connection dbconn, String firstName, String lastName, String phone, String pName) {
+	
+	protected static int insertMember(Connection dbconn, String firstName, String lastName, 
+			String phone, String pName) {
 	    Statement stmt = null;
 	    ResultSet answer = null;
 
@@ -21,14 +23,18 @@ public class DataManipulation {
 	        // **************** Retrieve C1 and C2 values from the Package table ****************
 	        String getCoursesQuery = "SELECT C1, C2 FROM Package WHERE PName = '" + pName + "'";
 	        ResultSet coursesResultSet = stmt.executeQuery(getCoursesQuery);
-	        
-	        String c1 = coursesResultSet.getString("C1");
-	        String c2 = coursesResultSet.getString("C2");
+	        String c1="",c2="";
+	        if(coursesResultSet.next()) {
+	         c1 = coursesResultSet.getString("C1");}
+	        if(coursesResultSet.next()) {
+	         c2 = coursesResultSet.getString("C2");}
 	        
 	        // ******************** Get cost of package *******************************
 	        String getCostQuery = "SELECT Price FROM Package WHERE PName = '" + pName + "'";
 	        ResultSet costResultSet = stmt.executeQuery(getCostQuery);
-	        float price = costResultSet.getFloat("Price");
+	        float price=0;
+	        if(costResultSet.next()) {
+	         price = costResultSet.getFloat("Price");}
 	        
 	        float balance = -1*price; // Default balance value
 	        
@@ -54,7 +60,7 @@ public class DataManipulation {
 	        }
 
 	        insertQuery = "INSERT INTO Transaction (X#, M#, XDate, Amount, XType, EType) " +
-	            "VALUES (" + XID + ", " + mId + ", TO_DATE(SYSDATE, 'YYYY-MM-DD'), " + price + ", 'Credit', NULL)";
+	            "VALUES (" + XID + ", " + mId + ", SYSDATE, " + price + ", 'Credit', NULL)";
 
 	        // Execute the INSERT statement
 	        stmt.executeUpdate(insertQuery);
@@ -169,18 +175,16 @@ public class DataManipulation {
 	    Statement stmt = null;
 	    try {
 	        stmt = dbconn.createStatement();
-
 	        // Handle nulls and format values
 	        c1 = c1 != null ? "'" + c1 + "'" : "NULL";
 	        c2 = c2 != null ? "'" + c2 + "'" : "NULL";
-	        startDate = startDate != null ? "TO_DATE('" + startDate + "', 'YYYY-MM-DD')" : "NULL";
-	        endDate = endDate != null ? "TO_DATE('" + endDate + "', 'YYYY-MM-DD')" : "NULL";
+	        startDate = startDate != null ? "TO_DATE('" + startDate + "', 'YYYY-MM-DD HH24:MI')" : "NULL";
+	        endDate = endDate != null ? "TO_DATE('" + endDate + "', 'YYYY-MM-DD HH24:MI')" : "NULL";
 
 	        // Create the INSERT query
 	        String insertQuery = "INSERT INTO Package (PName, C1, C2, StartDate, EndDate, Price) " +
 	                             "VALUES ('" + pName + "', " + c1 + ", " + c2 + ", " + startDate + ", " +
 	                             endDate + ", " + price + ")";
-	        System.out.println(insertQuery);
 	        // Execute the INSERT statement
 	        int rowsInserted = stmt.executeUpdate(insertQuery);
 	        stmt.close();
@@ -256,7 +260,6 @@ public class DataManipulation {
 	        String updateQuery = "UPDATE Equipment SET M# = " + Mno + " WHERE E# = " + ENo;
 	        // Execute the UPDATE statement
 	        stmt.executeUpdate(updateQuery);
-	        
 	        return 1;
 	       
 	    } catch (SQLException e) {
