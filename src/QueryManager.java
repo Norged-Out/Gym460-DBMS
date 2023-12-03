@@ -182,10 +182,10 @@ public class QueryManager {
 			}
 
 			// Displaying the results
-			System.out.println(String.format("%-20s", "Course Name"));
+			System.out.println(String.format("%-15s", "Course Name"));
 			while (answer.next()) {
 				String courseName = answer.getString("CName");
-				System.out.println(String.format("%-20s", courseName));
+				System.out.println(String.format("%-15s", courseName));
 			}
 			stmt.close();
 		} catch (SQLException e) {
@@ -207,13 +207,13 @@ public class QueryManager {
 			}
 
 			// Displaying the results
-			System.out.println(String.format("%-30s %-10s %-10s", "Package Name", "Course 1", "Course 2"));
+			System.out.println(String.format("%-30s %-15s %-15s", "Package Name", "Course 1", "Course 2"));
 
 			while (answer.next()) {
 				String packageName = answer.getString("PName");
 				String course1 = answer.getString("C1");
 				String course2 = answer.getString("C2");
-				System.out.println(String.format("%-30s %-10s %-10s", packageName, course1, course2));
+				System.out.println(String.format("%-30s %-15s %-15s", packageName, course1, course2));
 			}
 			stmt.close();
 		} catch (SQLException e) {
