@@ -7,8 +7,10 @@
  * scp -r ./* priyanshnayak@lectura.cs.arizona.edu:~/csc/460/p4
  *
  * */
-
 import java.util.*;
+
+import entities.Course;
+
 import java.sql.*;
 
 public class Gym460 {
@@ -21,8 +23,7 @@ public class Gym460 {
 		System.out.print("\nPlease enter your choice (1/2)"
 				+ "\nEnter any other key to quit: ");
 		userInput = sc.nextLine().strip();
-		switch (userInput) {
-		case "1":
+		if(userInput.equals("1")) {
 			String firstName = null,
 					lastName = null,
 					 phoneNo = null,
@@ -34,22 +35,21 @@ public class Gym460 {
 			lastName = sc.nextLine().strip();
 			System.out.print("Enter 10-digit Phone Number: ");
 			phoneNo = sc.nextLine().strip();
-			
-			// TODO: print all packages
-			
-			System.out.print("Enter Package name to enroll into: ");
+			System.out.println("Choose Package from the following:");
+			QueryManager.showAllPackages(dbconn);			
+			System.out.print("\nEnter Package Name to enroll into: ");
 			pName = sc.nextLine().strip();
 			
 			System.out.println("Added Member");
 			System.out.println("Member id is <insert M#>");
-			break;
-		case "2":
+		}
+		else if(userInput.equals("2")) {
 			System.out.print("Enter the M# to delete: ");
 			userInput = sc.nextLine().strip();
 			int mNo = Integer.parseInt(userInput);
 			System.out.println("M# " + mNo + " is deleted");
-			break;
-		default:
+		}
+		else {
 			return false;
 		}		
 		return true;
@@ -63,8 +63,7 @@ public class Gym460 {
 		System.out.print("\nPlease enter your choice (1/2)"
 				+ "\nEnter any other key to quit: ");
 		userInput = sc.nextLine().strip();
-		switch (userInput) {
-		case "1":
+		if(userInput.equals("1")) {
 			String     cName = null,
 						 tNo = null,
 					capacity = null,
@@ -74,37 +73,39 @@ public class Gym460 {
 				     endTime = null,
 				     	 day = null;
 			
-			System.out.print("Enter Course Name: ");
-			System.out.print("Enter Capacity: ");
-			capacity = sc.nextLine().strip();
-			System.out.print("Enter Start Date (YYYY-MM-DD): ");
-			startDate = sc.nextLine().strip();
-			System.out.print("Enter End Date (YYYY-MM-DD): ");
-			endDate = sc.nextLine().strip();
-			System.out.print("Enter Start Time (HH24:MI): ");
-			startTime = sc.nextLine().strip();
-			System.out.print("Enter End Time (HH24:MI): ");
-			endTime = sc.nextLine().strip();
-			System.out.print("Enter the Day the course will be taught: ");
-			day = sc.nextLine().strip();
+			boolean valid = false;
 			
-			// TODO: print all trainers
-			
-			System.out.print("Choose a trainer for the course: ");
-			tNo = sc.nextLine().strip();
-			
-			
-			
-			// TODO: Call Insert method with filtered data
+			while (!valid) {
+				System.out.print("Enter Course Name: ");
+				cName = sc.nextLine().strip();
+				System.out.print("Enter Capacity: ");
+				capacity = sc.nextLine().strip();
+				System.out.print("Enter Start Date (YYYY-MM-DD): ");
+				startDate = sc.nextLine().strip();
+				System.out.print("Enter End Date (YYYY-MM-DD): ");
+				endDate = sc.nextLine().strip();
+				System.out.print("Enter Start Time (HH24:MI): ");
+				startTime = sc.nextLine().strip();
+				System.out.print("Enter End Time (HH24:MI): ");
+				endTime = sc.nextLine().strip();
+				System.out.print("Enter the Day the course will be taught: ");
+				day = sc.nextLine().strip();
+				System.out.println("Choose a trainer for the course:");
+				QueryManager.showAllTrainers(dbconn);
+				System.out.print("\nEnter T#: ");
+				tNo = sc.nextLine().strip();
+				
+			}			
 			
 			System.out.println("Added Course " + cName);
-			break;
-		case "2":
+		}
+		else if(userInput.equals("2")) {
 			System.out.print("Enter the Course to delete: ");
 			userInput = sc.nextLine().strip();
+			Course choice = QueryManager.getCourse(dbconn, userInput);
 			System.out.println("Course " + userInput + " is deleted");
-			break;
-		default:
+		}
+		else {
 			return false;
 		}		
 		return true;
@@ -119,19 +120,16 @@ public class Gym460 {
 		System.out.print("\nPlease enter your choice (1/2/3)"
 				+ "\nEnter any other key to quit: ");
 		userInput = sc.nextLine().strip();
-		switch (userInput) {
-		case "1":
+		if(userInput.equals("1")) {
 			String pName = null,
 					  c1 = null,
 					  c2 = null,
 				   price = null;
 			System.out.print("Enter Package Name: ");
 			pName = sc.nextLine().strip();
-
-			
-			// TODO: print all courses
-			
-			System.out.print("Choose Course 1: ");
+			System.out.println("Choose courses from the following:");
+			QueryManager.showAllCourses(dbconn);			
+			System.out.print("\nChoose Course 1: ");
 			c1 = sc.nextLine().strip();
 			System.out.print("Choose Course 2: ");
 			c2 = sc.nextLine().strip();
@@ -139,30 +137,29 @@ public class Gym460 {
 			price = sc.nextLine().strip();
 			
 			System.out.println("Added Package " + pName);
-			break;
-		case "2":
-			// TODO list all packages
+		}
+		else if(userInput.equals("2")) {
+			System.out.println("List of all Packages:");
+			QueryManager.showAllPackages(dbconn);
 			String oldPName = null,
 				   newPName = null,
 				   newC1 = null,
 				   newC2 = null,
 				   newPrice = null;
 			
-			System.out.print("Which package would you like to update? ");
+			System.out.print("\nWhich package would you like to update? ");
 			oldPName = sc.nextLine().strip();
 			
 			// TODO if package name is correct, return an object
 			// Obtain new details
-			
-			break;
-		case "3":
+		}
+		else if(userInput.equals("3")) {
 			System.out.print("Enter the Package to delete: ");
 			userInput = sc.nextLine().strip();
 			int mno = Integer.parseInt(userInput);
 			System.out.println("M# " + mno + " is deleted");
-			
-			break;
-		default:
+		}
+		else {
 			return false;
 		}		
 		return true;

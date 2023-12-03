@@ -251,12 +251,13 @@ public class QueryManager {
 		final String query = "SELECT * FROM Course WHERE CName = '" + cName + "'";
 		Statement stmt = null;
 		ResultSet answer = null;
+		Course retval = null;
 	    try {
 	        stmt = dbconn.createStatement();
 	        answer = stmt.executeQuery(query);
 
 	        if (answer.next()) {
-	            return new Course(
+	            retval = new Course(
 	            		answer.getString("CName"),
 	            		answer.getInt("T#"),
 	            		answer.getInt("EnrollCount"),
@@ -265,25 +266,24 @@ public class QueryManager {
 	            		answer.getDate("EndDate"),
 	            		answer.getString("Day")
 	            		);
-	        } else {
-	            return null; // No course found
 	        }
 	    } catch (SQLException e) {
 	    	handleSQLException(e, query);
-	        return null;
 	    }
+	    return retval;
 	}
 	
 	protected static Package getPackage(Connection dbconn, String pName) {
 		final String query = "SELECT * FROM Package WHERE PName = '" + pName + "'";
 		Statement stmt = null;
 		ResultSet answer = null;
+		Package retval = null;
 	    try {
 	        stmt = dbconn.createStatement();
 	        answer = stmt.executeQuery(query);
 
 	        if (answer.next()) {
-	            return new Package(
+	            retval = new Package(
 	            		answer.getString("PName"),
 	            		answer.getString("C1"),
 	            		answer.getString("C2"),
@@ -291,26 +291,24 @@ public class QueryManager {
 	            		answer.getDate("EndDate"),
 	            		answer.getDouble("Price")
 	            		);
-	        } else {
-	        	System.out.println("No Package found");
-	            return null; // No package found
 	        }
 	    } catch (SQLException e) {
 	    	handleSQLException(e, query);
-	        return null;
 	    }
+	    return retval;
 	}
 
 	protected static Member getMember(Connection dbconn, int mno) {
 		final String query = "SELECT * FROM Member WHERE M# = " + mno;
 		Statement stmt = null;
 		ResultSet answer = null;
+		Member retval = null;
 	    try {
 	        stmt = dbconn.createStatement();
 	        answer = stmt.executeQuery(query);
 
 	        if (answer.next()) {
-	            return new Member(
+	            retval = new Member(
 	            		answer.getInt("M#"),
 	            		answer.getString("FirstName"),
 	            		answer.getString("LastName"),
@@ -319,14 +317,11 @@ public class QueryManager {
 	            		answer.getDouble("Balance"),
 	            		answer.getDouble("Consumption")
 	            		);
-	        } else {
-	        	System.out.println("No Member found");
-	            return null; // No member found
 	        }
 	    } catch (SQLException e) {
 	    	handleSQLException(e, query);
-	        return null;
 	    }
+	    return retval;
 	}
 
 	
