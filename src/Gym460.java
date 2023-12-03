@@ -29,19 +29,31 @@ public class Gym460 {
 					 phoneNo = null,
 					   pName = null;
 			
-			System.out.print("Enter First Name: ");
-			firstName = sc.nextLine().strip();
-			System.out.print("Enter Last Name: ");
-			lastName = sc.nextLine().strip();
-			System.out.print("Enter 10-digit Phone Number: ");
-			phoneNo = sc.nextLine().strip();
-			System.out.println("Choose Package from the following:");
-			QueryManager.showAllPackages(dbconn);			
-			System.out.print("\nEnter Package Name to enroll into: ");
-			pName = sc.nextLine().strip();
+			boolean phCheck = false,
+					pnCheck = false;
 			
+			while (true) {			
+				System.out.print("Enter First Name: ");
+				firstName = sc.nextLine().strip();
+				System.out.print("Enter Last Name: ");
+				lastName = sc.nextLine().strip();
+				System.out.print("Enter 10-digit Phone Number: ");
+				phoneNo = sc.nextLine().strip();
+				phCheck = Validation.validatePhone(phoneNo);
+				System.out.println("Choose Package from the following:");
+				QueryManager.showAllPackages(dbconn);			
+				System.out.print("\nEnter Package Name to enroll into: ");
+				pName = sc.nextLine().strip();
+				if(QueryManager.getPackage(dbconn, pName) != null) {
+					pnCheck = true;
+				}
+				if(phCheck && pnCheck) {
+					break;
+				}
+			}			
+			int mno = DataManipulation.insertMember(dbconn, firstName, lastName, phoneNo, pName);			
 			System.out.println("Added Member");
-			System.out.println("Member id is <insert M#>");
+			System.out.println("Member id is " + mno);
 		}
 		else if(userInput.equals("2")) {
 			System.out.print("Enter the M# to delete: ");
