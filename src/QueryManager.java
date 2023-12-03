@@ -2,6 +2,7 @@ import entities.Equipment;
 import entities.Course;
 import entities.Member;
 import entities.Package;
+import entities.Trainer;
 
 import java.sql.*;
 import java.util.LinkedList;
@@ -19,7 +20,7 @@ public class QueryManager {
 			stmt = dbconn.createStatement();
 			answer = stmt.executeQuery(query);
 
-			if (!answer.next()) {
+			if (answer == null) {
 				System.out.println("There are no members with a negative balance!");
 				return;
 			}
@@ -53,7 +54,7 @@ public class QueryManager {
 			stmt = dbconn.createStatement();			
 			answer = stmt.executeQuery(query);
 
-			if (answer.next() == false) {
+			if (answer == null) {
 				System.out.println("No Outputs");
 				return;
 			}
@@ -90,7 +91,7 @@ public class QueryManager {
 			stmt = dbconn.createStatement();
 			answer = stmt.executeQuery(query);
 
-			if (answer.next() == false) {
+			if (answer == null) {
 				System.out.println("No Outputs.");
 				return;
 			}
@@ -121,7 +122,7 @@ public class QueryManager {
 			stmt = dbconn.createStatement();
 			answer = stmt.executeQuery(query);
 
-			if (!answer.next()) {
+			if (answer == null) {
 				System.out.println("No members found.");
 				return;
 			}
@@ -148,7 +149,7 @@ public class QueryManager {
 			stmt = dbconn.createStatement();
 			answer = stmt.executeQuery(query);
 
-			if (!answer.next()) {
+			if (answer == null) {
 				System.out.println("No trainers found.");
 				return;
 			}
@@ -175,16 +176,16 @@ public class QueryManager {
 			stmt = dbconn.createStatement();
 			answer = stmt.executeQuery(query);
 
-			if (!answer.next()) {
+			if (answer == null) {
 				System.out.println("No courses found.");
 				return;
 			}
 
 			// Displaying the results
-			System.out.println(String.format("%-20s", "Course Name"));
+			System.out.println(String.format("%-15s", "Course Name"));
 			while (answer.next()) {
 				String courseName = answer.getString("CName");
-				System.out.println(String.format("%-20s", courseName));
+				System.out.println(String.format("%-15s", courseName));
 			}
 			stmt.close();
 		} catch (SQLException e) {
@@ -200,19 +201,19 @@ public class QueryManager {
 			stmt = dbconn.createStatement();
 			answer = stmt.executeQuery(query);
 
-			if (!answer.next()) {
+			if (answer == null) {
 				System.out.println("No packages found.");
 				return;
 			}
 
 			// Displaying the results
-			System.out.println(String.format("%-30s %-10s %-10s", "Package Name", "Course 1", "Course 2"));
+			System.out.println(String.format("%-30s %-15s %-15s", "Package Name", "Course 1", "Course 2"));
 
 			while (answer.next()) {
 				String packageName = answer.getString("PName");
 				String course1 = answer.getString("C1");
 				String course2 = answer.getString("C2");
-				System.out.println(String.format("%-30s %-10s %-10s", packageName, course1, course2));
+				System.out.println(String.format("%-30s %-15s %-15s", packageName, course1, course2));
 			}
 			stmt.close();
 		} catch (SQLException e) {
@@ -228,7 +229,7 @@ public class QueryManager {
 			stmt = dbconn.createStatement();
 			answer = stmt.executeQuery(query);
 
-			if (!answer.next()) {
+			if (answer == null) {
 				System.out.println("No equipment types found.");
 				return;
 			}
@@ -298,7 +299,7 @@ public class QueryManager {
 	    return retval;
 	}
 
-	protected static Member getMember(Connection dbconn, int mno) {
+	protected static Member getMember(Connection dbconn, String mno) {
 		final String query = "SELECT * FROM Member WHERE M# = " + mno;
 		Statement stmt = null;
 		ResultSet answer = null;
@@ -315,7 +316,8 @@ public class QueryManager {
 	            		answer.getString("Phone#"),
 	            		answer.getString("PName"),
 	            		answer.getDouble("Balance"),
-	            		answer.getDouble("Consumption")
+	            		answer.getDouble("Consumption"),
+	            		answer.getString("Tier")
 	            		);
 	        }
 	    } catch (SQLException e) {
@@ -324,6 +326,48 @@ public class QueryManager {
 	    return retval;
 	}
 
+	protected static Trainer getTrainer(Connection dbconn, String tNo) {
+        final String query = "SELECT * FROM Trainer WHERE T# = " + tNo;
+        Statement stmt = null;
+        ResultSet answer = null;
+        Trainer retval = null;
+        try {
+            stmt = dbconn.createStatement();
+            answer = stmt.executeQuery(query);
+
+
+            if (answer.next()) {
+                int TNo = answer.getInt("T#");
+                String fName = answer.getString("FirstName");
+                String lName = answer.getString("LastName");
+                String phoneNo = answer.getString("Phone#");
+
+
+                retval = new Trainer(TNo,fName, lName, phoneNo);
+
+            }
+        } catch (SQLException e) {
+            handleSQLException(e, query);
+        }
+        return retval;
+    }
+	
+	public static LinkedList<Course> getCoursesByTrainerNumber(Connection dbconn, String tNo) {
+        LinkedList<Course> coursesList = new LinkedList<>();
+        try {
+            Statement stmt = dbconn.createStatement();
+            String query = "SELECT * FROM Course WHERE T# = " + tNo;
+            ResultSet rs = stmt.executeQuery(query);
+
+            while (rs.next()) {
+                coursesList.add(new Course(rs.getString("CName"), rs.getInt("T#"), rs.getInt("EnrollCount"),
+                        rs.getInt("Capacity"), rs.getDate("StartDate"), rs.getDate("EndDate"), rs.getString("Day")));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return coursesList;
+    }
 	
 	protected static LinkedList<Equipment> getEquipment(Connection dbconn, String eType) {
 		final String query = "SELECT * FROM Equipment WHERE EType = '" + eType + "'";

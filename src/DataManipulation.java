@@ -171,16 +171,16 @@ public class DataManipulation {
 	        stmt = dbconn.createStatement();
 
 	        // Handle nulls and format values
-	        c1 = c1 != null ? "'" + c1 + "'" : null;
-	        c2 = c2 != null ? "'" + c2 + "'" : null;
-	        startDate = startDate != null ? "TO_DATE('" + startDate + "', 'YYYY-MM-DD')" : null;
-	        endDate = endDate != null ? "TO_DATE('" + endDate + "', 'YYYY-MM-DD')" : null;
+	        c1 = c1 != null ? "'" + c1 + "'" : "NULL";
+	        c2 = c2 != null ? "'" + c2 + "'" : "NULL";
+	        startDate = startDate != null ? "TO_DATE('" + startDate + "', 'YYYY-MM-DD')" : "NULL";
+	        endDate = endDate != null ? "TO_DATE('" + endDate + "', 'YYYY-MM-DD')" : "NULL";
 
 	        // Create the INSERT query
 	        String insertQuery = "INSERT INTO Package (PName, C1, C2, StartDate, EndDate, Price) " +
 	                             "VALUES ('" + pName + "', " + c1 + ", " + c2 + ", " + startDate + ", " +
 	                             endDate + ", " + price + ")";
-
+	        System.out.println(insertQuery);
 	        // Execute the INSERT statement
 	        int rowsInserted = stmt.executeUpdate(insertQuery);
 	        stmt.close();
@@ -247,7 +247,7 @@ public class DataManipulation {
 	    }
 	    return -1;
 	}
-	protected static int borrowEquipmentHelper(Connection dbconn, int Mno, int ENo) {
+	private static int borrowEquipmentHelper(Connection dbconn, int Mno, int ENo) {
 		Statement stmt = null;
 		try {
 	        stmt = dbconn.createStatement();
@@ -269,12 +269,43 @@ public class DataManipulation {
 	    Statement stmt = null;
 	    try {
 	        stmt = dbconn.createStatement();
+	        
+	        //************************Get member's tier*************************
+	        String tierQuery="SELECT Tier,Consumption "
+	        		+ "from Member"
+	        		+ "where m#="+mId;
+	        ResultSet rs = stmt.executeQuery(tierQuery);
+	        String tier=rs.getString("Tier");
+	        float oldConsumption=rs.getFloat("Consumption");
+	        float discount=0;
+	        //*************************Get their discount*************************
+	        if(tier!=null) {
+	        	String discountQuery="SELECT Discount "
+		        		+ "from Tier"
+		        		+ "where Tier = "+tier;
+	        	rs=stmt.executeQuery(discountQuery);
+	        	discount=rs.getFloat("Discount");
+	        }
+	        float Consumption=oldConsumption+amount-(amount*discount);
+	        //**************************Update the Balance/Consumption of the member***********
 	        String updateQuery = "UPDATE Member SET Balance = Balance + " + amount + 
-	                             ", Consumption = Consumption + " + amount +
+	                             ", Consumption = " + Consumption +
 	                             " WHERE M# = " + mId;
 	        // Execute the update statement and return the number of rows affected
 	        stmt.executeUpdate(updateQuery);
-	      //********************Add a transaction**************************************
+	        //**************************Update the tier of the member**********************
+	        String updatedTier="null";
+	        if (Consumption>=500 && Consumption <1000) {
+	        	updatedTier="'Diamond'";
+	        }
+	        if (Consumption>=1000) {
+	        	updatedTier="'Gold'";
+	        }
+	        updateQuery = "UPDATE member SET Tier = " + updatedTier + " WHERE memberId = " + mId;
+	        stmt.executeUpdate(updateQuery);
+	        
+	        //********************Add a transaction**************************************
+	        float discAmount=amount-(amount*discount);
 	        int XID = 1; // Default value if the table is empty
 	        String query = "SELECT MAX(X#) FROM Transaction";
 	        ResultSet answer = stmt.executeQuery(query);
@@ -282,7 +313,7 @@ public class DataManipulation {
 	            XID = answer.getInt(1) + 1; 
 	        }
 	        String insertQuery = "INSERT INTO Transaction (X#, M#, XDate, Amount, XType, EType) " +
-	            "VALUES (" + XID + ", " + mId + ", TO_DATE(SYSDATE, 'YYYY-MM-DD'), "+amount+" , 'Payment', NULL)";
+	            "VALUES (" + XID + ", " + mId + ", TO_DATE(SYSDATE, 'YYYY-MM-DD'), "+discAmount+" , 'Payment', NULL)";
 	        // Execute the INSERT statement
 	        stmt.executeUpdate(insertQuery);
 	        stmt.close();
@@ -292,7 +323,4 @@ public class DataManipulation {
 	        return -1; // Indicate error
 	    } 
 	}
-	
-	
-
 }

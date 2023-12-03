@@ -48,7 +48,7 @@ public class TableGen {
                 + ")",
                 
                 "create table Course ("
-                + "CName varchar2(10),"
+                + "CName varchar2(15),"
                 + "T# integer not null,"
                 + "EnrollCount integer not null,"
                 + "Capacity integer not null,"
@@ -62,8 +62,8 @@ public class TableGen {
                 
                 "create table Package ("
                 + "PName varchar2(30),"
-                + "C1 varchar2(10),"
-                + "C2 varchar2(10),"
+                + "C1 varchar2(15),"
+                + "C2 varchar2(15),"
                 + "StartDate date,"
                 + "EndDate date,"
                 + "Price float not null,"
