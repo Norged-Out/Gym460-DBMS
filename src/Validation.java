@@ -1,5 +1,7 @@
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Date;
@@ -63,7 +65,6 @@ public class Validation {
 	 * @return true if the member has a non-negative balance, else return false.
 	 */
 	protected static boolean balanceCheck(Member member) {
-
 
 		// if the member's balance is negative
 		if (member.balance < 0) {
@@ -190,24 +191,18 @@ public class Validation {
 	 * 
 	 * @param dow is the day of the week that the new course is to be taught.
 	 * 
-	 * @param startTime is the start time of the new course.
+	 * @param start is the date and time when the new course begins.
 	 * 
-	 * @param startDate is the start date of the new course.
-	 * 
-	 * @param endTime is the end time of the new course.
-	 * 
-	 * @param endDate is the end date of the new course.
+	 * @param end is the date and time when the new course ends.
 	 * 
 	 * @return true if there are no conflicts with the new course and the 
 	 * 	other courses, else return false.
 	 */
-	protected static boolean noTrainerScheduleConflict(LinkedList<Course> courses, String dow, String startTime, String startDate, String endTime, String endDate) {
+	protected static boolean noTrainerScheduleConflict(LinkedList<Course> courses, String dow, String start, String end) {
 
 		// create LocalDateTime objects for the new course start date and end date
-		// LocalDateTime newStartDateTime	= LocalDateTime.of(startYear, startMonth, startDay, startHour, startMinute);
-		// LocalDateTime newEndDateTime	= LocalDateTime.of(endYear, endMonth, endDay, endHour, endMinute);
-		LocalDateTime newStartDateTime	= dateToLocalDateTime(stringToDate(concatDateAndTime(startDate, startTime)));
-		LocalDateTime newEndDateTime	= dateToLocalDateTime(stringToDate(concatDateAndTime(endDate, endTime)));
+		LocalDateTime newStartDateTime	= dateToLocalDateTime(stringToDate(start));
+		LocalDateTime newEndDateTime	= dateToLocalDateTime(stringToDate(end));
 
 		// loop through the courses to check for conflicts
 		for (Course course : courses) {
@@ -226,8 +221,8 @@ public class Validation {
 
 		}// end for
 
-		// if we get here, there were no conflicts
-		return false;
+		// if we get here, there were no conflicts so return true
+		return true;
 
 	}// end noTrainerScheduleConflict
 
@@ -254,13 +249,11 @@ public class Validation {
 		// convert the course dates to LocalDateTime objects
 		LocalDateTime c1StartDateTime	= dateToLocalDateTime(c1.startDate);
 		LocalDateTime c1EndDateTime		= dateToLocalDateTime(c1.endDate);
-		String		  c1DOW				= c1.day;
 		LocalDateTime c2StartDateTime	= dateToLocalDateTime(c2.startDate);
 		LocalDateTime c2EndDateTime		= dateToLocalDateTime(c2.endDate);
-		String		  c2DOW				= c2.day;
 
 		// check if the two courses have a schedule conflict
-		return noScheduleConflict(c1StartDateTime, c1EndDateTime, c1DOW, c2StartDateTime, c2EndDateTime, c2DOW);
+		return noScheduleConflict(c1StartDateTime, c1EndDateTime, c1.day, c2StartDateTime, c2EndDateTime, c2.day);
 		
 	}// end noCourseScheduleConflict
 
@@ -286,8 +279,21 @@ public class Validation {
 	 */
 	protected static boolean noScheduleConflict(LocalDateTime c1StartDateTime, LocalDateTime c1EndDateTime, String c1DOW, LocalDateTime c2StartDateTime, LocalDateTime c2EndDateTime, String c2DOW) {
 
+		// separate the date and time portions of the LocalDateTime objects
+		LocalDate c1StartDate =	c1StartDateTime.toLocalDate();
+		LocalDate c1EndDate =	c1EndDateTime.toLocalDate();
+		LocalTime c1StartTime =	c1StartDateTime.toLocalTime();
+		LocalTime c1EndTime =	c1EndDateTime.toLocalTime();
+		LocalDate c2StartDate =	c2StartDateTime.toLocalDate();
+		LocalDate c2EndDate =	c2EndDateTime.toLocalDate();
+		LocalTime c2StartTime =	c2StartDateTime.toLocalTime();
+		LocalTime c2EndTime =	c2EndDateTime.toLocalTime();
+
 		// if the first course end date is before the second course start date
-		if (c1EndDateTime.toLocalDate().isBefore(c2StartDateTime.toLocalDate())) {
+		// 	or if the first course end date is equal to the second course 
+		// 	start date and the first course end time is before or equal to the 
+		// 	second course start time
+		if (c1EndDate.isBefore(c2StartDate) || (c1EndDate.isEqual(c2StartDate) && c1EndTime.compareTo(c2StartTime) <= 0)) {
 
 			// return true
 			return true;
@@ -295,7 +301,10 @@ public class Validation {
 		}// end if
 		
 		// if the first course start date is after the second course end date
-		if (c1StartDateTime.toLocalDate().isAfter(c2EndDateTime.toLocalDate())) {
+		// 	or if the first course start date is equal to the second course
+		// 	end date and the first course start time is after or equal to the
+		// 	second course end time
+		if (c1StartDate.isAfter(c2EndDate) || (c1StartDate.isEqual(c2EndDate) && c1StartTime.compareTo(c2EndTime) >= 0)) {
 
 			// return true
 			return true;
@@ -303,23 +312,23 @@ public class Validation {
 		}// end if
 
 		// if the days that they're taught on are different
-		if (!c1DOW.equals(c2DOW)) {
+		if (!c1DOW.equalsIgnoreCase(c2DOW)) {
 
 			// return true
 			return true;
 
 		}// end if
 
-		// if the first course end time is before the second course start time
-		if (c1EndDateTime.toLocalTime().isBefore(c2StartDateTime.toLocalTime())) {
+		// if the first course end time is before or equal tothe second course start time
+		if (c1EndTime.compareTo(c2StartTime) <= 0) {
 
 			// return true
 			return true;
 
 		}// end if
 
-		// if the first course start time is after the second course end time
-		if (c1StartDateTime.toLocalTime().isAfter(c2EndDateTime.toLocalTime())) {
+		// if the first course start time is after or equal to the second course end time
+		if (c1StartTime.compareTo(c2EndTime) >= 0) {
 
 			// return true
 			return true;
@@ -524,7 +533,7 @@ public class Validation {
 				int day		= Integer.parseInt(input.substring(8, 10));
 
 				// test the year
-				if (year < 0000) {
+				if (year <= 0000) {
 
 					return false;
 
@@ -666,8 +675,8 @@ public class Validation {
 		// make sure the date and time are valid
 		if (!validateDate(date) || !validateTime(time)) {
 
-			// if either is invalid, return null
-			return "0000-00-00 00:00";
+			// if either is invalid, return January 1, 0001 01:01
+			return "0001-01-01 01:01";
 
 		}// end if
 
@@ -694,14 +703,14 @@ public class Validation {
 		// create a linked list to hold the date strings
 		LinkedList<String> dates = new LinkedList<>();
 
-		// check if c1 is null and c2 is not null
-		if (c1 == null && c2 != null) {
+		// check if both are null
+		if (c2 == null && c1 == null) {
 
 			// add c2's startDate to the LinkedList at index 0
-			dates.add(0, dateToString(c2.startDate));
+			dates.add(null);
 
 			// add c2's endDate to the LinkedList at index 1
-			dates.add(1, dateToString(c2.endDate));
+			dates.add(null);
 
 			// return the dates
 			return dates;
@@ -722,14 +731,14 @@ public class Validation {
 
 		}// end if
 
-		// check if c2 is null and c1 is not null
-		if (c2 == null && c1 == null) {
+		// check if c1 is null and c2 is not null
+		if (c1 == null && c2 != null) {
 
 			// add c2's startDate to the LinkedList at index 0
-			dates.add(null);
+			dates.add(0, dateToString(c2.startDate));
 
 			// add c2's endDate to the LinkedList at index 1
-			dates.add(null);
+			dates.add(1, dateToString(c2.endDate));
 
 			// return the dates
 			return dates;
@@ -809,6 +818,7 @@ public class Validation {
 	 * @return a date object.
 	 */
 	protected static Date stringToDate(String date) {
+
 		int year	= Integer.parseInt(date.substring(0, 4));
 		int month	= Integer.parseInt(date.substring(5, 7));
 		int day		= Integer.parseInt(date.substring(8, 10));
@@ -860,8 +870,6 @@ public class Validation {
 		return ldt;
 
 	}// end dateToLocalDateTime
-
-	
 	
 }// end Validation class
 
