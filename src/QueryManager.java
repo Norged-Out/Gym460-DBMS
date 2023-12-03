@@ -316,7 +316,8 @@ public class QueryManager {
 	            		answer.getString("Phone#"),
 	            		answer.getString("PName"),
 	            		answer.getDouble("Balance"),
-	            		answer.getDouble("Consumption")
+	            		answer.getDouble("Consumption"),
+	            		answer.getString("Tier")
 	            		);
 	        }
 	    } catch (SQLException e) {
@@ -325,30 +326,6 @@ public class QueryManager {
 	    return retval;
 	}
 
-	
-	protected static LinkedList<Equipment> getEquipment(Connection dbconn, String eType) {
-		final String query = "SELECT * FROM Equipment WHERE EType = '" + eType + "'";
-		Statement stmt = null;
-		ResultSet answer = null;
-	    LinkedList<Equipment> equipmentList = new LinkedList<>();
-	    try {
-	        stmt = dbconn.createStatement();
-	        answer = stmt.executeQuery(query);
-
-	        while (answer.next()) {
-	        	Integer mNumber = (Integer) answer.getObject("M#"); // This will be null if the column is SQL NULL
-	            equipmentList.add(new Equipment(
-	            		answer.getInt("E#"),
-	            		answer.getString("EType"),
-	            		mNumber // Can be null
-	            		));
-	        }
-	    } catch (SQLException e) {
-	    	handleSQLException(e, query);
-	    }
-	    return equipmentList;
-	}
-	
 	protected static Trainer getTrainer(Connection dbconn, String tNo) {
         final String query = "SELECT * FROM Trainer WHERE T# = " + tNo;
         Statement stmt = null;
@@ -374,7 +351,46 @@ public class QueryManager {
         }
         return retval;
     }
+	
+	public static LinkedList<Course> getCoursesByTrainerNumber(Connection dbconn, String tNo) {
+        LinkedList<Course> coursesList = new LinkedList<>();
+        try {
+            Statement stmt = dbconn.createStatement();
+            String query = "SELECT * FROM Course WHERE T# = " + tNo;
+            ResultSet rs = stmt.executeQuery(query);
 
+            while (rs.next()) {
+                coursesList.add(new Course(rs.getString("CName"), rs.getInt("T#"), rs.getInt("EnrollCount"),
+                        rs.getInt("Capacity"), rs.getDate("StartDate"), rs.getDate("EndDate"), rs.getString("Day")));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return coursesList;
+    }
+	
+	protected static LinkedList<Equipment> getEquipment(Connection dbconn, String eType) {
+		final String query = "SELECT * FROM Equipment WHERE EType = '" + eType + "'";
+		Statement stmt = null;
+		ResultSet answer = null;
+	    LinkedList<Equipment> equipmentList = new LinkedList<>();
+	    try {
+	        stmt = dbconn.createStatement();
+	        answer = stmt.executeQuery(query);
+
+	        while (answer.next()) {
+	        	Integer mNumber = (Integer) answer.getObject("M#"); // This will be null if the column is SQL NULL
+	            equipmentList.add(new Equipment(
+	            		answer.getInt("E#"),
+	            		answer.getString("EType"),
+	            		mNumber // Can be null
+	            		));
+	        }
+	    } catch (SQLException e) {
+	    	handleSQLException(e, query);
+	    }
+	    return equipmentList;
+	}
 
 	private static void handleSQLException(SQLException e, String query) {
 		System.err.println("*** SQLException:  " + "Could not fetch query results.");

@@ -160,9 +160,16 @@ public class Gym460 {
 					c2Check = false,
 					prCheck = false;
 			
+			Course course1 = null,
+				   course2 = null;
+			
 			while(true) {
 				System.out.print("Enter Package Name: ");
 				pName = sc.nextLine().strip();
+				if(QueryManager.getPackage(dbconn, pName) != null) {
+					System.out.println("Package already exists");
+					continue;
+				}	
 				System.out.println("Choose courses from the following:");
 				QueryManager.showAllCourses(dbconn);			
 				System.out.print("\nChoose Course 1: ");
@@ -177,7 +184,8 @@ public class Gym460 {
 					c1Check = true;
 				}
 				else {
-					if (QueryManager.getCourse(dbconn, c1) != null) {
+					course1 = QueryManager.getCourse(dbconn, c1);
+					if (course1 != null) {
 						c1Check = true;
 					}
 				}
@@ -187,19 +195,18 @@ public class Gym460 {
 					c2Check = true;
 				}
 				else {
-					if (QueryManager.getCourse(dbconn, c2) != null) {
+					course2 = QueryManager.getCourse(dbconn, c2);
+					if (course2 != null) {
 						c2Check = true;
 					}
-				}
+				}				
 				
 				if(c1Check && c2Check) {
 					break;
 				}
 				System.out.println("\n Invalid Data, Try Again\n");
 			}
-			Course t1 = QueryManager.getCourse(dbconn, c1);
-			Course t2 = QueryManager.getCourse(dbconn, c2);
-			LinkedList<String> dates = Validation.courseToPackageDates(t1, t2);
+			LinkedList<String> dates = Validation.courseToPackageDates(course1, course2);
 			String startDate = dates.get(0);
 			String endDate = dates.get(1);
 			float pcost = Float.parseFloat(price);
