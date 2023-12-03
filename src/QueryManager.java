@@ -2,6 +2,7 @@ import entities.Equipment;
 import entities.Course;
 import entities.Member;
 import entities.Package;
+import entities.Trainer;
 
 import java.sql.*;
 import java.util.LinkedList;
@@ -19,7 +20,7 @@ public class QueryManager {
 			stmt = dbconn.createStatement();
 			answer = stmt.executeQuery(query);
 
-			if (!answer.next()) {
+			if (answer == null) {
 				System.out.println("There are no members with a negative balance!");
 				return;
 			}
@@ -53,7 +54,7 @@ public class QueryManager {
 			stmt = dbconn.createStatement();			
 			answer = stmt.executeQuery(query);
 
-			if (answer.next() == false) {
+			if (answer == null) {
 				System.out.println("No Outputs");
 				return;
 			}
@@ -90,7 +91,7 @@ public class QueryManager {
 			stmt = dbconn.createStatement();
 			answer = stmt.executeQuery(query);
 
-			if (answer.next() == false) {
+			if (answer == null) {
 				System.out.println("No Outputs.");
 				return;
 			}
@@ -121,7 +122,7 @@ public class QueryManager {
 			stmt = dbconn.createStatement();
 			answer = stmt.executeQuery(query);
 
-			if (!answer.next()) {
+			if (answer == null) {
 				System.out.println("No members found.");
 				return;
 			}
@@ -148,7 +149,7 @@ public class QueryManager {
 			stmt = dbconn.createStatement();
 			answer = stmt.executeQuery(query);
 
-			if (!answer.next()) {
+			if (answer == null) {
 				System.out.println("No trainers found.");
 				return;
 			}
@@ -175,7 +176,7 @@ public class QueryManager {
 			stmt = dbconn.createStatement();
 			answer = stmt.executeQuery(query);
 
-			if (!answer.next()) {
+			if (answer == null) {
 				System.out.println("No courses found.");
 				return;
 			}
@@ -200,7 +201,7 @@ public class QueryManager {
 			stmt = dbconn.createStatement();
 			answer = stmt.executeQuery(query);
 
-			if (!answer.next()) {
+			if (answer == null) {
 				System.out.println("No packages found.");
 				return;
 			}
@@ -228,7 +229,7 @@ public class QueryManager {
 			stmt = dbconn.createStatement();
 			answer = stmt.executeQuery(query);
 
-			if (!answer.next()) {
+			if (answer == null) {
 				System.out.println("No equipment types found.");
 				return;
 			}
@@ -298,7 +299,7 @@ public class QueryManager {
 	    return retval;
 	}
 
-	protected static Member getMember(Connection dbconn, int mno) {
+	protected static Member getMember(Connection dbconn, String mno) {
 		final String query = "SELECT * FROM Member WHERE M# = " + mno;
 		Statement stmt = null;
 		ResultSet answer = null;
@@ -347,6 +348,33 @@ public class QueryManager {
 	    }
 	    return equipmentList;
 	}
+	
+	protected static Trainer getTrainer(Connection dbconn, String tNo) {
+        final String query = "SELECT * FROM Trainer WHERE T# = " + tNo;
+        Statement stmt = null;
+        ResultSet answer = null;
+        Trainer retval = null;
+        try {
+            stmt = dbconn.createStatement();
+            answer = stmt.executeQuery(query);
+
+
+            if (answer.next()) {
+                int TNo = answer.getInt("T#");
+                String fName = answer.getString("FirstName");
+                String lName = answer.getString("LastName");
+                String phoneNo = answer.getString("Phone#");
+
+
+                retval = new Trainer(TNo,fName, lName, phoneNo);
+
+            }
+        } catch (SQLException e) {
+            handleSQLException(e, query);
+        }
+        return retval;
+    }
+
 
 	private static void handleSQLException(SQLException e, String query) {
 		System.err.println("*** SQLException:  " + "Could not fetch query results.");

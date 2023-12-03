@@ -9,6 +9,8 @@
  * */
 import java.util.*;
 import entities.Course;
+import entities.Trainer;
+
 import java.sql.*;
 
 public class Gym460 {
@@ -71,31 +73,59 @@ public class Gym460 {
 				     endTime = null,
 				     	 day = null;
 						
-			boolean valid = false,
-					tCheck = false;
+			boolean cpCheck = false,
+					sdCheck = false,
+					stCheck = false,
+					edCheck = false,
+					etCheck = false,
+					tnCheck = false;
 			
-			while (!valid) {
+			while (true) {
 				System.out.print("Enter Course Name: ");
 				cName = sc.nextLine().strip();
+				if(QueryManager.getCourse(dbconn, cName) != null) {
+					System.out.println("Course already exists");
+					continue;
+				}				
 				System.out.print("Enter Capacity: ");
 				capacity = sc.nextLine().strip();
+				cpCheck = Validation.validateInt(capacity);
 				System.out.print("Enter Start Date (YYYY-MM-DD): ");
 				startDate = sc.nextLine().strip();
+				sdCheck = Validation.validateDate(startDate);
 				System.out.print("Enter End Date (YYYY-MM-DD): ");
 				endDate = sc.nextLine().strip();
+				edCheck = Validation.validateDate(endDate);
 				System.out.print("Enter Start Time (HH24:MI): ");
 				startTime = sc.nextLine().strip();
+				stCheck = Validation.validateTime(startTime);
 				System.out.print("Enter End Time (HH24:MI): ");
 				endTime = sc.nextLine().strip();
+				etCheck = Validation.validateTime(endTime);
 				System.out.print("Enter the Day the course will be taught: ");
 				day = sc.nextLine().strip();
 				System.out.println("Choose a trainer for the course:");
 				QueryManager.showAllTrainers(dbconn);
 				System.out.print("\nEnter T#: ");
 				tNo = sc.nextLine().strip();
-				tCheck = Validation.validateInt(tNo);
+				if(Validation.validateInt(tNo)) {
+					if (QueryManager.getTrainer(dbconn, tNo) != null) {
+						tnCheck = true;
+					}
+				}
 				
+				if(cpCheck && sdCheck && edCheck && stCheck && etCheck && tnCheck) {
+					break;
+				}
+				System.out.println("\n Invalid Data, Try Again\n");
 			}
+			
+			int c = Integer.parseInt(capacity);
+			int t = Integer.parseInt(tNo);
+			String start = Validation.concatDateAndTime(startDate, startTime);
+			String end = Validation.concatDateAndTime(endDate, endTime);
+			
+			DataManipulation.insertCourse(dbconn, cName, t, c, start, end, day);
 			
 			System.out.println("Added Course " + cName);
 		}
@@ -125,16 +155,56 @@ public class Gym460 {
 					  c1 = null,
 					  c2 = null,
 				   price = null;
-			System.out.print("Enter Package Name: ");
-			pName = sc.nextLine().strip();
-			System.out.println("Choose courses from the following:");
-			QueryManager.showAllCourses(dbconn);			
-			System.out.print("\nChoose Course 1: ");
-			c1 = sc.nextLine().strip();
-			System.out.print("Choose Course 2: ");
-			c2 = sc.nextLine().strip();
-			System.out.print("Enter a price for the package: ");
-			price = sc.nextLine().strip();
+			
+			boolean c1Check = false,
+					c2Check = false,
+					prCheck = false;
+			
+			while(true) {
+				System.out.print("Enter Package Name: ");
+				pName = sc.nextLine().strip();
+				System.out.println("Choose courses from the following:");
+				QueryManager.showAllCourses(dbconn);			
+				System.out.print("\nChoose Course 1: ");
+				c1 = sc.nextLine().strip();
+				System.out.print("Choose Course 2: ");
+				c2 = sc.nextLine().strip();
+				System.out.print("Enter a price for the package: ");
+				price = sc.nextLine().strip();
+				
+				if (c1.equals("")) {
+					c1 = null;
+					c1Check = true;
+				}
+				else {
+					if (QueryManager.getCourse(dbconn, c1) != null) {
+						c1Check = true;
+					}
+				}
+				
+				if (c2.equals("")) {
+					c2 = null;
+					c2Check = true;
+				}
+				else {
+					if (QueryManager.getCourse(dbconn, c2) != null) {
+						c2Check = true;
+					}
+				}
+				
+				if(c1Check && c2Check) {
+					break;
+				}
+				System.out.println("\n Invalid Data, Try Again\n");
+			}
+			Course t1 = QueryManager.getCourse(dbconn, c1);
+			Course t2 = QueryManager.getCourse(dbconn, c2);
+			LinkedList<String> dates = Validation.courseToPackageDates(t1, t2);
+			String startDate = dates.get(0);
+			String endDate = dates.get(1);
+			float pcost = Float.parseFloat(price);
+			
+			DataManipulation.insertPackage(dbconn, pName, c1, c2, pcost, startDate, endDate);
 			
 			System.out.println("Added Package " + pName);
 		}
