@@ -1,7 +1,7 @@
 import java.sql.*;
 
 public class DataManipulation {
-	public int insertMember(Connection dbconn, String firstName, String lastName, String phone, String pName) {
+	protected static int insertMember(Connection dbconn, String firstName, String lastName, String phone, String pName) {
 	    Statement stmt = null;
 	    ResultSet answer = null;
 
@@ -67,7 +67,7 @@ public class DataManipulation {
 	    return -1; // Return -1 to indicate an error
 	}
 
-	private void updateEnrollmentCount(Connection dbconn, String courseName, String operation) {
+	private static void updateEnrollmentCount(Connection dbconn, String courseName, String operation) {
 	    try {
 	        // Update the enrollment count for the given course
 	        String incrementEnrollmentQuery = "UPDATE Course SET EnrollCount = EnrollCount "+operation+" WHERE CName = '" + courseName + "'";
@@ -79,7 +79,7 @@ public class DataManipulation {
 	        e.printStackTrace();
 	    }
 	}
-	public int deleteMember(Connection dbconn, int mId) {
+	protected static int deleteMember(Connection dbconn, int mId) {
 	    try {
 	        Statement stmt = dbconn.createStatement();
 
@@ -112,7 +112,7 @@ public class DataManipulation {
 	    return -1; // Return -1 to indicate an error
 	}
 
-	public int insertCourse(Connection dbconn, String Cname, int Tno, 
+	protected static int insertCourse(Connection dbconn, String Cname, int Tno, 
 			int capacity, String startTimestamp, String endTimestamp,
 	        String day) {
 	    String insertQuery = "";
@@ -142,7 +142,7 @@ public class DataManipulation {
 	    }
 	    return -1; // Return -1 to indicate an error
 	}
-	public int deleteCourse(Connection dbconn, String Cname) {
+	protected static int deleteCourse(Connection dbconn, String Cname) {
 	    try {
 	        // Create a DELETE statement to remove the course with the specified Cname
 	        String deleteQuery = "DELETE FROM Course WHERE CName = '" + Cname + "'";
@@ -164,7 +164,7 @@ public class DataManipulation {
 	    }
 	    return -1; // Return -1 to indicate an error
 	}
-	public int insertPackage(Connection dbconn, String pName, String c1, String c2, 
+	protected static int insertPackage(Connection dbconn, String pName, String c1, String c2, 
 	        float price, String startDate, String endDate) {
 	    Statement stmt = null;
 	    try {
@@ -190,7 +190,7 @@ public class DataManipulation {
 	        return -1; // Indicate error
 	    } 
 	}
-	public int deletePackage(Connection dbconn, String pName) {
+	protected static int deletePackage(Connection dbconn, String pName) {
 	    Statement stmt = null;
 	    try {
 	        stmt = dbconn.createStatement();
@@ -212,7 +212,7 @@ public class DataManipulation {
 	    } 
 	    return -1; // Return -1 to indicate an error
 	}
-	public int borrowEquipment(Connection dbconn, int Mno, int quantity, String eType) {
+	protected static int borrowEquipment(Connection dbconn, int Mno, int quantity, String eType) {
 		Statement stmt = null;
 	    ResultSet resultSet = null;
 	    int counter=1;
@@ -247,7 +247,7 @@ public class DataManipulation {
 	    }
 	    return -1;
 	}
-	public int borrowEquipmentHelper(Connection dbconn, int Mno, int ENo) {
+	protected static int borrowEquipmentHelper(Connection dbconn, int Mno, int ENo) {
 		Statement stmt = null;
 		try {
 	        stmt = dbconn.createStatement();
@@ -265,7 +265,7 @@ public class DataManipulation {
 	    return -1;
 	    
 	}
-	public int makePayment(Connection dbconn, float amount, int mId) {
+	protected static int makePayment(Connection dbconn, float amount, int mId) {
 	    Statement stmt = null;
 	    try {
 	        stmt = dbconn.createStatement();

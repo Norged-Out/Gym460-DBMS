@@ -8,9 +8,7 @@
  *
  * */
 import java.util.*;
-
 import entities.Course;
-
 import java.sql.*;
 
 public class Gym460 {
@@ -72,8 +70,9 @@ public class Gym460 {
 				   startTime = null,
 				     endTime = null,
 				     	 day = null;
-			
-			boolean valid = false;
+						
+			boolean valid = false,
+					tCheck = false;
 			
 			while (!valid) {
 				System.out.print("Enter Course Name: ");
@@ -94,8 +93,9 @@ public class Gym460 {
 				QueryManager.showAllTrainers(dbconn);
 				System.out.print("\nEnter T#: ");
 				tNo = sc.nextLine().strip();
+				tCheck = Validation.validateInt(tNo);
 				
-			}			
+			}
 			
 			System.out.println("Added Course " + cName);
 		}
