@@ -3,6 +3,7 @@ import entities.Course;
 import entities.Member;
 import entities.Package;
 import entities.Trainer;
+import entities.Transaction;
 
 import java.sql.*;
 import java.util.LinkedList;
@@ -247,6 +248,38 @@ public class QueryManager {
 			handleSQLException(e, query);
 		}
 	}
+	
+	public static void printTransactionDetailsByXNumber(Connection dbconn, int xNumber) {
+		final String query = "SELECT * FROM Transaction WHERE X# = " + xNumber;
+		Statement stmt = null;
+		ResultSet answer = null;
+        try {
+            stmt = dbconn.createStatement();
+            answer = stmt.executeQuery(query);
+            
+			if (answer == null) {
+				System.out.println("No Transaction found with X# = " + xNumber);
+				return;
+			}
+
+            // if transaction exists.
+            if (answer.next()) {
+
+                Transaction transaction = new Transaction(
+                		answer.getInt("X#"),
+                		answer.getInt("M#"),
+                		answer.getDate("XDate"),
+                		answer.getFloat("Amount"),
+                		answer.getString("XType"),
+                		answer.getString("EType")
+                );
+
+                System.out.println(transaction); 
+            }
+        } catch (SQLException e) {
+        	handleSQLException(e, query);
+        }
+    }
 	
 	protected static Course getCourse(Connection dbconn, String cName) {
 		final String query = "SELECT * FROM Course WHERE CName = '" + cName + "'";

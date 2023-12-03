@@ -95,9 +95,11 @@ public class DataManipulation {
 	        	    "WHERE p.PName = m.PName " +
 	        	    "AND m.M# = " + mId;
 	        ResultSet coursesResultSet = stmt.executeQuery(getCoursesQuery);
-
-	        String c1 = coursesResultSet.getString("C1");
-	        String c2 = coursesResultSet.getString("C2");
+	        String c1="",c2="";
+	        if (coursesResultSet.next()) {
+	        	 c1 = coursesResultSet.getString("C1");}
+	        if (coursesResultSet.next()) {
+	        	 c2 = coursesResultSet.getString("C2");}
 	        
 	        //********************Delete the member********************
 	        // Create a DELETE statement to remove the member with the specified mId
@@ -278,8 +280,12 @@ public class DataManipulation {
 	        		+ "from Member"
 	        		+ "where m#="+mId;
 	        ResultSet rs = stmt.executeQuery(tierQuery);
-	        String tier=rs.getString("Tier");
-	        float oldConsumption=rs.getFloat("Consumption");
+	        String tier="";
+	        if (rs.next()){
+	        	 tier=rs.getString("Tier");}
+	        float oldConsumption=0;
+	        if (rs.next()){
+	        	 oldConsumption=rs.getFloat("Consumption");}
 	        float discount=0;
 	        //*************************Get their discount*************************
 	        if(tier!=null) {
@@ -287,7 +293,8 @@ public class DataManipulation {
 		        		+ "from Tier"
 		        		+ "where Tier = "+tier;
 	        	rs=stmt.executeQuery(discountQuery);
-	        	discount=rs.getFloat("Discount");
+	        	if (rs.next()) {
+	        		discount=rs.getFloat("Discount");}
 	        }
 	        float Consumption=oldConsumption+amount-(amount*discount);
 	        //**************************Update the Balance/Consumption of the member***********

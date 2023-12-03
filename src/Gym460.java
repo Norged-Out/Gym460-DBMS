@@ -32,7 +32,7 @@ public class Gym460 {
 			
 			boolean phCheck = false,
 					pnCheck = false,
-					coCheck = false;
+					cfCheck = false;
 			
 			while (true) {			
 				System.out.print("Enter First Name: ");
@@ -51,9 +51,9 @@ public class Gym460 {
 					pnCheck = true;
 					Course c1 = QueryManager.getCourse(dbconn, p.c1);
 					Course c2 = QueryManager.getCourse(dbconn, p.c2);
-					coCheck = !Validation.isCourseFull(c1) && !Validation.isCourseFull(c2);
+					cfCheck = !Validation.isCourseFull(c1) && !Validation.isCourseFull(c2);
 				}
-				if(phCheck && pnCheck && coCheck) {
+				if(phCheck && pnCheck && cfCheck) {
 					break;
 				}
 			}			
@@ -100,7 +100,7 @@ public class Gym460 {
 					etCheck = false,
 					dwCheck = false,
 					tnCheck = false,
-					coCheck = false;
+					cfCheck = false;
 			
 			while (true) {
 				System.out.print("Enter Course Name: ");
@@ -139,11 +139,11 @@ public class Gym460 {
 					if (QueryManager.getTrainer(dbconn, tNo) != null) {
 						tnCheck = true;
 						LinkedList<Course> courses = QueryManager.getCoursesByTrainer(dbconn, tNo);
-						coCheck = Validation.noTrainerScheduleConflict(courses, day, startTime, startDate, endTime, endDate);
+						cfCheck = Validation.noTrainerScheduleConflict(courses, day, start, end);
 					}
 				}
 				
-				if(cpCheck && sdCheck && edCheck && stCheck && etCheck && dwCheck && tnCheck && coCheck) {
+				if(cpCheck && sdCheck && edCheck && stCheck && etCheck && dwCheck && tnCheck && cfCheck) {
 					break;
 				}
 				System.out.println("\n Invalid Data, Try Again\n");
@@ -186,7 +186,7 @@ public class Gym460 {
 			boolean c1Check = false,
 					c2Check = false,
 					prCheck = false,
-					coCheck = false;
+					cfCheck = false;
 			
 			Course course1 = null,
 				   course2 = null;
@@ -229,9 +229,9 @@ public class Gym460 {
 						c2Check = true;
 					}
 				}
-				coCheck = Validation.noCourseScheduleConflict(course1, course2);
+				cfCheck = Validation.noCourseScheduleConflict(course1, course2);
 				
-				if(c1Check && c2Check && prCheck && coCheck) {
+				if(c1Check && c2Check && prCheck && cfCheck) {
 					break;
 				}
 				System.out.println("\n Invalid Data, Try Again\n");
