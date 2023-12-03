@@ -4,8 +4,13 @@ import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.LinkedList;
 
-import entities.*;
-
+import entities.Course;
+import entities.Equipment;
+import entities.Member;
+import entities.Package;
+// import entities.Tier;
+// import entities.Trainer;
+// import entities.Transaction;
 
 
 public class Validation {
@@ -73,6 +78,13 @@ public class Validation {
 	}// end balanceCheck
 
 
+
+
+
+	/* ******************************
+	   ***** Course Validations *****
+	   ****************************** */
+
 	/**
 	 * This method takes a Course object and determines if it is active.
 	 * 
@@ -105,9 +117,235 @@ public class Validation {
 
 	}// end isCourseActive
 
-		// TODO: check if enrolled in an active package
-		// TODO: check if either courses are active 
-		// TODO: update courses enrollCount
+
+	/**
+	 * This method takes a Course object and determines if its 
+	 * 	capacity is full.
+	 * 
+	 * @param course is the course to be checked.
+	 * 
+	 * @return true if the course is full, else return false.
+	 */
+	protected static boolean isCourseFull(Course course) {
+		
+		// if the course is null, return true so that no one can enroll in it
+		if (course == null) {
+
+			return true;
+
+		}// end if
+
+		// if the course is full
+		if (course.enrollCount >= course.capacity) {
+
+			// return true
+			return true;
+
+		}// end if
+
+		// if the course is not full, return false
+		return false;
+
+	}// end isCourseFull
+
+
+	/**
+	 * This method takes a Course object and determines if enrollCount is zero.
+	 * 
+	 * @param course is the course to be checked.
+	 * 
+	 * @return true if the course is empty, else return false.
+	 */
+	protected static boolean isCourseEmpty(Course course) {
+		
+		// if the course is null, return true so that a package can be deleted
+		if (course == null) {
+
+			return true;
+
+		}// end if
+
+		// if the course is empty
+		if (course.enrollCount == 0) {
+
+			// return true
+			return true;
+
+		}// end if
+
+		// if the course is not empty, return false
+		return false;
+
+	}// end isCourseEmpty
+
+
+	// TODO: check for Trainer schedule conflicts noScheduleConflict()
+	/**
+	 * This method takes a LinkedList of Course objects, the day of week, the 
+	 * 	new course start time and end time and determines if it conflicts with 
+	 * 	another course.
+	 * 
+	 * @param courses is the list of courses that the trainer is already 
+	 * 	teaching.
+	 * 
+	 * @param dow is the day of the week that the new course is to be taught.
+	 * 
+	 * @param startTime is the start time of the new course.
+	 * 
+	 * @param startDate is the start date of the new course.
+	 * 
+	 * @param endTime is the end time of the new course.
+	 * 
+	 * @param endDate is the end date of the new course.
+	 * 
+	 * @return true if there are no conflicts with the new course and the 
+	 * 	other courses, else return false.
+	 */
+	protected static boolean noTrainerScheduleConflict(LinkedList<Course> courses, String dow, String startTime, String startDate, String endTime, String endDate) {
+		
+		// convert the strings to integers for year, month, day, hour, and minute
+		int startYear	= Integer.parseInt(startDate.substring(0, 4));
+		int startMonth	= Integer.parseInt(startDate.substring(5, 7));
+		int startDay	= Integer.parseInt(startDate.substring(8, 10));
+		int startHour	= Integer.parseInt(startTime.substring(0, 2));
+		int startMinute	= Integer.parseInt(startTime.substring(3, 5));
+		int endYear		= Integer.parseInt(endDate.substring(0, 4));
+		int endMonth	= Integer.parseInt(endDate.substring(5, 7));
+		int endDay		= Integer.parseInt(endDate.substring(8, 10));
+		int endHour		= Integer.parseInt(endTime.substring(0, 2));
+		int endMinute	= Integer.parseInt(endTime.substring(3, 5));
+
+		// create LocalDateTime objects for the new course start date and end date
+		LocalDateTime newStartDateTime	= LocalDateTime.of(startYear, startMonth, startDay, startHour, startMinute);
+		LocalDateTime newEndDateTime	= LocalDateTime.of(endYear, endMonth, endDay, endHour, endMinute);
+
+		// loop through the courses to check for conflicts
+		for (Course course : courses) {
+
+			// create a LocalDateTime object for the course start date and end date
+			LocalDateTime courseStartDateTime	= dateToLocalDateTime(course.startDate);
+			LocalDateTime courseEndDateTime		= dateToLocalDateTime(course.endDate);
+
+			// LocalDateTime courseStartDateTime	= LocalDateTime.of(course.startDate.getYear(), course.startDate.getMonth(), course.startDate.getDay(), course.startDate.getHours(), course.startDate.getMinutes());
+			// LocalDateTime courseEndDateTime		= LocalDateTime.of(course.endDate.getYear(), course.endDate.getMonth(), course.endDate.getDay(), course.endDate.getHours(), course.endDate.getMinutes());
+
+			// if the new course start date is before the course start date
+			if (newStartDateTime.isBefore(courseStartDateTime)) {
+
+				// if the new course end date is before the course start date
+				if (newEndDateTime.isBefore(courseStartDateTime)) {
+
+					// skip the course
+					continue;
+
+				}// end if
+
+				// if the new course end date is after the course end date
+				if (newEndDateTime.isAfter(courseEndDateTime)) {
+
+					// skip the course
+					continue;
+
+				}// end if
+
+				// if the new course end date is the same as the course end date
+				if (newEndDateTime.isEqual(courseEndDateTime)) {
+
+					// if the new course end time is after the course end time
+					if (newEndDateTime.isAfter(courseEndDateTime)) {
+
+						// skip the course
+						continue;
+
+					}// end if
+
+				}// end if
+
+				// if the new course end date is before the course end date
+				if (newEndDateTime.isBefore(courseEndDateTime)) {
+
+				}// end if
+				
+			}// end if
+
+		}// end for
+return false;
+	}// end noTrainerScheduleConflict
+
+	/**
+	 * this method takes two course objects and determines if they have a 
+	 * 	scedule conflict.
+	 * 
+	 * @param c1 is the first course.
+	 * 
+	 * @param c2 is the second course.
+	 * 
+	 * @return true if the two courses do not have a schedule conflict, else return false.
+	 */
+	protected static boolean noCourseScheduleConflict(Course c1, Course c2) {
+		
+		// convert the course dates to LocalDateTime objects
+		LocalDateTime c1StartDateTime	= dateToLocalDateTime(c1.startDate);
+		LocalDateTime c1EndDateTime		= dateToLocalDateTime(c1.endDate);
+		LocalDateTime c2StartDateTime	= dateToLocalDateTime(c2.startDate);
+		LocalDateTime c2EndDateTime		= dateToLocalDateTime(c2.endDate);
+
+		// check if the two courses have a schedule conflict
+		// return noScheduleConflict(c1StartDateTime, c1EndDateTime, c2StartDateTime, c2EndDateTime);
+
+		return false;
+		
+	}// end noCourseScheduleConflict
+
+
+
+
+	/* *******************************
+	   ***** Package Validations *****
+	   ******************************* */
+
+	/**
+	 * This method takes a Package object and determines if it is active.
+	 * 
+	 * @param thePackage is the package to be checked.
+	 * 
+	 * @return true if the package is active, else return false.
+	 */
+	protected static boolean isPackageActive(Package thePackage) {
+
+		// if the package is null, return false
+		if (thePackage == null) {
+
+			return false;
+
+		}// end if
+
+		// if the dates are null, return false
+		if (thePackage.startDate == null || thePackage.endDate == null) {
+
+			return false;
+
+		}// end if
+		
+		// create a date object for the current date
+		Date currentDate = new Date();
+
+		// if the package is "active"
+		if (thePackage.startDate.before(currentDate) && thePackage.endDate.after(currentDate)) {
+
+			// return true
+			return true;
+
+		}// end if
+
+		// if the package is not active, return false
+		return false;
+
+	}// end isPackageActive
+	
+	
+
+	
 	
 
 
@@ -129,7 +367,7 @@ public class Validation {
 
 	/**
 	 * This method takes a string and determines if it can be converted 
-	 * 	to an integer.
+	 * 	to an integer and if it is non-negative.
 	 * 
 	 * @param input is the string to be validated.
 	 * 
@@ -142,7 +380,53 @@ public class Validation {
 		try {
 		
 			// try to convert input to an integer
-			Integer.parseInt(input);
+			int number = Integer.parseInt(input);
+
+			// make sure the input is not negative
+			if (number < 0) {
+
+				// if the input is negative, return false
+				return false;
+
+			}// end if
+			
+		} catch (Exception e) {
+	
+			// if the string is not able to be converted, return false
+			return false;
+	
+		}// end try/catch
+			
+		// if the input was converted, return true
+		return true;
+
+	}// end validateInt
+
+
+	/**
+	 * This method takes a string and determines if it can be converted 
+	 * 	to a float and if it is non-negative.
+	 * 
+	 * @param input is the string to be validated.
+	 * 
+	 * @return true if the input can be converted to an float, 
+	 * 	else return false.
+	 */
+	static boolean validateFloat(String input) {
+		
+		// check if the input is a valid float
+		try {
+		
+			// try to convert input to an float
+			Float number = Float.parseFloat(input);
+
+			// make sure the input is not negative
+			if (number.compareTo(Float.valueOf("0")) < 0) {
+
+				// if the input is negative, return false
+				return false;
+
+			}// end if
 			
 		} catch (Exception e) {
 	
@@ -309,6 +593,33 @@ public class Validation {
 		return false;
 
 	}// end validateTime
+
+
+	/**
+	 * This method takes a three letter abbreviation of a day of the week and 
+	 * 	verifies if it is valid.
+	 * 
+	 * @param day is the string to be validated.
+	 * 
+	 * @return true if the input is a valid day of the week, else return false.
+	 */
+	protected static boolean validateDay(String day) {
+
+		// create a regex pattern for a valid day of the week
+		String regex = "MON|TUE|WED|THU|FRI|SAT|SUN";
+
+		// if the input matches the regex pattern
+		if (day.toUpperCase().matches(regex)) {
+
+			// return true
+			return true;
+
+		}// end if
+
+		// if the input does not match the regex pattern, return false
+		return false;
+
+	}// end validateDay
 
 
 

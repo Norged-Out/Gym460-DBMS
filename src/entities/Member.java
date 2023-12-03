@@ -10,10 +10,11 @@ public class Member {
     public String pName;
     public double balance;
     public double consumption;
+    public String tier;
 
 
     // constructors
-    public Member(int m, String firstName, String lastName, String phone, String pName, double balance, double consumption) {
+    public Member(int m, String firstName, String lastName, String phone, String pName, double balance, double consumption, String tier) {
 
         // set to given values
         this.m = m;
@@ -23,6 +24,7 @@ public class Member {
         this.pName = pName;
         this.balance = balance;
         this.consumption = consumption;
+        this.tier = tier;
 
     }// end constructor
 
@@ -36,6 +38,7 @@ public class Member {
         this.pName = null;
         this.balance = 0.0;
         this.consumption = 0.0;
+        this.tier = null;
 
     }// end empty constructor
 
@@ -45,7 +48,7 @@ public class Member {
     public String toString() {
 
         // return the member as a string
-        return "Member:" + m + ", firstName = " + firstName + ", lastName = " + lastName + ", phone = " + phone + ", pName = " + pName + ", balance = $" + balance + ", consumption = $" + consumption + ".";
+        return "Member:" + m + ", firstName = " + firstName + ", lastName = " + lastName + ", phone = " + phone + ", pName = " + pName + ", balance = $" + balance + ", consumption = $" + consumption + ", tier = " + tier + ".";
 
     }// end toString
 
