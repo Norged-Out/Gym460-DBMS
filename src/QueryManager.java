@@ -256,17 +256,19 @@ public class QueryManager {
 	    try {
 	        stmt = dbconn.createStatement();
 	        answer = stmt.executeQuery(query);
-
-	        if (answer.next()) {
-	            retval = new Course(
-	            		answer.getString("CName"),
-	            		answer.getInt("T#"),
-	            		answer.getInt("EnrollCount"),
-	            		answer.getInt("Capacity"),
-	            		answer.getDate("StartDate"),
-	            		answer.getDate("EndDate"),
-	            		answer.getString("Day")
-	            		);
+	        
+	        if (answer != null) {
+	        	if (answer.next()) {
+		            retval = new Course(
+		            		answer.getString("CName"),
+		            		answer.getInt("T#"),
+		            		answer.getInt("EnrollCount"),
+		            		answer.getInt("Capacity"),
+		            		answer.getDate("StartDate"),
+		            		answer.getDate("EndDate"),
+		            		answer.getString("Day")
+		            		);
+		        }
 	        }
 	    } catch (SQLException e) {
 	    	handleSQLException(e, query);
@@ -283,15 +285,17 @@ public class QueryManager {
 	        stmt = dbconn.createStatement();
 	        answer = stmt.executeQuery(query);
 
-	        if (answer.next()) {
-	            retval = new Package(
-	            		answer.getString("PName"),
-	            		answer.getString("C1"),
-	            		answer.getString("C2"),
-	            		answer.getDate("StartDate"),
-	            		answer.getDate("EndDate"),
-	            		answer.getDouble("Price")
-	            		);
+	        if (answer != null) {
+		        if (answer.next()) {
+		            retval = new Package(
+		            		answer.getString("PName"),
+		            		answer.getString("C1"),
+		            		answer.getString("C2"),
+		            		answer.getDate("StartDate"),
+		            		answer.getDate("EndDate"),
+		            		answer.getDouble("Price")
+		            		);
+		        }
 	        }
 	    } catch (SQLException e) {
 	    	handleSQLException(e, query);
@@ -307,18 +311,20 @@ public class QueryManager {
 	    try {
 	        stmt = dbconn.createStatement();
 	        answer = stmt.executeQuery(query);
-
-	        if (answer.next()) {
-	            retval = new Member(
-	            		answer.getInt("M#"),
-	            		answer.getString("FirstName"),
-	            		answer.getString("LastName"),
-	            		answer.getString("Phone#"),
-	            		answer.getString("PName"),
-	            		answer.getDouble("Balance"),
-	            		answer.getDouble("Consumption"),
-	            		answer.getString("Tier")
-	            		);
+	        
+	        if (answer != null) {
+	        	if (answer.next()) {
+		            retval = new Member(
+		            		answer.getInt("M#"),
+		            		answer.getString("FirstName"),
+		            		answer.getString("LastName"),
+		            		answer.getString("Phone#"),
+		            		answer.getString("PName"),
+		            		answer.getDouble("Balance"),
+		            		answer.getDouble("Consumption"),
+		            		answer.getString("Tier")
+		            		);
+		        }
 	        }
 	    } catch (SQLException e) {
 	    	handleSQLException(e, query);
@@ -335,16 +341,15 @@ public class QueryManager {
             stmt = dbconn.createStatement();
             answer = stmt.executeQuery(query);
 
-
-            if (answer.next()) {
-                int TNo = answer.getInt("T#");
-                String fName = answer.getString("FirstName");
-                String lName = answer.getString("LastName");
-                String phoneNo = answer.getString("Phone#");
-
-
-                retval = new Trainer(TNo,fName, lName, phoneNo);
-
+            if (answer != null) {
+            	if (answer.next()) {
+                    int TNo = answer.getInt("T#");
+                    String fName = answer.getString("FirstName");
+                    String lName = answer.getString("LastName");
+                    String phoneNo = answer.getString("Phone#");
+                    
+                    retval = new Trainer(TNo,fName, lName, phoneNo);
+                }
             }
         } catch (SQLException e) {
             handleSQLException(e, query);
@@ -352,23 +357,29 @@ public class QueryManager {
         return retval;
     }
 	
-	public static LinkedList<Course> getCoursesByTrainerNumber(Connection dbconn, String tNo) {
+	// LinkedList can be empty but not null
+	protected static LinkedList<Course> getCoursesByTrainer(Connection dbconn, String tNo) {
+        final String query = "SELECT * FROM Course WHERE T# = " + tNo;
+        Statement stmt = null;
+		ResultSet answer = null;
         LinkedList<Course> coursesList = new LinkedList<>();
         try {
-            Statement stmt = dbconn.createStatement();
-            String query = "SELECT * FROM Course WHERE T# = " + tNo;
-            ResultSet rs = stmt.executeQuery(query);
-
-            while (rs.next()) {
-                coursesList.add(new Course(rs.getString("CName"), rs.getInt("T#"), rs.getInt("EnrollCount"),
-                        rs.getInt("Capacity"), rs.getDate("StartDate"), rs.getDate("EndDate"), rs.getString("Day")));
+            stmt = dbconn.createStatement();
+            answer = stmt.executeQuery(query);
+            
+            if (answer != null) {
+                while (answer.next()) {
+                    coursesList.add(new Course(answer.getString("CName"), answer.getInt("T#"), answer.getInt("EnrollCount"),
+                    		answer.getInt("Capacity"), answer.getDate("StartDate"), answer.getDate("EndDate"), answer.getString("Day")));
+                }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+	    	handleSQLException(e, query);
         }
         return coursesList;
     }
 	
+	// LinkedList can be empty but not null	
 	protected static LinkedList<Equipment> getEquipment(Connection dbconn, String eType) {
 		final String query = "SELECT * FROM Equipment WHERE EType = '" + eType + "'";
 		Statement stmt = null;
@@ -377,14 +388,16 @@ public class QueryManager {
 	    try {
 	        stmt = dbconn.createStatement();
 	        answer = stmt.executeQuery(query);
-
-	        while (answer.next()) {
-	        	Integer mNumber = (Integer) answer.getObject("M#"); // This will be null if the column is SQL NULL
-	            equipmentList.add(new Equipment(
-	            		answer.getInt("E#"),
-	            		answer.getString("EType"),
-	            		mNumber // Can be null
-	            		));
+	        
+	        if (answer != null) {
+		        while (answer.next()) {
+		        	Integer mNumber = (Integer) answer.getObject("M#"); // This will be null if the column is SQL NULL
+		            equipmentList.add(new Equipment(
+		            		answer.getInt("E#"),
+		            		answer.getString("EType"),
+		            		mNumber // Can be null
+		            		));
+		        }
 	        }
 	    } catch (SQLException e) {
 	    	handleSQLException(e, query);
