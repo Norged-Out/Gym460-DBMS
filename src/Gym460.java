@@ -10,6 +10,7 @@
 import java.util.*;
 import entities.Course;
 import entities.Trainer;
+import entities.Package;
 
 import java.sql.*;
 
@@ -30,7 +31,8 @@ public class Gym460 {
 					   pName = null;
 			
 			boolean phCheck = false,
-					pnCheck = false;
+					pnCheck = false,
+					coCheck = false;
 			
 			while (true) {			
 				System.out.print("Enter First Name: ");
@@ -44,10 +46,14 @@ public class Gym460 {
 				QueryManager.showAllPackages(dbconn);			
 				System.out.print("\nEnter Package Name to enroll into: ");
 				pName = sc.nextLine().strip();
-				if(QueryManager.getPackage(dbconn, pName) != null) {
+				Package p = QueryManager.getPackage(dbconn, pName);
+				if(p != null) {
 					pnCheck = true;
+					Course c1 = QueryManager.getCourse(dbconn, p.c1);
+					Course c2 = QueryManager.getCourse(dbconn, p.c2);
+					coCheck = !Validation.isCourseFull(c1) && !Validation.isCourseFull(c2);
 				}
-				if(phCheck && pnCheck) {
+				if(phCheck && pnCheck && coCheck) {
 					break;
 				}
 			}			
@@ -83,7 +89,9 @@ public class Gym460 {
 				     endDate = null,
 				   startTime = null,
 				     endTime = null,
-				     	 day = null;
+				     	 day = null,
+				       start = null,
+				         end = null;
 						
 			boolean cpCheck = false,
 					sdCheck = false,
@@ -91,7 +99,8 @@ public class Gym460 {
 					edCheck = false,
 					etCheck = false,
 					dwCheck = false,
-					tnCheck = false;
+					tnCheck = false,
+					coCheck = false;
 			
 			while (true) {
 				System.out.print("Enter Course Name: ");
@@ -120,6 +129,8 @@ public class Gym460 {
 				day = sc.nextLine().strip();
 				dwCheck = Validation.validateDay(day);
 				day = day.toUpperCase();
+				start = Validation.concatDateAndTime(startDate, startTime);
+				end = Validation.concatDateAndTime(endDate, endTime);
 				System.out.println("Choose a trainer for the course");
 				QueryManager.showAllTrainers(dbconn);
 				System.out.print("\nEnter T#: ");
@@ -127,10 +138,12 @@ public class Gym460 {
 				if(Validation.validateInt(tNo)) {
 					if (QueryManager.getTrainer(dbconn, tNo) != null) {
 						tnCheck = true;
+						LinkedList<Course> courses = QueryManager.getCoursesByTrainer(dbconn, tNo);
+						coCheck = Validation.noTrainerScheduleConflict(courses, day, startTime, startDate, endTime, endDate);
 					}
 				}
 				
-				if(cpCheck && sdCheck && edCheck && stCheck && etCheck && dwCheck && tnCheck) {
+				if(cpCheck && sdCheck && edCheck && stCheck && etCheck && dwCheck && tnCheck && coCheck) {
 					break;
 				}
 				System.out.println("\n Invalid Data, Try Again\n");
@@ -138,8 +151,6 @@ public class Gym460 {
 			
 			int c = Integer.parseInt(capacity);
 			int t = Integer.parseInt(tNo);
-			String start = Validation.concatDateAndTime(startDate, startTime);
-			String end = Validation.concatDateAndTime(endDate, endTime);
 			
 			DataManipulation.insertCourse(dbconn, cName, t, c, start, end, day);
 			
@@ -174,7 +185,8 @@ public class Gym460 {
 			
 			boolean c1Check = false,
 					c2Check = false,
-					prCheck = false;
+					prCheck = false,
+					coCheck = false;
 			
 			Course course1 = null,
 				   course2 = null;
@@ -216,9 +228,10 @@ public class Gym460 {
 					if (course2 != null) {
 						c2Check = true;
 					}
-				}				
+				}
+				coCheck = Validation.noCourseScheduleConflict(course1, course2);
 				
-				if(c1Check && c2Check && prCheck) {
+				if(c1Check && c2Check && prCheck && coCheck) {
 					break;
 				}
 				System.out.println("\n Invalid Data, Try Again\n");
