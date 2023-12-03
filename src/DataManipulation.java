@@ -60,7 +60,7 @@ public class DataManipulation {
 	        }
 
 	        insertQuery = "INSERT INTO Transaction (X#, M#, XDate, Amount, XType, EType) " +
-	            "VALUES (" + XID + ", " + mId + ", TO_DATE(SYSDATE, 'YYYY-MM-DD'), " + price + ", 'Credit', NULL)";
+	            "VALUES (" + XID + ", " + mId + ", SYSDATE, " + price + ", 'Credit', NULL)";
 
 	        // Execute the INSERT statement
 	        stmt.executeUpdate(insertQuery);
