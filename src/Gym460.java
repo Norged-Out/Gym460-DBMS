@@ -78,6 +78,7 @@ public class Gym460 {
 					stCheck = false,
 					edCheck = false,
 					etCheck = false,
+					dwCheck = false,
 					tnCheck = false;
 			
 			while (true) {
@@ -102,9 +103,12 @@ public class Gym460 {
 				System.out.print("Enter End Time (HH24:MI): ");
 				endTime = sc.nextLine().strip();
 				etCheck = Validation.validateTime(endTime);
-				System.out.print("Enter the Day the course will be taught: ");
+				System.out.println("Enter the Day the course will be taught");
+				System.out.print("Choose from (MON|TUE|WED|THU|FRI|SAT|SUN): ");
 				day = sc.nextLine().strip();
-				System.out.println("Choose a trainer for the course:");
+				dwCheck = Validation.validateDay(day);
+				day = day.toUpperCase();
+				System.out.println("Choose a trainer for the course");
 				QueryManager.showAllTrainers(dbconn);
 				System.out.print("\nEnter T#: ");
 				tNo = sc.nextLine().strip();
@@ -114,7 +118,7 @@ public class Gym460 {
 					}
 				}
 				
-				if(cpCheck && sdCheck && edCheck && stCheck && etCheck && tnCheck) {
+				if(cpCheck && sdCheck && edCheck && stCheck && etCheck && dwCheck && tnCheck) {
 					break;
 				}
 				System.out.println("\n Invalid Data, Try Again\n");
@@ -170,7 +174,7 @@ public class Gym460 {
 					System.out.println("Package already exists");
 					continue;
 				}	
-				System.out.println("Choose courses from the following:");
+				System.out.println("Choose courses from the following");
 				QueryManager.showAllCourses(dbconn);			
 				System.out.print("\nChoose Course 1: ");
 				c1 = sc.nextLine().strip();
@@ -178,6 +182,7 @@ public class Gym460 {
 				c2 = sc.nextLine().strip();
 				System.out.print("Enter a price for the package: ");
 				price = sc.nextLine().strip();
+				prCheck = Validation.validateFloat(price);
 				
 				if (c1.equals("")) {
 					c1 = null;
@@ -201,7 +206,7 @@ public class Gym460 {
 					}
 				}				
 				
-				if(c1Check && c2Check) {
+				if(c1Check && c2Check && prCheck) {
 					break;
 				}
 				System.out.println("\n Invalid Data, Try Again\n");
