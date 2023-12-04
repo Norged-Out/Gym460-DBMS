@@ -393,6 +393,64 @@ public class Validation {
 
 
 
+	/* *********************************
+	   ***** Equipment Validations *****
+	   ********************************* */
+
+	/**
+	 * This method takes a LinkedList of Equipment objects and a  
+	 * 	quantity to determine if the requested quantity is available.
+	 * 
+	 * @param equipment is the list of equipment to be checked.
+	 * 
+	 * @param quantityStr is the quantity of equipment to be checked.
+	 * 
+	 * @return true if the requested quantity is available, else return false.
+	 */
+	protected static boolean canBorrow(LinkedList<Equipment> equipment, String quantityStr) {
+		
+		// if quantity is not a valid integer, return false		// TODO: possibly already validated
+		if (!validateInt(quantityStr)) {
+
+			return false;
+
+		}// end if
+
+		// convert quantity to an integer
+		int quantity = Integer.parseInt(quantityStr);
+
+		// if quantity is less than 1, return false
+		if (quantity < 1 || quantity > equipment.size()) {
+
+			return false;
+
+		}// end if
+
+		// create a counter for the number of borrowable equipment
+		int borrowable = 0;
+
+		// loop through the equipment and determine how many are borrowable
+		for (Equipment equip : equipment) {
+
+			// if the equipment is not borrowed or lost, increment borrowable
+			if (equip.m == null) {
+
+				// only if the m# is null is the equipment borrowable
+				borrowable++;
+
+			}// end if
+
+		}// end for
+
+		// if the requested quantity is greater than the number of borrowable equipment, return false
+		return quantity <= borrowable;
+		
+	}// end canBorrow
+
+
+
+
+
 	/* **********************************
 	   ***** User Input Validations *****
 	   ********************************** */
@@ -877,5 +935,3 @@ public class Validation {
 	}// end dateToLocalDateTime
 	
 }// end Validation class
-
-// test change
