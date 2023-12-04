@@ -27,14 +27,19 @@ public class Gym460 {
 				+ "\nEnter any other key to quit: ");
 		userInput = sc.nextLine().strip();
 		if(userInput.equals("1")) {
+			
+					// Strings to use for user input
+			
 			String firstName = null,
 					lastName = null,
 					 phoneNo = null,
 					   pName = null;
 			
-			boolean phCheck = false,
-					pnCheck = false,
-					cfCheck = false;
+					// Series of Validation checks
+			
+			boolean phCheck = false, // phone number is 10 digit integer
+					pnCheck = false, // package actually exists
+					cfCheck = false; // courses have space for enrollment
 			
 			while (true) {			
 				System.out.print("Enter First Name: ");
@@ -304,9 +309,9 @@ public class Gym460 {
 		}
 		float pay = Float.parseFloat(amount);
 		int mid = Integer.parseInt(mno);
-		int xid = DataManipulation.makePayment(dbconn, pay, mid);
+		int xno = DataManipulation.makePayment(dbconn, pay, mid);
 		System.out.println("Transaction successful");
-		QueryManager.printTransactionDetails(dbconn, xid);
+		QueryManager.printTransactionDetails(dbconn, xno);
 		return true;
 	}
 	
@@ -319,14 +324,15 @@ public class Gym460 {
 				+ "\nEnter any other key to quit: ");
 		userInput = sc.nextLine().strip();
 		if(userInput.equals("1")) {
-			String      mno = null,
-					  eType = null,
-			       quantity = null;
+			String   mno = null,
+				   eType = null,
+			         qty = null;
 		
 			boolean miCheck = false,
 					mbCheck = false,
 					etCheck = false,
-					evCheck = false;
+					qtCheck = false,
+					avCheck = false;
 			
 			while (true) {
 				System.out.println("Choose Member from the following:");
@@ -342,21 +348,26 @@ public class Gym460 {
 				QueryManager.showAllEquipment(dbconn);
 				System.out.print("\nChoose Equipment Type: ");
 				eType = sc.nextLine().strip();
-				//Equipment e = QueryManager.getEquipment(dbconn, eType);
-				//if(e != null) {
-				//	etCheck = true;
-				//}
-				System.out.print("Enter Amount: ");
-				//amount = sc.nextLine().strip();
-				//pfCheck = Validation.validateFloat(amount);
-				
-				if(miCheck && mbCheck) {
+				etCheck = QueryManager.checkEquipmentType(dbconn, eType);
+				System.out.print("Enter the Quantity you would like to borrow: ");
+				qty = sc.nextLine().strip();
+				qtCheck = Validation.validateInt(qty);
+				// validate that enough quantity available
+				if(miCheck && mbCheck && etCheck && qtCheck && avCheck) {
 					break;
 				}
-				System.out.println("\n Invalid Data, Try Again\n");
+				else if(!avCheck) {
+					System.out.println("Not enough Equipment available, sorry.");
+				}
+				else {
+					System.out.println("\n Invalid Data, Try Again\n");
+				}
 			}
-			
-			
+			int m = Integer.parseInt(mno);
+			int q = Integer.parseInt(qty);
+			int xno = DataManipulation.borrowEquipment(dbconn, m, q, eType);
+			System.out.println("Transaction successful");
+			QueryManager.printTransactionDetails(dbconn, xno);			
 		}
 		else if(userInput.equals("2")) {
 			

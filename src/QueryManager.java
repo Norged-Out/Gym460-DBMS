@@ -282,6 +282,9 @@ public class QueryManager {
     }
 	
 	protected static Course getCourse(Connection dbconn, String cName) {
+		if(cName.equals("")) {
+			return null;
+		}
 		final String query = "SELECT * FROM Course WHERE CName = '" + cName + "'";
 		Statement stmt = null;
 		ResultSet answer = null;
@@ -310,6 +313,9 @@ public class QueryManager {
 	}
 	
 	protected static Package getPackage(Connection dbconn, String pName) {
+		if(pName.equals("")) {
+			return null;
+		}
 		final String query = "SELECT * FROM Package WHERE PName = '" + pName + "'";
 		Statement stmt = null;
 		ResultSet answer = null;
@@ -337,6 +343,9 @@ public class QueryManager {
 	}
 
 	protected static Member getMember(Connection dbconn, String mno) {
+		if(mno.equals("")) {
+			return null;
+		}
 		final String query = "SELECT * FROM Member WHERE M# = " + mno;
 		Statement stmt = null;
 		ResultSet answer = null;
@@ -366,6 +375,9 @@ public class QueryManager {
 	}
 
 	protected static Trainer getTrainer(Connection dbconn, String tNo) {
+		if(tNo.equals("")) {
+			return null;
+		}
         final String query = "SELECT * FROM Trainer WHERE T# = " + tNo;
         Statement stmt = null;
         ResultSet answer = null;
@@ -390,12 +402,37 @@ public class QueryManager {
         return retval;
     }
 	
+	protected static Boolean checkEquipmentType(Connection dbconn, String eType) {
+		if(eType.equals("")) {
+			return false;
+		}
+        final String query = "SELECT * FROM Equipment WHERE ETYPE = '" + eType+"'";
+        Statement stmt = null;
+        ResultSet answer = null;
+        try {
+            stmt = dbconn.createStatement();
+            answer = stmt.executeQuery(query);
+
+            if (answer != null) {
+                return true;
+            }
+
+            return false;
+        } catch (SQLException e) {
+            handleSQLException(e, query);
+            return false;
+        }
+    }
+	
 	// LinkedList can be empty but not null
 	protected static LinkedList<Course> getCoursesByTrainer(Connection dbconn, String tNo) {
         final String query = "SELECT * FROM Course WHERE T# = " + tNo;
         Statement stmt = null;
 		ResultSet answer = null;
         LinkedList<Course> coursesList = new LinkedList<>();
+        if(tNo.equals("")) {
+			return coursesList;
+		}
         try {
             stmt = dbconn.createStatement();
             answer = stmt.executeQuery(query);
@@ -418,6 +455,9 @@ public class QueryManager {
 		Statement stmt = null;
 		ResultSet answer = null;
 	    LinkedList<Equipment> equipmentList = new LinkedList<>();
+	    if(eType.equals("")) {
+			return equipmentList;
+		}
 	    try {
 	        stmt = dbconn.createStatement();
 	        answer = stmt.executeQuery(query);
