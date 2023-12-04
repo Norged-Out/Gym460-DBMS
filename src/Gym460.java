@@ -9,6 +9,7 @@
  * */
 import java.util.*;
 import entities.Course;
+import entities.Equipment;
 import entities.Member;
 import entities.Trainer;
 import entities.Package;
@@ -309,6 +310,63 @@ public class Gym460 {
 		return true;
 	}
 	
+	private static boolean handleEquipment(
+			Scanner sc, String userInput, Connection dbconn) {
+		System.out.println("\nPlease choose from the following:");
+		System.out.println("\t1. Borrow some Equipment");
+		System.out.println("\t2. Return some Equipment");
+		System.out.print("\nPlease enter your choice (1/2)"
+				+ "\nEnter any other key to quit: ");
+		userInput = sc.nextLine().strip();
+		if(userInput.equals("1")) {
+			String      mno = null,
+					  eType = null,
+			       quantity = null;
+		
+			boolean miCheck = false,
+					mbCheck = false,
+					etCheck = false,
+					evCheck = false;
+			
+			while (true) {
+				System.out.println("Choose Member from the following:");
+				QueryManager.showAllMembers(dbconn);
+				System.out.print("\nEnter Member ID: ");
+				mno = sc.nextLine().strip();
+				miCheck = Validation.validateInt(mno);
+				Member m = QueryManager.getMember(dbconn, mno);
+				if(m != null) {
+					mbCheck = true;
+				}
+				System.out.println("Choose Equipment from the following:");
+				QueryManager.showAllEquipment(dbconn);
+				System.out.print("\nChoose Equipment Type: ");
+				eType = sc.nextLine().strip();
+				//Equipment e = QueryManager.getEquipment(dbconn, eType);
+				//if(e != null) {
+				//	etCheck = true;
+				//}
+				System.out.print("Enter Amount: ");
+				//amount = sc.nextLine().strip();
+				//pfCheck = Validation.validateFloat(amount);
+				
+				if(miCheck && mbCheck) {
+					break;
+				}
+				System.out.println("\n Invalid Data, Try Again\n");
+			}
+			
+			
+		}
+		else if(userInput.equals("2")) {
+			
+		}
+		else {
+			return false;
+		}
+		return true;
+	}
+	
 	private static boolean handleQueries(
 			Scanner sc, String userInput, Connection dbconn) {
 		System.out.println("\nHere are some queries you may use:");
@@ -422,6 +480,7 @@ public class Gym460 {
     		System.out.println("\t2. Add or Delete a Course");
     		System.out.println("\t3. Add, Update, or Delete a Package");
     		System.out.println("\t4. Make a payment for a Member");
+    		System.out.println("\t5. Borrow or Return Equipment");
     		System.out.println("\t6. Investigate some general queries");
     		System.out.print("\nPlease enter your choice (1/2/3/4/5/6)"
     				+ "\nEnter any other key to quit: ");
@@ -438,6 +497,9 @@ public class Gym460 {
         		break;
         	case "4":
         		executeFlag = handlePayment(sc, dbconn);
+        		break;
+        	case "5":
+        		executeFlag = handleEquipment(sc, userInput, dbconn);
         		break;
         	case "6":
         		executeFlag = handleQueries(sc, userInput, dbconn);

@@ -413,7 +413,7 @@ public class QueryManager {
     }
 	
 	// LinkedList can be empty but not null	
-	protected static LinkedList<Equipment> getEquipment(Connection dbconn, String eType) {
+	protected static LinkedList<Equipment> getEquipmentList(Connection dbconn, String eType) {
 		final String query = "SELECT * FROM Equipment WHERE EType = '" + eType + "'";
 		Statement stmt = null;
 		ResultSet answer = null;
