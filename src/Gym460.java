@@ -41,6 +41,8 @@ public class Gym460 {
 					pnCheck = false, // package actually exists
 					cfCheck = false; // courses have space for enrollment
 			
+					// Loop until all input is approved
+			
 			while (true) {			
 				System.out.print("Enter First Name: ");
 				firstName = sc.nextLine().strip();
@@ -64,7 +66,10 @@ public class Gym460 {
 					break;
 				}
 				System.out.println("\n Invalid Data, Try Again\n");
-			}			
+			}
+			
+					// Add the Member to the Database
+			
 			int mno = DataManipulation.insertMember(dbconn, firstName, lastName, phoneNo, pName);			
 			System.out.println("Added Member");
 			System.out.println("Member id is " + mno);
@@ -90,6 +95,9 @@ public class Gym460 {
 				+ "\nEnter any other key to quit: ");
 		userInput = sc.nextLine().strip();
 		if(userInput.equals("1")) {
+
+					// Strings to use for user input
+	
 			String     cName = null,
 						 tNo = null,
 					capacity = null,
@@ -100,6 +108,8 @@ public class Gym460 {
 				     	 day = null,
 				       start = null,
 				         end = null;
+
+					// Series of Validation checks
 						
 			boolean cpCheck = false,
 					sdCheck = false,
@@ -109,6 +119,8 @@ public class Gym460 {
 					dwCheck = false,
 					tnCheck = false,
 					cfCheck = false;
+			
+					// Loop until all input is approved
 			
 			while (true) {
 				System.out.print("Enter Course Name: ");
@@ -157,6 +169,8 @@ public class Gym460 {
 				System.out.println("\n Invalid Data, Try Again\n");
 			}
 			
+					// Add the Course to the Database
+			
 			int c = Integer.parseInt(capacity);
 			int t = Integer.parseInt(tNo);
 			
@@ -181,23 +195,32 @@ public class Gym460 {
 		System.out.println("\nPlease choose from the following:");
 		System.out.println("\t1. Add a new Package");
 		System.out.println("\t2. Update a Package");
-		System.out.println("\t2. Delete a Package");
+		System.out.println("\t3. Delete a Package");
 		System.out.print("\nPlease enter your choice (1/2/3)"
 				+ "\nEnter any other key to quit: ");
 		userInput = sc.nextLine().strip();
 		if(userInput.equals("1")) {
+
+					// Strings to use for user input
+	
 			String pName = null,
 					  c1 = null,
 					  c2 = null,
 				   price = null;
+			
+					// Series of Validation checks
 			
 			boolean c1Check = false,
 					c2Check = false,
 					prCheck = false,
 					cfCheck = false;
 			
+					// Obtain the two courses for the package
+			
 			Course course1 = null,
 				   course2 = null;
+			
+					// Loop until all input is approved
 			
 			while(true) {
 				System.out.print("Enter Package Name: ");
@@ -244,6 +267,9 @@ public class Gym460 {
 				}
 				System.out.println("\n Invalid Data, Try Again\n");
 			}
+			
+					// Add the Package to the Database
+			
 			LinkedList<String> dates = Validation.courseToPackageDates(course1, course2);
 			String startDate = dates.get(0);
 			String endDate = dates.get(1);
@@ -282,12 +308,19 @@ public class Gym460 {
 	
 	private static boolean handlePayment(
 			Scanner sc, Connection dbconn) {
+
+				// Strings to use for user input
+
 		String    mno = null,
 			   amount = null;
+		
+				// Series of Validation checks
 		
 		boolean miCheck = false,
 				pfCheck = false,
 				mbCheck = false;
+		
+				// Loop until all input is approved
 		
 		while (true) {
 			System.out.println("Choose Member from the following:");
@@ -307,6 +340,9 @@ public class Gym460 {
 			}
 			System.out.println("\n Invalid Data, Try Again\n");
 		}
+		
+				// Make the payment
+		
 		float pay = Float.parseFloat(amount);
 		int mid = Integer.parseInt(mno);
 		int xno = DataManipulation.makePayment(dbconn, pay, mid);
@@ -324,15 +360,22 @@ public class Gym460 {
 				+ "\nEnter any other key to quit: ");
 		userInput = sc.nextLine().strip();
 		if(userInput.equals("1")) {
+
+					// Strings to use for user input
+
 			String   mno = null,
 				   eType = null,
 			         qty = null;
+			
+					// Series of Validation checks
 		
 			boolean miCheck = false,
 					mbCheck = false,
 					etCheck = false,
 					qtCheck = false,
 					avCheck = false;
+			
+					// Loop until all input is approved
 			
 			while (true) {
 				System.out.println("Choose Member from the following:");
@@ -352,6 +395,10 @@ public class Gym460 {
 				System.out.print("Enter the Quantity you would like to borrow: ");
 				qty = sc.nextLine().strip();
 				qtCheck = Validation.validateInt(qty);
+				if(etCheck) {
+					LinkedList<Equipment> list = QueryManager.getEquipmentList(dbconn, eType);
+					avCheck = Validation.canBorrow(list, qty);
+				}
 				// validate that enough quantity available
 				if(miCheck && mbCheck && etCheck && qtCheck && avCheck) {
 					break;
@@ -363,6 +410,9 @@ public class Gym460 {
 					System.out.println("\n Invalid Data, Try Again\n");
 				}
 			}
+			
+					// Borrow the Equipment
+			
 			int m = Integer.parseInt(mno);
 			int q = Integer.parseInt(qty);
 			int xno = DataManipulation.borrowEquipment(dbconn, m, q, eType);
@@ -389,7 +439,7 @@ public class Gym460 {
     			+ "\n   December.");
 		System.out.println("\n4. TODO");
 		
-		System.out.print("\nPlease enter your choice (1/2/3)"
+		System.out.print("\nPlease enter your choice (1/2/3/4)"
 				+ "\nEnter any other key to quit: ");
 		userInput = sc.nextLine().strip();
 		switch (userInput) {
