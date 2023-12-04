@@ -9,6 +9,7 @@
  * */
 import java.util.*;
 import entities.Course;
+import entities.Member;
 import entities.Trainer;
 import entities.Package;
 
@@ -56,6 +57,7 @@ public class Gym460 {
 				if(phCheck && pnCheck && cfCheck) {
 					break;
 				}
+				System.out.println("\n Invalid Data, Try Again\n");
 			}			
 			int mno = DataManipulation.insertMember(dbconn, firstName, lastName, phoneNo, pName);			
 			System.out.println("Added Member");
@@ -272,6 +274,41 @@ public class Gym460 {
 		return true;
 	}
 	
+	private static boolean handlePayment(
+			Scanner sc, Connection dbconn) {
+		String    mno = null,
+			   amount = null;
+		
+		boolean miCheck = false,
+				pfCheck = false,
+				mbCheck = false;
+		
+		while (true) {
+			System.out.println("Choose Member from the following:");
+			QueryManager.showAllMembers(dbconn);			
+			System.out.print("\nEnter Member ID: ");
+			mno = sc.nextLine().strip();
+			miCheck = Validation.validateInt(mno);
+			System.out.print("Enter Amount: ");
+			amount = sc.nextLine().strip();
+			pfCheck = Validation.validateFloat(amount);
+			Member m = QueryManager.getMember(dbconn, mno);
+			if(m != null) {
+				mbCheck = true;
+			}
+			if(miCheck && pfCheck && mbCheck) {
+				break;
+			}
+			System.out.println("\n Invalid Data, Try Again\n");
+		}
+		float pay = Float.parseFloat(amount);
+		int mid = Integer.parseInt(mno);
+		int xid = DataManipulation.makePayment(dbconn, pay, mid);
+		System.out.println("Transaction successful");
+		QueryManager.printTransactionDetails(dbconn, xid);
+		return true;
+	}
+	
 	private static boolean handleQueries(
 			Scanner sc, String userInput, Connection dbconn) {
 		System.out.println("\nHere are some queries you may use:");
@@ -384,8 +421,9 @@ public class Gym460 {
     		System.out.println("\t1. Add or Delete a Member");
     		System.out.println("\t2. Add or Delete a Course");
     		System.out.println("\t3. Add, Update, or Delete a Package");
-    		System.out.println("\t4. Investigate some general queries");
-    		System.out.print("\nPlease enter your choice (1/2/3/4)"
+    		System.out.println("\t4. Make a payment for a Member");
+    		System.out.println("\t6. Investigate some general queries");
+    		System.out.print("\nPlease enter your choice (1/2/3/4/5/6)"
     				+ "\nEnter any other key to quit: ");
         	userInput = sc.nextLine().strip();
         	switch (userInput) {
@@ -399,6 +437,9 @@ public class Gym460 {
         		executeFlag = handlePackage(sc, userInput, dbconn);
         		break;
         	case "4":
+        		executeFlag = handlePayment(sc, dbconn);
+        		break;
+        	case "6":
         		executeFlag = handleQueries(sc, userInput, dbconn);
         		break;
         	default:

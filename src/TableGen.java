@@ -109,8 +109,7 @@ public class TableGen {
                 + "Amount float not null,"
                 + "XType varchar2(10) not null,"
                 + "EType varchar2(20),"
-                + "PRIMARY KEY (X#),"
-                + "FOREIGN KEY (M#) REFERENCES Member"
+                + "PRIMARY KEY (X#)"
                 + ")"
                 
         };

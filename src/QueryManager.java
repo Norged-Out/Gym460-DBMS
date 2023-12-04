@@ -249,7 +249,7 @@ public class QueryManager {
 		}
 	}
 	
-	public static void printTransactionDetailsByXNumber(Connection dbconn, int xNumber) {
+	protected static void printTransactionDetails(Connection dbconn, int xNumber) {
 		final String query = "SELECT * FROM Transaction WHERE X# = " + xNumber;
 		Statement stmt = null;
 		ResultSet answer = null;
