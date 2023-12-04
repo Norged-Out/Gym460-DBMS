@@ -871,11 +871,8 @@ public class Validation {
 	 */
 	protected static LocalDateTime dateToLocalDateTime(Date date) {
 		
-		// create a LocalDateTime object
-		LocalDateTime ldt = LocalDateTime.ofInstant(date.toInstant(), ZoneOffset.ofHours(0));
-
 		// return the LocalDateTime object
-		return ldt;
+		return stringToLocalDateTime(dateToString(date));
 
 	}// end dateToLocalDateTime
 	
