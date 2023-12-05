@@ -396,7 +396,7 @@ public class Gym460 {
 				qty = sc.nextLine().strip();
 				qtCheck = Validation.validateInt(qty);
 				if(etCheck) {
-					LinkedList<Equipment> list = QueryManager.getEquipmentList(dbconn, eType);
+					LinkedList<Equipment> list = QueryManager.getEquipmentList(dbconn, eType, false);
 					avCheck = Validation.canBorrow(list, qty);
 				}
 				// validate that enough quantity available
