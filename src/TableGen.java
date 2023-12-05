@@ -98,8 +98,7 @@ public class TableGen {
                 + "E# integer,"
                 + "EType varchar2(20),"
                 + "M# integer,"
-                + "PRIMARY KEY (E#, EType),"
-                + "FOREIGN KEY (M#) REFERENCES Member"
+                + "PRIMARY KEY (E#, EType)"
                 + ")",
                 
                 "create table Transaction ("

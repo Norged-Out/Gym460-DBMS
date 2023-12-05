@@ -65,20 +65,55 @@ public class Gym460 {
 				if(phCheck && pnCheck && cfCheck) {
 					break;
 				}
-				System.out.println("\n Invalid Data, Try Again\n");
+				System.out.println("\n***Invalid Data, Try Again***\n");
 			}
 			
 					// Add the Member to the Database
 			
 			int mno = DataManipulation.insertMember(dbconn, firstName, lastName, phoneNo, pName);			
 			System.out.println("Added Member");
-			System.out.println("Member id is " + mno);
+			System.out.println("M# is " + mno);
 		}
 		else if(userInput.equals("2")) {
-			System.out.print("Enter the M# to delete: ");
-			userInput = sc.nextLine().strip();
-			int mNo = Integer.parseInt(userInput);
-			System.out.println("M# " + mNo + " is deleted");
+			
+			String mno = null;
+			
+					// Series of Validation checks
+			
+			boolean miCheck = false, // m# is an integer
+					meCheck = false, // m# actually exists
+					mbCheck = false; // balance is paid off
+					
+					// Loop until all input is approved
+			
+			while(true) {
+				System.out.println("\nChoose Member from the following:");
+				QueryManager.showAllMembers(dbconn);
+				System.out.print("\nEnter the M# to delete: ");
+				mno = sc.nextLine().strip();
+				miCheck = Validation.validateInt(mno);
+				if(miCheck && QueryManager.getMember(dbconn, mno) != null) {
+					meCheck = true;
+				}
+				if(miCheck && meCheck) {
+					break;
+				}
+				System.out.println("\n***Invalid Data, Try Again***");
+			}
+					
+					// Verify that balance is non-negative
+			
+			mbCheck = Validation.memberbalanceGood(QueryManager.getMember(dbconn, mno));
+			if(!mbCheck) {
+				System.out.println("\nBalance is not paid off, cannot delete");
+				return true;
+			}
+			int m = Integer.parseInt(mno);
+			LinkedList<Equipment> allEquipment = QueryManager.getEquipmentList(dbconn, "", true);
+			LinkedList<Equipment> lostEquipment = Validation.equipmentCheck(allEquipment, m);
+			// Mark Equipment as Lost as needed
+			DataManipulation.deleteMember(dbconn, m);			
+			System.out.println("M# " + mno + " is deleted");
 		}
 		else {
 			return false;
@@ -166,7 +201,7 @@ public class Gym460 {
 				if(cpCheck && sdCheck && edCheck && stCheck && etCheck && dwCheck && tnCheck && cfCheck) {
 					break;
 				}
-				System.out.println("\n Invalid Data, Try Again\n");
+				System.out.println("\n***Invalid Data, Try Again***\n");
 			}
 			
 					// Add the Course to the Database
@@ -265,7 +300,7 @@ public class Gym460 {
 				if(c1Check && c2Check && prCheck && cfCheck) {
 					break;
 				}
-				System.out.println("\n Invalid Data, Try Again\n");
+				System.out.println("\n***Invalid Data, Try Again***\n");
 			}
 			
 					// Add the Package to the Database
@@ -325,20 +360,19 @@ public class Gym460 {
 		while (true) {
 			System.out.println("\nChoose Member from the following:");
 			QueryManager.showAllMembers(dbconn);			
-			System.out.print("\nEnter Member ID: ");
+			System.out.print("\nEnter M#: ");
 			mno = sc.nextLine().strip();
 			miCheck = Validation.validateInt(mno);
 			System.out.print("Enter Amount: ");
 			amount = sc.nextLine().strip();
 			pfCheck = Validation.validateFloat(amount);
-			Member m = QueryManager.getMember(dbconn, mno);
-			if(m != null) {
+			if(miCheck && QueryManager.getMember(dbconn, mno) != null) {
 				mbCheck = true;
 			}
 			if(miCheck && pfCheck && mbCheck) {
 				break;
 			}
-			System.out.println("\n Invalid Data, Try Again\n");
+			System.out.println("\n***Invalid Data, Try Again***");
 		}
 		
 				// Make the payment
@@ -380,11 +414,10 @@ public class Gym460 {
 			while (true) {
 				System.out.println("\nChoose Member from the following:");
 				QueryManager.showAllMembers(dbconn);
-				System.out.print("\nEnter Member ID: ");
+				System.out.print("\nEnter M#: ");
 				mno = sc.nextLine().strip();
 				miCheck = Validation.validateInt(mno);
-				Member m = QueryManager.getMember(dbconn, mno);
-				if(m != null) {
+				if(miCheck && QueryManager.getMember(dbconn, mno) != null) {
 					mbCheck = true;
 				}
 				System.out.println("\nChoose Equipment from the following:");
@@ -404,10 +437,10 @@ public class Gym460 {
 					break;
 				}
 				else if(!avCheck) {
-					System.out.println("Not enough Equipment available, sorry.");
+					System.out.println("\nNot enough Equipment available, sorry.");
 				}
 				else {
-					System.out.println("\n Invalid Data, Try Again\n");
+					System.out.println("\n***Invalid Data, Try Again***");
 				}
 			}
 			
