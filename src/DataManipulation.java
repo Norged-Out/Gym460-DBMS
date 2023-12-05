@@ -232,7 +232,7 @@ public class DataManipulation {
 	        // Collect the E# values in the availableEquipmentNumbers ArrayList
 	        while (resultSet.next() && counter<=quantity) {
 	            int equipmentNumber = resultSet.getInt("E#");
-	            borrowEquipmentHelper(dbconn,Mno,equipmentNumber);
+	            borrowEquipmentHelper(dbconn,Mno,equipmentNumber, eType);
 	            counter++;
 	        }
 	        
@@ -244,7 +244,7 @@ public class DataManipulation {
 	            XID = answer.getInt(1) + 1; 
 	        }
 	        String insertQuery = "INSERT INTO Transaction (X#, M#, XDate, Amount, XType, EType) " +
-	            "VALUES (" + XID + ", " + Mno + ", TO_DATE(SYSDATE, 'YYYY-MM-DD'), 0 , 'Checkout', '"+eType+"')";
+	            "VALUES (" + XID + ", " + Mno + ", SYSDATE, " + quantity + ", 'Checkout', '"+eType+"')";
 	        // Execute the INSERT statement
 	        stmt.executeUpdate(insertQuery);
 	        return XID;
@@ -253,13 +253,15 @@ public class DataManipulation {
 	    }
 	    return -1;
 	}
-	private static int borrowEquipmentHelper(Connection dbconn, int Mno, int ENo) {
+	private static int borrowEquipmentHelper(Connection dbconn, int Mno, int ENo, String EType) {
 		Statement stmt = null;
 		try {
 	        stmt = dbconn.createStatement();
 	        
 	        //********************set M# in the Equipment table********************
-	        String updateQuery = "UPDATE Equipment SET M# = " + Mno + " WHERE E# = " + ENo;
+	        String updateQuery = "UPDATE Equipment SET M# = " + Mno
+	        					 + " WHERE E# = " + ENo
+	        					 + " AND EType = '" + EType + "'";
 	        // Execute the UPDATE statement
 	        stmt.executeUpdate(updateQuery);
 	        return 1;
