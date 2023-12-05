@@ -247,7 +247,7 @@ public class Gym460 {
 			// If course is not empty, notify the members
 			if(!Validation.isCourseEmpty(c)) {
 				System.out.println("\nThe following members are enrolled in this course");
-				// Display all members enrolled in a certain course
+				QueryManager.showMembersEnrolled(dbconn, cName);
 				System.out.print("\nNotify them to proceed with course deletion? (y/n): ");
 				userInput = sc.nextLine().strip();
 				if(!userInput.toLowerCase().equals("y")) {
