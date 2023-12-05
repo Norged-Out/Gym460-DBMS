@@ -449,27 +449,43 @@ public class QueryManager {
         return coursesList;
     }
 	
+	
 	// LinkedList can be empty but not null	
-	protected static LinkedList<Equipment> getEquipmentList(Connection dbconn, String eType) {
-		final String query = "SELECT * FROM Equipment WHERE EType = '" + eType + "'";
+	protected static LinkedList<Equipment> getEquipmentList(
+			Connection dbconn, String eType, boolean allData) {
+		String query = "SELECT * FROM Equipment";
+		String specific = " WHERE EType = '" + eType + "'";
 		Statement stmt = null;
 		ResultSet answer = null;
 	    LinkedList<Equipment> equipmentList = new LinkedList<>();
-	    if(eType.equals("")) {
+	    if(!allData && eType.equals("")) {
 			return equipmentList;
 		}
+	    if(!allData) {
+	    	query = query.concat(specific);
+	    }
 	    try {
 	        stmt = dbconn.createStatement();
 	        answer = stmt.executeQuery(query);
 	        
 	        if (answer != null) {
 		        while (answer.next()) {
-		        	Integer mNumber = (Integer) answer.getObject("M#"); // This will be null if the column is SQL NULL
-		            equipmentList.add(new Equipment(
-		            		answer.getInt("E#"),
-		            		answer.getString("EType"),
-		            		mNumber // Can be null
-		            		));
+		        	// This will be null if the column is SQL NULL
+		        	int mNumber = answer.getInt("M#");
+                    if (mNumber == 0) {
+                        equipmentList.add(new Equipment(
+                                answer.getInt("E#"),
+                                answer.getString("EType"),
+                                null // Can be null
+                                ));
+                    } 
+                    else {
+	                    equipmentList.add(new Equipment(
+	                            answer.getInt("E#"),
+	                            answer.getString("EType"),
+	                            mNumber
+	                            ));
+                    }
 		        }
 	        }
 	    } catch (SQLException e) {
