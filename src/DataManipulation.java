@@ -25,9 +25,9 @@ public class DataManipulation {
 	        ResultSet coursesResultSet = stmt.executeQuery(getCoursesQuery);
 	        String c1="",c2="";
 	        if(coursesResultSet.next()) {
-	         c1 = coursesResultSet.getString("C1");}
-	        if(coursesResultSet.next()) {
-	         c2 = coursesResultSet.getString("C2");}
+	        	c1 = coursesResultSet.getString("C1");
+	        	c2 = coursesResultSet.getString("C2");
+	        }
 	        
 	        // ******************** Get cost of package *******************************
 	        String getCostQuery = "SELECT Price FROM Package WHERE PName = '" + pName + "'";
@@ -97,9 +97,9 @@ public class DataManipulation {
 	        ResultSet coursesResultSet = stmt.executeQuery(getCoursesQuery);
 	        String c1="",c2="";
 	        if (coursesResultSet.next()) {
-	        	 c1 = coursesResultSet.getString("C1");}
-	        if (coursesResultSet.next()) {
-	        	 c2 = coursesResultSet.getString("C2");}
+	        	c1 = coursesResultSet.getString("C1");
+	        	c2 = coursesResultSet.getString("C2");
+	        }
 	        
 	        //********************Delete the member********************
 	        // Create a DELETE statement to remove the member with the specified mId

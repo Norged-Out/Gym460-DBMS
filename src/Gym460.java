@@ -76,13 +76,8 @@ public class Gym460 {
 		}
 		else if(userInput.equals("2")) {
 			
-			String mno = null;
-			
-					// Series of Validation checks
-			
-			boolean miCheck = false, // m# is an integer
-					meCheck = false, // m# actually exists
-					mbCheck = false; // balance is paid off
+			String mno = null;			
+			boolean miCheck = false;
 					
 					// Loop until all input is approved
 			
@@ -91,11 +86,8 @@ public class Gym460 {
 				QueryManager.showAllMembers(dbconn);
 				System.out.print("\nEnter the M# to delete: ");
 				mno = sc.nextLine().strip();
-				miCheck = Validation.validateInt(mno);
+				miCheck = Validation.validateInt(mno); // m# is an integer
 				if(miCheck && QueryManager.getMember(dbconn, mno) != null) {
-					meCheck = true;
-				}
-				if(miCheck && meCheck) {
 					break;
 				}
 				System.out.println("\n***Invalid Data, Try Again***");
@@ -103,7 +95,7 @@ public class Gym460 {
 					
 					// Verify that balance is non-negative
 			
-			mbCheck = Validation.memberbalanceGood(QueryManager.getMember(dbconn, mno));
+			boolean mbCheck = Validation.memberbalanceGood(QueryManager.getMember(dbconn, mno));
 			if(!mbCheck) {
 				System.out.println("\nBalance is not paid off, cannot delete");
 				return true;
@@ -214,6 +206,22 @@ public class Gym460 {
 			System.out.println("Added Course " + cName);
 		}
 		else if(userInput.equals("2")) {
+			
+					// Strings to use for user input
+	
+			String cName = null,
+					  c1 = null,
+					  c2 = null,
+				   price = null;
+			
+					// Series of Validation checks
+			
+			boolean c1Check = false,
+					c2Check = false,
+					prCheck = false,
+					cfCheck = false;
+			
+			
 			System.out.print("Enter the Course to delete: ");
 			userInput = sc.nextLine().strip();
 			Course choice = QueryManager.getCourse(dbconn, userInput);
@@ -315,6 +323,7 @@ public class Gym460 {
 			System.out.println("Added Package " + pName);
 		}
 		else if(userInput.equals("2")) {
+			
 			System.out.println("List of all Packages:");
 			QueryManager.showAllPackages(dbconn);
 			String oldPName = null,
@@ -330,10 +339,33 @@ public class Gym460 {
 			// Obtain new details
 		}
 		else if(userInput.equals("3")) {
-			System.out.print("Enter the Package to delete: ");
-			userInput = sc.nextLine().strip();
-			int mno = Integer.parseInt(userInput);
-			System.out.println("M# " + mno + " is deleted");
+			
+			String pName = null;
+			Package p = null;	
+
+					// Loop until all input is approved
+			
+			while(true) {
+				System.out.println("\nChoose Package from the following:");
+				QueryManager.showAllPackages(dbconn);
+				System.out.print("\nEnter the PName to delete: ");
+				pName = sc.nextLine().strip();
+				p = QueryManager.getPackage(dbconn, pName);
+				if(p != null) {
+					break;
+				}
+				System.out.println("\n***Invalid Data, Try Again***");
+			}
+			Course c1 = QueryManager.getCourse(dbconn, p.c1),
+				   c2 = QueryManager.getCourse(dbconn, p.c2);
+			if(Validation.canDeletePackage(p, c1, c2)) {
+				DataManipulation.deletePackage(dbconn, pName);
+				System.out.println("Package " + pName + " is deleted");
+			}
+			else {
+				System.out.println("Unable to delete active package");
+			}
+			
 		}
 		else {
 			return false;
