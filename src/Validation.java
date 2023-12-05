@@ -3,7 +3,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneOffset;
-// import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.LinkedList;
 
@@ -30,7 +29,8 @@ public class Validation {
 	 * 
 	 * @param memberID is the memberID of the member.
 	 * 
-	 * @return a list of equipment that was loaned to the member or if none, return null.
+	 * @return a list of equipment that was loaned to the member or if none, 
+	 * 	return an empty list.
 	 */
 	protected static LinkedList<Equipment> equipmentCheck(LinkedList<Equipment> equipment, int memberID) {
 
@@ -41,7 +41,7 @@ public class Validation {
 		for (Equipment equip : equipment) {
 			
 			// if the equipment is loaned to the member
-			if (equip.m == memberID) {
+			if (equip.m != null && equip.m == memberID) {
 
 				// add it to the lost equipment list
 				lostEquipment.add(equip);
@@ -50,7 +50,7 @@ public class Validation {
 
 		}// end for
 
-		// return null, if the member has no unreturned equipment
+		// return the list 
 		return null;
 
 	}// end equipmentCheck
@@ -64,7 +64,7 @@ public class Validation {
 	 * 
 	 * @return true if the member has a non-negative balance, else return false.
 	 */
-	protected static boolean balanceCheck(Member member) {
+	protected static boolean memberbalanceGood(Member member) {
 
 		// if the member's balance is negative
 		if (member.balance < 0) {
@@ -77,7 +77,7 @@ public class Validation {
 		// if balance is non-negative, return true
 		return true;
 
-	}// end balanceCheck
+	}// end memberbalanceGood
 
 
 
@@ -118,6 +118,32 @@ public class Validation {
 		return false;
 
 	}// end isCourseActive
+
+
+	/**
+	 * This method takes a Course object and determines if it has not yet ended.
+	 * 
+	 * @param course is the course to be checked.
+	 * 
+	 * @return true if the course has not yet ended, else return false.
+	 */
+	protected static boolean canAddCourseToPackage(Course course) {
+		
+		// if the course is null, return false
+		if (course == null) {
+
+			// cannot add a null Course to a package
+			return false;
+
+		}// end if
+		
+		// create a date object for the current date
+		Date currentDate = new Date();
+
+		// if the course has not yet ended (ends after today), return true, else false
+		return course.endDate.after(currentDate);
+
+	}// end canAddCourseToPackage
 
 
 	/**
@@ -167,16 +193,8 @@ public class Validation {
 
 		}// end if
 
-		// if the course is empty
-		if (course.enrollCount == 0) {
-
-			// return true
-			return true;
-
-		}// end if
-
-		// if the course is not empty, return false
-		return false;
+		// if the course is empty return true, else return false
+		return !(course.enrollCount > 0);
 
 	}// end isCourseEmpty
 
@@ -201,8 +219,6 @@ public class Validation {
 	protected static boolean noTrainerScheduleConflict(LinkedList<Course> courses, String dow, String start, String end) {
 
 		// create LocalDateTime objects for the new course start date and end date
-//		LocalDateTime newStartDateTime	= dateToLocalDateTime(stringToDate(start));
-//		LocalDateTime newEndDateTime	= dateToLocalDateTime(stringToDate(end));
 		LocalDateTime newStartDateTime	= stringToLocalDateTime(start);
 		LocalDateTime newEndDateTime	= stringToLocalDateTime(end);
 
@@ -359,15 +375,8 @@ public class Validation {
 	 */
 	protected static boolean isPackageActive(Package thePackage) {
 
-		// if the package is null, return false
-		if (thePackage == null) {
-
-			return false;
-
-		}// end if
-
-		// if the dates are null, return false
-		if (thePackage.startDate == null || thePackage.endDate == null) {
+		// if the package is null or if the dates are null, return false
+		if (thePackage == null || thePackage.startDate == null || thePackage.endDate == null) {
 
 			return false;
 
@@ -376,18 +385,50 @@ public class Validation {
 		// create a date object for the current date
 		Date currentDate = new Date();
 
-		// if the package is "active"
-		if (thePackage.startDate.before(currentDate) && thePackage.endDate.after(currentDate)) {
-
-			// return true
-			return true;
-
-		}// end if
-
-		// if the package is not active, return false
-		return false;
+		// if the package is "active" return true, else return false
+		return thePackage.startDate.before(currentDate) && thePackage.endDate.after(currentDate);
 
 	}// end isPackageActive
+
+
+	/**
+	 * This method takes the two package courses and determines if there are 
+	 * 	members enrolled in them.
+	 * 
+	 * @param c1 is the first course.
+	 * 
+	 * @param c2 is the second course.
+	 * 
+	 * @return true if there are no members enrolled in the courses, else return false.
+	 */
+	protected static boolean noMembersEnrolled(Course c1, Course c2) {
+		
+		// if there are no members enrolled in either course 
+		// 	return true, else return false
+		return isCourseEmpty(c1) && isCourseEmpty(c2);
+
+	}// end noMembersEnrolled
+
+
+	/**
+	 * This method takes a Package object and its two courses and determines 
+	 * 	if the package can be deleted.
+	 * 
+	 * @param thePackage is the package to be checked.
+	 * 
+	 * @param c1 is the first course.
+	 * 
+	 * @param c2 is the second course.
+	 * 
+	 * @return true if the package can be deleted, else return false.
+	 */
+	protected static boolean canDeletePackage(Package thePackage, Course c1, Course c2) {
+		
+		// if the package is not active or if there are no members enrolled 
+		// 	in either course, return true, else return false
+		return !isPackageActive(thePackage) || noMembersEnrolled(c1, c2);
+		
+	}// end canDeletePackage
 
 
 
@@ -869,18 +910,14 @@ public class Validation {
 
 
 	/**
-//	 * This method takes a string representation of a date and returns a date 
-//	 * 	object similar to the SQL toDate() function.
 	 * This method takes a string representation of a date and returns a  
 	 * 	LocalDateTime object similar to the SQL toDate() function.
 	 * The date string format is YYYY-MM-DD HH:MI.
 	 * 
 	 * @param date is the string representation of the date to be converted.
 	 * 
-//	 * @return a date object.
 	 * @return a LocalDateTime object.
 	 */
-	// protected static Date stringToDate(String date) {
 	protected static LocalDateTime stringToLocalDateTime(String date) {
 
 		int year	= Integer.parseInt(date.substring(0, 4));
@@ -889,15 +926,9 @@ public class Validation {
 		int hour	= Integer.parseInt(date.substring(11, 13));
 		int minute	= Integer.parseInt(date.substring(14, 16));
 
-//		// // create a date object
-//		// LocalDateTime tempLDT = LocalDateTime.of(year, month, day, hour, minute);
-//		// ZonedDateTime tempZDT = tempLDT.atZone(ZoneOffset.ofHours(0));
-
 		// return the converted date object
-//		// return new Date(tempZDT.toInstant().toEpochMilli());
 		return LocalDateTime.of(year, month, day, hour, minute);
 
-//	}// end stringToDate
 	}// end stringToLocalDateTime
 
 
