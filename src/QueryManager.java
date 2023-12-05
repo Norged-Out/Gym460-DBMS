@@ -115,6 +115,30 @@ public class QueryManager {
 		}
 	}
 	
+	protected static void query4(Connection dbconn, String eType) {
+		final String query =
+				"SELECT m.FirstName, m.LastName, x.XDate" 
+				+ " FROM Transaction x"
+				+ " JOIN Member m"
+				+ " ON x.M# = m.M#"
+				+ " WHERE x.EType = '" + eType +"'";
+		Statement stmt = null;
+		ResultSet answer = null;
+		try {
+			stmt = dbconn.createStatement();
+			answer = stmt.executeQuery(query);
+
+			if (answer == null) {
+				System.out.println("No Outputs.");
+				return;
+			}
+			stmt.close();
+		} catch (SQLException e) {
+			handleSQLException(e, query);
+		}
+		
+	}
+	
 	protected static void showAllMembers(Connection dbconn) {
 		final String query = "SELECT M#, FirstName, LastName FROM Member";
 		Statement stmt = null;

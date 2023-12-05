@@ -221,31 +221,105 @@ public class Gym460 {
 			System.out.println("Added Course " + cName);
 		}
 		else if(userInput.equals("2")) {
-			
-					// Strings to use for user input
 	
-			String cName = null,
-					  c1 = null,
-					  c2 = null,
-				   price = null;
+			String cName = null;
+			Course c = null;	
+
+					// Loop until all input is approved
 			
-					// Series of Validation checks
+			while(true) {
+				System.out.println("\nChoose courses from the following");
+				QueryManager.showAllCourses(dbconn);
+				cName = sc.nextLine().strip();
+				c = QueryManager.getCourse(dbconn, cName);
+				if(c != null) {
+					break;
+				}
+				System.out.print("\n***Invalid Data Provided***\n"
+						+ "Press 'c' to retry, other keys to exit: ");
+				userInput = sc.nextLine().strip();
+				if(!userInput.toLowerCase().equals("c")) {
+					return true;
+				}
+			}
 			
-			boolean c1Check = false,
-					c2Check = false,
-					prCheck = false,
-					cfCheck = false;
+			// If course is not empty, notify the members
+			if(!Validation.isCourseEmpty(c)) {
+				System.out.println("\nThe following members are enrolled in this course");
+				// Display all members enrolled in a certain course
+				System.out.print("\nNotify them to proceed with course deletion? (y/n): ");
+				userInput = sc.nextLine().strip();
+				if(!userInput.toLowerCase().equals("y")) {
+					System.out.println("Course not deleted");
+					return true;
+				}
+			}
 			
-			
-			System.out.print("Enter the Course to delete: ");
-			userInput = sc.nextLine().strip();
-			Course choice = QueryManager.getCourse(dbconn, userInput);
-			System.out.println("Course " + userInput + " is deleted");
+			// Obtain a LinkedList of all packages having those courses
+			// Update them to not have it anymore
+			DataManipulation.deleteCourse(dbconn, cName);
+			System.out.println("Course " + cName + " is deleted");
 		}
 		else {
 			return false;
 		}		
 		return true;
+	}
+	
+	private static LinkedList<String> packageHelper(
+			Scanner sc, Connection dbconn){
+		LinkedList<String> retval = null;
+		
+				// Series of Validation checks
+			
+		boolean c1Check = false,
+				c2Check = false,
+				prCheck = false,
+				cfCheck = false;
+		
+		System.out.println("\nChoose courses from the following");
+		QueryManager.showAllCourses(dbconn);			
+		System.out.print("\nChoose Course 1: ");
+		String c1 = sc.nextLine().strip();
+		System.out.print("Choose Course 2: ");
+		String c2 = sc.nextLine().strip();
+		System.out.print("Enter a price for the package: ");
+		String price = sc.nextLine().strip();
+		prCheck = Validation.validateFloat(price);
+		
+		Course course1 = null, course2 = null;
+		
+		if (c1.equals("")) {
+			c1 = null;
+			c1Check = true;
+		}
+		else {
+			course1 = QueryManager.getCourse(dbconn, c1);
+			if (course1 != null) {
+				c1Check = true;
+			}
+		}
+		
+		if (c2.equals("")) {
+			c2 = null;
+			c2Check = true;
+		}
+		else {
+			course2 = QueryManager.getCourse(dbconn, c2);
+			if (course2 != null) {
+				c2Check = true;
+			}
+		}
+		cfCheck = Validation.noCourseScheduleConflict(course1, course2);
+		
+		if(c1Check && c2Check && prCheck && cfCheck) {
+			retval = new LinkedList<String>();
+			retval.add(0, c1);
+			retval.add(1, c2);
+			retval.add(2, price);
+		}
+			
+		return retval;
 	}
 	
 	private static boolean handlePackage(
@@ -259,24 +333,8 @@ public class Gym460 {
 		userInput = sc.nextLine().strip();
 		if(userInput.equals("1")) {
 
-					// Strings to use for user input
-	
-			String pName = null,
-					  c1 = null,
-					  c2 = null,
-				   price = null;
-			
-					// Series of Validation checks
-			
-			boolean c1Check = false,
-					c2Check = false,
-					prCheck = false,
-					cfCheck = false;
-			
-					// Obtain the two courses for the package
-			
-			Course course1 = null,
-				   course2 = null;
+			String pName = null;			
+			LinkedList<String> info = null;
 			
 					// Loop until all input is approved
 			
@@ -286,41 +344,54 @@ public class Gym460 {
 				if(QueryManager.getPackage(dbconn, pName) != null) {
 					System.out.println("Package already exists");
 					continue;
-				}	
-				System.out.println("\nChoose courses from the following");
-				QueryManager.showAllCourses(dbconn);			
-				System.out.print("\nChoose Course 1: ");
-				c1 = sc.nextLine().strip();
-				System.out.print("Choose Course 2: ");
-				c2 = sc.nextLine().strip();
-				System.out.print("Enter a price for the package: ");
-				price = sc.nextLine().strip();
-				prCheck = Validation.validateFloat(price);
-				
-				if (c1.equals("")) {
-					c1 = null;
-					c1Check = true;
 				}
-				else {
-					course1 = QueryManager.getCourse(dbconn, c1);
-					if (course1 != null) {
-						c1Check = true;
-					}
+				info = packageHelper(sc, dbconn);
+				if(info != null) {
+					break;
+				}				
+				System.out.print("\n***Invalid Data Provided***\n"
+						+ "Press 'c' to retry, other keys to exit: ");
+				userInput = sc.nextLine().strip();
+				if(!userInput.toLowerCase().equals("c")) {
+					return true;
 				}
-				
-				if (c2.equals("")) {
-					c2 = null;
-					c2Check = true;
-				}
-				else {
-					course2 = QueryManager.getCourse(dbconn, c2);
-					if (course2 != null) {
-						c2Check = true;
-					}
-				}
-				cfCheck = Validation.noCourseScheduleConflict(course1, course2);
-				
-				if(c1Check && c2Check && prCheck && cfCheck) {
+			}
+			
+					// Get information from the helper
+			
+			String c1 = info.get(0),
+				   c2 = info.get(1);
+			float pcost = Float.parseFloat(info.get(2));
+					
+					// Obtain the two courses for the package
+			
+			Course course1 = QueryManager.getCourse(dbconn, c1),
+				   course2 = QueryManager.getCourse(dbconn, c2);
+			
+					// Add the Package to the Database
+			
+			LinkedList<String> dates = Validation.courseToPackageDates(course1, course2);
+			String startDate = dates.get(0);
+			String endDate = dates.get(1);
+			
+			DataManipulation.insertPackage(dbconn, pName, c1, c2, pcost, startDate, endDate);			
+			System.out.println("Added Package " + pName);
+		}
+		else if(userInput.equals("2")) {
+			
+			String pName = null;
+			Package p = null;
+			LinkedList<String> info = null;
+
+					// Loop until all input is approved
+			
+			while(true) {
+				System.out.println("\nList of all Packages:");
+				QueryManager.showAllPackages(dbconn);
+				System.out.print("\nWhich package would you like to update? ");
+				pName = sc.nextLine().strip();
+				p = QueryManager.getPackage(dbconn, pName);
+				if(p != null) {
 					break;
 				}
 				System.out.print("\n***Invalid Data Provided***\n"
@@ -331,53 +402,50 @@ public class Gym460 {
 				}
 			}
 			
+					// Check if package can be updated
+			
+			Course curr1 = QueryManager.getCourse(dbconn, p.c1),
+				   curr2 = QueryManager.getCourse(dbconn, p.c2);
+			if(!Validation.canDeletePackage(p, curr1, curr2)) {
+				System.out.println("\n***Cannot update this package***"
+						+ "There are members currently enrolled in it");
+				return true;
+			}
+			
+					// Loop to obtain new details
+			
+			while(true) {
+				info = packageHelper(sc, dbconn);
+				if(info != null) {
+					break;
+				}				
+				System.out.print("\n***Invalid Data Provided***\n"
+						+ "Press 'c' to retry, other keys to exit: ");
+				userInput = sc.nextLine().strip();
+				if(!userInput.toLowerCase().equals("c")) {
+					return true;
+				}
+			}
+			
+					// Get information from the helper
+			
+			String c1 = info.get(0),
+				   c2 = info.get(1);
+			float pcost = Float.parseFloat(info.get(2));
+					
+					// Obtain the two courses for the package
+			
+			Course course1 = QueryManager.getCourse(dbconn, c1),
+				   course2 = QueryManager.getCourse(dbconn, c2);
+			
 					// Add the Package to the Database
 			
 			LinkedList<String> dates = Validation.courseToPackageDates(course1, course2);
 			String startDate = dates.get(0);
 			String endDate = dates.get(1);
-			float pcost = Float.parseFloat(price);
 			
-			DataManipulation.insertPackage(dbconn, pName, c1, c2, pcost, startDate, endDate);
-			
-			System.out.println("Added Package " + pName);
-		}
-		else if(userInput.equals("2")) {
-			
-
-					// Strings to use for user input
-	
-			String pName = null,
-					  c1 = null,
-					  c2 = null,
-				   price = null;
-			
-					// Series of Validation checks
-			
-			boolean c1Check = false,
-					c2Check = false,
-					prCheck = false,
-					cfCheck = false;
-			
-					// Obtain the two courses for the package
-			
-			Course course1 = null,
-				   course2 = null;
-			
-			
-			System.out.println("List of all Packages:");
-			QueryManager.showAllPackages(dbconn);
-			String oldPName = null,
-				   newPName = null,
-				   newC1 = null,
-				   newC2 = null,
-				   newPrice = null;
-			
-			System.out.print("\nWhich package would you like to update? ");
-			oldPName = sc.nextLine().strip();
-			
-			// TODO if package name is correct, return an object
-			// Obtain new details
+			// Update the package
+			System.out.println("Updated Package " + pName);
 		}
 		else if(userInput.equals("3")) {
 			
@@ -538,10 +606,34 @@ public class Gym460 {
 			int m = Integer.parseInt(mno);
 			int q = Integer.parseInt(qty);
 			int xno = DataManipulation.borrowEquipment(dbconn, m, q, eType);
-			System.out.println("Transaction successful");
+			System.out.println("Equipment borrowed");
 			QueryManager.printTransactionDetails(dbconn, xno);			
 		}
 		else if(userInput.equals("2")) {
+			
+			String mno = null;
+			
+					// Loop until all input is approved
+			
+			while (true) {
+				System.out.println("\nChoose Member from the following:");
+				QueryManager.showAllMembers(dbconn);
+				System.out.print("\nEnter M#: ");
+				mno = sc.nextLine().strip();
+				if(Validation.validateInt(mno) && QueryManager.getMember(dbconn, mno) != null) {
+					break;
+				}
+				System.out.print("\n***Invalid Data Provided***\n"
+						+ "Press 'c' to retry, other keys to exit: ");
+				userInput = sc.nextLine().strip();
+				if(!userInput.toLowerCase().equals("c")) {
+					return true;
+				}
+			}
+			
+			// return all equipment associated with them
+			System.out.println("Equipment returned");
+			//QueryManager.printTransactionDetails(dbconn, xno);	
 			
 		}
 		else {
