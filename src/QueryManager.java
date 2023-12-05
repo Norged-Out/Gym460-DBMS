@@ -464,12 +464,22 @@ public class QueryManager {
 	        
 	        if (answer != null) {
 		        while (answer.next()) {
-		        	Integer mNumber = (Integer) answer.getObject("M#"); // This will be null if the column is SQL NULL
-		            equipmentList.add(new Equipment(
-		            		answer.getInt("E#"),
-		            		answer.getString("EType"),
-		            		mNumber // Can be null
-		            		));
+		        	// This will be null if the column is SQL NULL
+		        	int mNumber = answer.getInt("M#");
+                    if (mNumber == 0) {
+                        equipmentList.add(new Equipment(
+                                answer.getInt("E#"),
+                                answer.getString("EType"),
+                                null // Can be null
+                                ));
+                    } 
+                    else {
+	                    equipmentList.add(new Equipment(
+	                            answer.getInt("E#"),
+	                            answer.getString("EType"),
+	                            mNumber
+	                            ));
+                    }
 		        }
 	        }
 	    } catch (SQLException e) {

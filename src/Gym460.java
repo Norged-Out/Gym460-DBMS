@@ -51,7 +51,7 @@ public class Gym460 {
 				System.out.print("Enter 10-digit Phone Number: ");
 				phoneNo = sc.nextLine().strip();
 				phCheck = Validation.validatePhone(phoneNo);
-				System.out.println("Choose Package from the following:");
+				System.out.println("\nChoose Package from the following:");
 				QueryManager.showAllPackages(dbconn);			
 				System.out.print("\nEnter Package Name to enroll into: ");
 				pName = sc.nextLine().strip();
@@ -151,7 +151,7 @@ public class Gym460 {
 				day = day.toUpperCase();
 				start = Validation.concatDateAndTime(startDate, startTime);
 				end = Validation.concatDateAndTime(endDate, endTime);
-				System.out.println("Choose a trainer for the course");
+				System.out.println("\nChoose a trainer for the course");
 				QueryManager.showAllTrainers(dbconn);
 				System.out.print("\nEnter T#: ");
 				tNo = sc.nextLine().strip();
@@ -229,7 +229,7 @@ public class Gym460 {
 					System.out.println("Package already exists");
 					continue;
 				}	
-				System.out.println("Choose courses from the following");
+				System.out.println("\nChoose courses from the following");
 				QueryManager.showAllCourses(dbconn);			
 				System.out.print("\nChoose Course 1: ");
 				c1 = sc.nextLine().strip();
@@ -323,7 +323,7 @@ public class Gym460 {
 				// Loop until all input is approved
 		
 		while (true) {
-			System.out.println("Choose Member from the following:");
+			System.out.println("\nChoose Member from the following:");
 			QueryManager.showAllMembers(dbconn);			
 			System.out.print("\nEnter Member ID: ");
 			mno = sc.nextLine().strip();
@@ -378,7 +378,7 @@ public class Gym460 {
 					// Loop until all input is approved
 			
 			while (true) {
-				System.out.println("Choose Member from the following:");
+				System.out.println("\nChoose Member from the following:");
 				QueryManager.showAllMembers(dbconn);
 				System.out.print("\nEnter Member ID: ");
 				mno = sc.nextLine().strip();
@@ -387,7 +387,7 @@ public class Gym460 {
 				if(m != null) {
 					mbCheck = true;
 				}
-				System.out.println("Choose Equipment from the following:");
+				System.out.println("\nChoose Equipment from the following:");
 				QueryManager.showAllEquipment(dbconn);
 				System.out.print("\nChoose Equipment Type: ");
 				eType = sc.nextLine().strip();
