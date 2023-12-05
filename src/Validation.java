@@ -87,6 +87,24 @@ public class Validation {
 	   ***** Course Validations *****
 	   ****************************** */
 
+
+	/**
+	 * This method takes a Course object and determines if it can be deleted.
+	 * 
+	 * @param theCourse is the course to be checked.
+	 * 
+	 * @return true if the course can be deleted, else return false.
+	 */
+	protected static boolean canDeleteCourse(Course theCourse) {
+		
+		// if the package is not active or if there are no members enrolled 
+		// 	in either course, return true, else return false
+		// return !isPackageActive(theCourse) || noMembersEnrolled(theCourse);
+		return !isCourseActive(theCourse) || isCourseEmpty(theCourse);
+		
+	}// end canDeletePackage
+	
+
 	/**
 	 * This method takes a Course object and determines if it is active.
 	 * 
@@ -106,16 +124,8 @@ public class Validation {
 		// create a date object for the current date
 		Date currentDate = new Date();
 
-		// if the course is "active"
-		if (course.startDate.before(currentDate) && course.endDate.after(currentDate)) {
-
-			// return true
-			return true;
-
-		}// end if
-
-		// if the course is not active, return false
-		return false;
+		// if the course is "active" return true, else return false
+		return course.startDate.before(currentDate) && course.endDate.after(currentDate);
 
 	}// end isCourseActive
 
