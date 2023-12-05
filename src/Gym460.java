@@ -10,8 +10,6 @@
 import java.util.*;
 import entities.Course;
 import entities.Equipment;
-import entities.Member;
-import entities.Trainer;
 import entities.Package;
 
 import java.sql.*;
@@ -244,8 +242,8 @@ public class Gym460 {
 				}
 			}
 			
-			// If course is not empty, notify the members
-			if(!Validation.isCourseEmpty(c)) {
+			// If course cannot be deleted, notify the members
+			if(!Validation.canDeleteCourse(c)) {
 				System.out.println("\nThe following members are enrolled in this course");
 				QueryManager.showMembersEnrolled(dbconn, cName);
 				System.out.print("\nNotify them to proceed with course deletion? (y/n): ");
@@ -532,7 +530,7 @@ public class Gym460 {
 		float pay = Float.parseFloat(amount);
 		int mid = Integer.parseInt(mno);
 		int xno = DataManipulation.makePayment(dbconn, pay, mid);
-		System.out.println("Transaction successful");
+		System.out.println("\nTransaction successful");
 		QueryManager.printTransactionDetails(dbconn, xno);
 		return true;
 	}
@@ -607,7 +605,7 @@ public class Gym460 {
 			int m = Integer.parseInt(mno);
 			int q = Integer.parseInt(qty);
 			int xno = DataManipulation.borrowEquipment(dbconn, m, q, eType);
-			System.out.println("Equipment borrowed");
+			System.out.println("\nEquipment borrowed");
 			QueryManager.printTransactionDetails(dbconn, xno);			
 		}
 		else if(userInput.equals("2")) {
@@ -633,7 +631,7 @@ public class Gym460 {
 			}
 			
 			// return all equipment associated with them
-			System.out.println("Equipment returned");
+			System.out.println("\nEquipment returned");
 			//QueryManager.printTransactionDetails(dbconn, xno);	
 			
 		}
