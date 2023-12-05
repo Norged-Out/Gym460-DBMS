@@ -357,7 +357,7 @@ public class QueryManager {
     }
 	
 	protected static Course getCourse(Connection dbconn, String cName) {
-		if(cName.equals("")) {
+		if(cName == null) {
 			return null;
 		}
 		final String query = "SELECT * FROM Course WHERE CName = '" + cName + "'";
@@ -407,7 +407,7 @@ public class QueryManager {
 		            		answer.getString("C2"),
 		            		answer.getDate("StartDate"),
 		            		answer.getDate("EndDate"),
-		            		answer.getDouble("Price")
+		            		answer.getFloat("Price")
 		            		);
 		        }
 	        }
@@ -524,7 +524,7 @@ public class QueryManager {
         return coursesList;
     }
 	
-	private static LinkedList<Package> getPackagesForCourse(Connection dbconn, String cName) {
+	protected static LinkedList<Package> getPackagesForCourse(Connection dbconn, String cName) {
         String query = "SELECT * FROM Package"
         		+ " WHERE C1 = '" + cName
         		+"' OR C2 = '" + cName + "'";
@@ -549,7 +549,7 @@ public class QueryManager {
                 		answer.getString("C2"),
                 		answer.getDate("StartDate"),
                 		answer.getDate("EndDate"),
-                		answer.getDouble("Price")
+                		answer.getFloat("Price")
                 		));
 
             }

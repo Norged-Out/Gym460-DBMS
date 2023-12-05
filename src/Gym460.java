@@ -255,7 +255,25 @@ public class Gym460 {
 			}
 			
 			// Obtain a LinkedList of all packages having those courses
+			LinkedList<Package> needUpdates = QueryManager.getPackagesForCourse(dbconn, cName);
 			// Update them to not have it anymore
+			for(Package p: needUpdates) {
+				String c1 = p.c1, c2 = p.c2;
+				String sd = (p.startDate == null) ? null : Validation.dateToString(p.startDate);
+				String ed = (p.endDate == null) ? null : Validation.dateToString(p.endDate);
+				if(c1 == null && c2 != null) {
+					DataManipulation.updatePackage(dbconn, p.pName, c1, c1, p.price, sd, ed);
+				}
+				else if(c1 != null && c2 == null) {
+					DataManipulation.updatePackage(dbconn, p.pName, c2, c2, p.price, sd, ed);
+				}
+				else if(c1 != null && c2 != null) {
+					c1 = (c1.equals(cName)) ? c2 : c1;
+					c2 = null;
+					DataManipulation.updatePackage(dbconn, p.pName, c1, c2, p.price, sd, ed);
+				}
+			}
+			System.out.println("Associated Packages Updated");
 			DataManipulation.deleteCourse(dbconn, cName);
 			System.out.println("Course " + cName + " is deleted");
 		}

@@ -10,11 +10,11 @@ public class Package {
     public String c2;
     public Date startDate;
     public Date endDate;
-    public double price;
+    public float price;
 
 
     // constructors
-    public Package(String pName, String c1, String c2, Date startDate, Date endDate, double price) {
+    public Package(String pName, String c1, String c2, Date startDate, Date endDate, float price) {
 
         // set to given values
         this.pName = pName;
@@ -34,7 +34,7 @@ public class Package {
         this.c2 = null;
         this.startDate = null;
         this.endDate = null;
-        this.price = 0.0;
+        this.price = 0;
 
     }// end empty constructor
 
