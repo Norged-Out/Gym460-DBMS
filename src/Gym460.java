@@ -44,7 +44,7 @@ public class Gym460 {
 					// Loop until all input is approved
 			
 			while (true) {			
-				System.out.print("Enter First Name: ");
+				System.out.print("\nEnter First Name: ");
 				firstName = sc.nextLine().strip();
 				System.out.print("Enter Last Name: ");
 				lastName = sc.nextLine().strip();
@@ -65,7 +65,12 @@ public class Gym460 {
 				if(phCheck && pnCheck && cfCheck) {
 					break;
 				}
-				System.out.println("\n***Invalid Data, Try Again***\n");
+				System.out.print("\n***Invalid Data Provided***\n"
+						+ "Press 'c' to retry, other keys to exit: ");
+				userInput = sc.nextLine().strip();
+				if(!userInput.toLowerCase().equals("c")) {
+					return true;
+				}
 			}
 			
 					// Add the Member to the Database
@@ -90,7 +95,12 @@ public class Gym460 {
 				if(miCheck && QueryManager.getMember(dbconn, mno) != null) {
 					break;
 				}
-				System.out.println("\n***Invalid Data, Try Again***");
+				System.out.print("\n***Invalid Data Provided***\n"
+						+ "Press 'c' to retry, other keys to exit: ");
+				userInput = sc.nextLine().strip();
+				if(!userInput.toLowerCase().equals("c")) {
+					return true;
+				}
 			}
 					
 					// Verify that balance is non-negative
@@ -150,7 +160,7 @@ public class Gym460 {
 					// Loop until all input is approved
 			
 			while (true) {
-				System.out.print("Enter Course Name: ");
+				System.out.print("\nEnter Course Name: ");
 				cName = sc.nextLine().strip();
 				if(QueryManager.getCourse(dbconn, cName) != null) {
 					System.out.println("Course already exists");
@@ -193,7 +203,12 @@ public class Gym460 {
 				if(cpCheck && sdCheck && edCheck && stCheck && etCheck && dwCheck && tnCheck && cfCheck) {
 					break;
 				}
-				System.out.println("\n***Invalid Data, Try Again***\n");
+				System.out.print("\n***Invalid Data Provided***\n"
+						+ "Press 'c' to retry, other keys to exit: ");
+				userInput = sc.nextLine().strip();
+				if(!userInput.toLowerCase().equals("c")) {
+					return true;
+				}
 			}
 			
 					// Add the Course to the Database
@@ -266,7 +281,7 @@ public class Gym460 {
 					// Loop until all input is approved
 			
 			while(true) {
-				System.out.print("Enter Package Name: ");
+				System.out.print("\nEnter Package Name: ");
 				pName = sc.nextLine().strip();
 				if(QueryManager.getPackage(dbconn, pName) != null) {
 					System.out.println("Package already exists");
@@ -308,7 +323,12 @@ public class Gym460 {
 				if(c1Check && c2Check && prCheck && cfCheck) {
 					break;
 				}
-				System.out.println("\n***Invalid Data, Try Again***\n");
+				System.out.print("\n***Invalid Data Provided***\n"
+						+ "Press 'c' to retry, other keys to exit: ");
+				userInput = sc.nextLine().strip();
+				if(!userInput.toLowerCase().equals("c")) {
+					return true;
+				}
 			}
 			
 					// Add the Package to the Database
@@ -323,6 +343,27 @@ public class Gym460 {
 			System.out.println("Added Package " + pName);
 		}
 		else if(userInput.equals("2")) {
+			
+
+					// Strings to use for user input
+	
+			String pName = null,
+					  c1 = null,
+					  c2 = null,
+				   price = null;
+			
+					// Series of Validation checks
+			
+			boolean c1Check = false,
+					c2Check = false,
+					prCheck = false,
+					cfCheck = false;
+			
+					// Obtain the two courses for the package
+			
+			Course course1 = null,
+				   course2 = null;
+			
 			
 			System.out.println("List of all Packages:");
 			QueryManager.showAllPackages(dbconn);
@@ -354,7 +395,12 @@ public class Gym460 {
 				if(p != null) {
 					break;
 				}
-				System.out.println("\n***Invalid Data, Try Again***");
+				System.out.print("\n***Invalid Data Provided***\n"
+						+ "Press 'c' to retry, other keys to exit: ");
+				userInput = sc.nextLine().strip();
+				if(!userInput.toLowerCase().equals("c")) {
+					return true;
+				}
 			}
 			Course c1 = QueryManager.getCourse(dbconn, p.c1),
 				   c2 = QueryManager.getCourse(dbconn, p.c2);
@@ -374,7 +420,7 @@ public class Gym460 {
 	}
 	
 	private static boolean handlePayment(
-			Scanner sc, Connection dbconn) {
+			Scanner sc, String userInput, Connection dbconn) {
 
 				// Strings to use for user input
 
@@ -404,7 +450,12 @@ public class Gym460 {
 			if(miCheck && pfCheck && mbCheck) {
 				break;
 			}
-			System.out.println("\n***Invalid Data, Try Again***");
+			System.out.print("\n***Invalid Data Provided***\n"
+					+ "Press 'c' to retry, other keys to exit: ");
+			userInput = sc.nextLine().strip();
+			if(!userInput.toLowerCase().equals("c")) {
+				return true;
+			}
 		}
 		
 				// Make the payment
@@ -469,10 +520,16 @@ public class Gym460 {
 					break;
 				}
 				else if(!avCheck) {
-					System.out.println("\nNot enough Equipment available, sorry.");
+					System.out.println("\nNot enough Equipment available");
+					return true;
 				}
 				else {
-					System.out.println("\n***Invalid Data, Try Again***");
+					System.out.print("\n***Invalid Data Provided***\n"
+							+ "Press 'c' to retry, other keys to exit: ");
+					userInput = sc.nextLine().strip();
+					if(!userInput.toLowerCase().equals("c")) {
+						return true;
+					}
 				}
 			}
 			
@@ -622,7 +679,7 @@ public class Gym460 {
         		executeFlag = handlePackage(sc, userInput, dbconn);
         		break;
         	case "4":
-        		executeFlag = handlePayment(sc, dbconn);
+        		executeFlag = handlePayment(sc, userInput, dbconn);
         		break;
         	case "5":
         		executeFlag = handleEquipment(sc, userInput, dbconn);
