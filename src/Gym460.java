@@ -230,6 +230,7 @@ public class Gym460 {
 			while(true) {
 				System.out.println("\nChoose courses from the following");
 				QueryManager.showAllCourses(dbconn);
+				System.out.print("\nChoose course to delete: ");
 				cName = sc.nextLine().strip();
 				c = QueryManager.getCourse(dbconn, cName);
 				if(c != null) {

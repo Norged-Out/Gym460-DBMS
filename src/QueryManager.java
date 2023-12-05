@@ -273,6 +273,37 @@ public class QueryManager {
 		}
 	}
 	
+	protected static void showMembersEnrolled(Connection dbconn, String cName) {
+        String query = "SELECT * FROM Member m"
+        		+ " JOIN Package p"
+        		+ " ON m.PName = p.PName"
+        		+ " WHERE p.C1 = '" + cName
+        		+ "' OR p.C2 = '" + cName + "'";
+
+        Statement stmt = null;
+        ResultSet answer = null;
+        try  {
+
+            stmt = dbconn.createStatement();
+            answer = stmt.executeQuery(query);
+
+            if (answer == null) {
+                System.out.println("No Member found");
+                return;
+            }
+
+            while (answer.next()) {
+                String firstName = answer.getString("FirstName");
+                String lastName = answer.getString("LastName");
+                int memberId = answer.getInt("M#");
+                System.out.println("Member ID: " + memberId + ", Name: " + firstName + " " + lastName);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+	
+	
 	protected static void printTransactionDetails(Connection dbconn, int xNumber) {
 		final String query = "SELECT * FROM Transaction WHERE X# = " + xNumber;
 		Statement stmt = null;
@@ -471,6 +502,42 @@ public class QueryManager {
 	    	handleSQLException(e, query);
         }
         return coursesList;
+    }
+	
+	private static LinkedList<Package> getPackagesForCourse(Connection dbconn, String cName) {
+        String query = "SELECT * FROM Package"
+        		+ " WHERE C1 = '" + cName
+        		+"' OR C2 = '" + cName + "'";
+        Statement stmt = null;
+        ResultSet answer = null;
+        LinkedList<Package> packageList = new LinkedList<>();
+
+        try  {
+
+            stmt = dbconn.createStatement();
+            answer = stmt.executeQuery(query);
+
+            if (answer == null) {
+                System.out.println("No Package found");
+                return null;
+            }
+
+            while (answer.next()) {
+                packageList.add(new Package(
+                		answer.getString("PName"),
+                		answer.getString("C1"),
+                		answer.getString("C2"),
+                		answer.getDate("StartDate"),
+                		answer.getDate("EndDate"),
+                		answer.getDouble("Price")
+                		));
+
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return packageList;
     }
 	
 	
