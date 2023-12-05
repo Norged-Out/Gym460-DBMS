@@ -109,8 +109,8 @@ public class Gym460 {
 				return true;
 			}
 			int m = Integer.parseInt(mno);
-			LinkedList<Equipment> allEquipment = QueryManager.getEquipmentList(dbconn, "", true);
-			LinkedList<Equipment> lostEquipment = Validation.equipmentCheck(allEquipment, m);
+			// LinkedList<Equipment> allEquipment = QueryManager.getEquipmentList(dbconn, "", true);
+			// LinkedList<Equipment> lostEquipment = Validation.equipmentCheck(allEquipment, m);
 			// Mark Equipment as Lost as needed
 			DataManipulation.deleteMember(dbconn, m);			
 			System.out.println("M# " + mno + " is deleted");
@@ -444,6 +444,7 @@ public class Gym460 {
 			String endDate = dates.get(1);
 			
 			// Update the package
+			DataManipulation.updatePackage(dbconn, pName, c1, c2, pcost, startDate, endDate);
 			System.out.println("Updated Package " + pName);
 		}
 		else if(userInput.equals("3")) {
@@ -631,8 +632,14 @@ public class Gym460 {
 			}
 			
 			// return all equipment associated with them
+			int m = Integer.parseInt(mno);
+			LinkedList<Integer> xnos = DataManipulation.returnEquipment(dbconn, m);
 			System.out.println("\nEquipment returned");
-			//QueryManager.printTransactionDetails(dbconn, xno);	
+			System.out.println("\nDetails:");
+			for(int x : xnos) {
+				System.out.println();
+				QueryManager.printTransactionDetails(dbconn, x);
+			}
 			
 		}
 		else {
