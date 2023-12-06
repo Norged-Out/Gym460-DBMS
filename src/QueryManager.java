@@ -299,10 +299,13 @@ public class QueryManager {
 				System.out.println("No members found.");
 				return;
 			}
-
+			 int row = 0;
 			// Displaying the results
-			System.out.println(String.format("%-10s %-20s %-20s", "Member ID", "First Name", "Last Name"));
 			while (answer.next()) {
+				if(row == 0) {
+					System.out.println(String.format("%-10s %-20s %-20s", "Member ID", "First Name", "Last Name"));
+				}
+				row++;
 				int memberId = answer.getInt("M#");
 				String firstName = answer.getString("FirstName");
 				String lastName = answer.getString("LastName");
@@ -467,17 +470,34 @@ public class QueryManager {
 
             // if transaction exists.
             if (answer.next()) {
+            	// Extracting details from the ResultSet
+	            int transactionNumber = answer.getInt("X#");
+	            int memberNumber = answer.getInt("M#");
+	            Date transactionDate = answer.getDate("XDate");
+	            float amount = answer.getFloat("Amount");
+	            String xType = answer.getString("XType");
+	            String eType = answer.getString("EType");
 
-                Transaction transaction = new Transaction(
-                		answer.getInt("X#"),
-                		answer.getInt("M#"),
-                		answer.getDate("XDate"),
-                		answer.getFloat("Amount"),
-                		answer.getString("XType"),
-                		answer.getString("EType")
-                );
+	            // Building and formatting the output message
+	            StringBuilder output = new StringBuilder();
+	            output.append(String.format("%-18s: %s\n", "Transaction Number", transactionNumber));
+	            output.append(String.format("%-18s: %s\n", "Transaction Type", xType));
+	            output.append(String.format("%-18s: %s\n", "Date", transactionDate));
+	            output.append(String.format("%-18s: %s\n", "Member Number", memberNumber));
 
-                System.out.println(transaction); 
+	            if (!"Credit".equals(xType) && !"Payment".equals(xType)) {
+	                int qty = (int) amount;
+	                output.append(String.format("%-18s: %d\n", "Quantity", qty));
+	            } else {
+	                output.append(String.format("%-18s: $%.2f\n", "Amount", amount));
+	            }
+
+	            if (eType != null && !"Credit".equals(xType) && !"Payment".equals(xType)) {
+	                output.append(String.format("%-18s: %s\n", "Equipment Type", eType));
+	            }
+
+	            // Print the constructed message
+	            System.out.println(output.toString());
             }
         } catch (SQLException e) {
         	handleSQLException(e, query);
@@ -485,7 +505,7 @@ public class QueryManager {
     }
 	
 	protected static Course getCourse(Connection dbconn, String cName) {
-		if(cName.equals("")) {
+		if(cName == null) {
 			return null;
 		}
 		final String query = "SELECT * FROM Course WHERE CName = '" + cName + "'";
@@ -535,7 +555,7 @@ public class QueryManager {
 		            		answer.getString("C2"),
 		            		answer.getDate("StartDate"),
 		            		answer.getDate("EndDate"),
-		            		answer.getDouble("Price")
+		            		answer.getFloat("Price")
 		            		);
 		        }
 	        }
@@ -652,7 +672,7 @@ public class QueryManager {
         return coursesList;
     }
 	
-	private static LinkedList<Package> getPackagesForCourse(Connection dbconn, String cName) {
+	protected static LinkedList<Package> getPackagesForCourse(Connection dbconn, String cName) {
         String query = "SELECT * FROM Package"
         		+ " WHERE C1 = '" + cName
         		+"' OR C2 = '" + cName + "'";
@@ -677,7 +697,7 @@ public class QueryManager {
                 		answer.getString("C2"),
                 		answer.getDate("StartDate"),
                 		answer.getDate("EndDate"),
-                		answer.getDouble("Price")
+                		answer.getFloat("Price")
                 		));
 
             }

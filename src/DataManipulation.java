@@ -1,4 +1,5 @@
 import java.sql.*;
+import java.util.*;
 
 public class DataManipulation {
 	
@@ -111,6 +112,10 @@ public class DataManipulation {
 	        {updateEnrollmentCount(dbconn, c1, "- 1");}
 	        if(c2!=null)
 	        {updateEnrollmentCount(dbconn, c2, "- 1");}
+	        //********************Mark equipment as lost*******************
+	        String updateQuery=" UPDATE Equipment SET M# = -1 WHERE M# = "+mId;
+	        stmt.executeUpdate(updateQuery);
+	        
 	        stmt.close(); // Close the Statement
 	        return 1; // Deletion successful
 	        
@@ -218,6 +223,29 @@ public class DataManipulation {
 	    } 
 	    return -1; // Return -1 to indicate an error
 	}
+	protected static int updatePackage(Connection dbconn, String pName, String c1, String c2, 
+	        float price, String startDate, String endDate) {
+		Statement stmt = null;
+	    try {
+	        stmt = dbconn.createStatement();
+	        // Handle nulls and format values
+	        c1 = c1 != null ? "'" + c1 + "'" : "NULL";
+	        c2 = c2 != null ? "'" + c2 + "'" : "NULL";
+	        startDate = startDate != null ? "TO_DATE('" + startDate + "', 'YYYY-MM-DD HH24:MI')" : "NULL";
+	        endDate = endDate != null ? "TO_DATE('" + endDate + "', 'YYYY-MM-DD HH24:MI')" : "NULL";
+
+	        // Create the UPDATE query
+	        String updateQuery = "UPDATE Package SET C1 = "+c1+" , C2 = "+c2+" , StartDate = "+startDate
+	        		+" , EndDate = "+endDate+" , Price = "+price+" WHERE PName = '"+pName+"'";
+	        // Execute the INSERT statement
+	        int rowsInserted = stmt.executeUpdate(updateQuery);
+	        stmt.close();
+	        return rowsInserted;
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	        return -1; // Indicate error
+	    } 
+	}
 	protected static int borrowEquipment(Connection dbconn, int Mno, int quantity, String eType) {
 		Statement stmt = null;
 	    ResultSet resultSet = null;
@@ -272,6 +300,55 @@ public class DataManipulation {
 	    return -1;
 	    
 	}
+	
+	/*
+	 * 
+	 * Return : A list containing the transaction numbers for all returned eTypes
+	 */
+	protected static LinkedList<Integer> returnEquipment(Connection dbconn, int Mno) {
+		Statement stmt = null;
+		ResultSet rs = null;
+		LinkedList<String> eTypes = new LinkedList<>();
+		LinkedList<Integer> transactions = new LinkedList<>();
+		String query = "SELECT DISTINCT EType FROM Equipment WHERE M# = " + Mno;
+		try {
+	        stmt = dbconn.createStatement();
+	        rs = stmt.executeQuery(query);
+	        
+	        //********************First get all the eTypes that the member has borrowed*************
+	        while (rs.next()) {
+                eTypes.add(rs.getString("EType"));
+            }
+	        //*********************Get the current max XID***********************
+	        int XID = 1; // Default value if the table is empty
+	        query = "SELECT MAX(X#) FROM Transaction";
+	        ResultSet answer = stmt.executeQuery(query);
+	        if (answer.next()) {
+	            XID = answer.getInt(1) + 1; 
+	        }
+	        //********************For each eType, return all the equipments*******************
+	        for(String equipment:eTypes) {
+	        	String updateQuery = "UPDATE Equipment SET M# = NULL WHERE EType = '" 
+	        							+ equipment + "' AND M# = " + Mno;
+	        	int rowsModified=stmt.executeUpdate(updateQuery);
+	        	
+	        	//*******************Create a transaction***********************************
+		        String insertQuery = "INSERT INTO Transaction (X#, M#, XDate, Amount, XType, EType) " +
+		            "VALUES (" + XID + ", " + Mno + ", SYSDATE, " + rowsModified + ", 'Return', '"+equipment+"')";
+		        // Execute the INSERT statement
+		        stmt.executeUpdate(insertQuery);
+		        transactions.add(XID);
+		        XID++;
+	        }
+	        stmt.close();
+		}
+		catch (SQLException e) {
+            e.printStackTrace();
+            // Handle exception appropriately
+        }
+		return transactions;
+	}
+	
 	protected static int makePayment(Connection dbconn, float amount, int mId) {
 	    Statement stmt = null;
 	    try {

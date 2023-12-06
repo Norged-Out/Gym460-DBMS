@@ -10,8 +10,6 @@
 import java.util.*;
 import entities.Course;
 import entities.Equipment;
-import entities.Member;
-import entities.Trainer;
 import entities.Package;
 
 import java.sql.*;
@@ -111,8 +109,8 @@ public class Gym460 {
 				return true;
 			}
 			int m = Integer.parseInt(mno);
-			LinkedList<Equipment> allEquipment = QueryManager.getEquipmentList(dbconn, "", true);
-			LinkedList<Equipment> lostEquipment = Validation.equipmentCheck(allEquipment, m);
+			// LinkedList<Equipment> allEquipment = QueryManager.getEquipmentList(dbconn, "", true);
+			// LinkedList<Equipment> lostEquipment = Validation.equipmentCheck(allEquipment, m);
 			// Mark Equipment as Lost as needed
 			DataManipulation.deleteMember(dbconn, m);			
 			System.out.println("M# " + mno + " is deleted");
@@ -244,8 +242,8 @@ public class Gym460 {
 				}
 			}
 			
-			// If course is not empty, notify the members
-			if(!Validation.isCourseEmpty(c)) {
+			// If course cannot be deleted, notify the members
+			if(!Validation.canDeleteCourse(c)) {
 				System.out.println("\nThe following members are enrolled in this course");
 				QueryManager.showMembersEnrolled(dbconn, cName);
 				System.out.print("\nNotify them to proceed with course deletion? (y/n): ");
@@ -257,7 +255,25 @@ public class Gym460 {
 			}
 			
 			// Obtain a LinkedList of all packages having those courses
+			LinkedList<Package> needUpdates = QueryManager.getPackagesForCourse(dbconn, cName);
 			// Update them to not have it anymore
+			for(Package p: needUpdates) {
+				String c1 = p.c1, c2 = p.c2;
+				String sd = (p.startDate == null) ? null : Validation.dateToString(p.startDate);
+				String ed = (p.endDate == null) ? null : Validation.dateToString(p.endDate);
+				if(c1 == null && c2 != null) {
+					DataManipulation.updatePackage(dbconn, p.pName, c1, c1, p.price, sd, ed);
+				}
+				else if(c1 != null && c2 == null) {
+					DataManipulation.updatePackage(dbconn, p.pName, c2, c2, p.price, sd, ed);
+				}
+				else if(c1 != null && c2 != null) {
+					c1 = (c1.equals(cName)) ? c2 : c1;
+					c2 = null;
+					DataManipulation.updatePackage(dbconn, p.pName, c1, c2, p.price, sd, ed);
+				}
+			}
+			System.out.println("Associated Packages Updated");
 			DataManipulation.deleteCourse(dbconn, cName);
 			System.out.println("Course " + cName + " is deleted");
 		}
@@ -446,6 +462,7 @@ public class Gym460 {
 			String endDate = dates.get(1);
 			
 			// Update the package
+			DataManipulation.updatePackage(dbconn, pName, c1, c2, pcost, startDate, endDate);
 			System.out.println("Updated Package " + pName);
 		}
 		else if(userInput.equals("3")) {
@@ -532,7 +549,7 @@ public class Gym460 {
 		float pay = Float.parseFloat(amount);
 		int mid = Integer.parseInt(mno);
 		int xno = DataManipulation.makePayment(dbconn, pay, mid);
-		System.out.println("Transaction successful");
+		System.out.println("\nTransaction successful");
 		QueryManager.printTransactionDetails(dbconn, xno);
 		return true;
 	}
@@ -607,7 +624,7 @@ public class Gym460 {
 			int m = Integer.parseInt(mno);
 			int q = Integer.parseInt(qty);
 			int xno = DataManipulation.borrowEquipment(dbconn, m, q, eType);
-			System.out.println("Equipment borrowed");
+			System.out.println("\nEquipment borrowed");
 			QueryManager.printTransactionDetails(dbconn, xno);			
 		}
 		else if(userInput.equals("2")) {
@@ -633,8 +650,14 @@ public class Gym460 {
 			}
 			
 			// return all equipment associated with them
-			System.out.println("Equipment returned");
-			//QueryManager.printTransactionDetails(dbconn, xno);	
+			int m = Integer.parseInt(mno);
+			LinkedList<Integer> xnos = DataManipulation.returnEquipment(dbconn, m);
+			System.out.println("\nEquipment returned");
+			System.out.println("\nDetails:");
+			for(int x : xnos) {
+				System.out.println();
+				QueryManager.printTransactionDetails(dbconn, x);
+			}
 			
 		}
 		else {
