@@ -6,13 +6,16 @@ import entities.Trainer;
 import entities.Transaction;
 
 import java.sql.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.LinkedList;
 
 public class QueryManager {
 	
 	protected static void query1(Connection dbconn) {
 		final String query = 
-				"SELECT FirstName, LastName, Phone#"
+				"SELECT FirstName, LastName, Phone#, Balance"
 				+ " FROM Member"
 				+ " WHERE Balance < 0";
 		Statement stmt = null;
@@ -31,7 +34,8 @@ public class QueryManager {
 				String firstName = answer.getString("FirstName");
 				String lastName = answer.getString("LastName");
 				String phone = answer.getString("Phone#");
-				System.out.println("Name: " + firstName + " " + lastName + ", Phone: " + phone);
+				Float  balance = answer.getFloat("Balance");
+				System.out.println("Name: " + firstName + " " + lastName + ", Phone: " + phone + ", Balance: " + balance);
 			}
 			stmt.close();
 		} catch (SQLException e) {
@@ -39,45 +43,188 @@ public class QueryManager {
 		}
 	}
 	
+// *************** original unchanged method (just in case) ***************
+	// protected static void query2(Connection dbconn, String mno) {
+	// 	final String query = 
+	// 			"SELECT m.FirstName, m.LastName, c.CName, c.StartDate, c.EndDate, c.Day"
+	// 			+ " FROM Member m"
+	// 			+ " JOIN Package p"
+	// 			+ " ON p.PName = m.PName"
+	// 			+ " JOIN Course c ON (c.CName = p.C1 OR c.CName = p.C2)"
+	// 			+ " WHERE m.M# = " + mno
+	// 			+ " AND TO_CHAR(c.StartDate, 'MM') <= '11'"
+	// 			+ " AND TO_CHAR(c.EndDate, 'MM') >= '11'";
+	// 	Statement stmt = null;
+	// 	ResultSet answer = null;
+	// 	try {
+	// 		stmt = dbconn.createStatement();			
+	// 		answer = stmt.executeQuery(query);
+
+	// 		if (answer == null) {
+	// 			System.out.println("No Outputs");
+	// 			return;
+	// 		}
+
+	// 		// Displaying the result
+	// 		System.out.println("Class Schedule for Member ID " + mno + " in November:");
+	// 		while (answer.next()) {
+	// 			String firstName = answer.getString("FirstName");
+    //             String lastName = answer.getString("LastName");
+    //             String cname = answer.getString("CName");
+    //             Date startDate = answer.getDate("StartDate");
+    //             Date endDate = answer.getDate("EndDate");
+    //             String day = answer.getString("Day");
+
+    //             System.out.println("Member: " + firstName + " " + lastName);
+    //             System.out.println("Course: " + cname + ", Start Date: " + startDate + ", End Date: " + endDate + ", Day: " + day);
+    //         } 
+	// 		stmt.close();
+	// 	} catch (SQLException e) {
+	// 		handleSQLException(e, query);
+	// 	}
+	// }
+// *************** original unchanged method (just in case) ***************
+
+	/**
+	 * This method takes a connection to the DB and a member ID and prints the
+	 * 	members schedule for November.
+	 * 
+	 * @param dbconn is the connection to the DB.
+	 * 
+	 * @param mno is the member ID.
+	 * 
+	 * @return nothing.
+	 */
 	protected static void query2(Connection dbconn, String mno) {
+
+		// if mno isn't a valid integer, print error message and return
+		if (!Validation.validateInt(mno)) {
+
+			System.out.println("*** ERROR: The given Member ID is invalid. ***");
+			return;
+
+		}// end if
+
+		// create the query to fetch the data from the DB
 		final String query = 
 				"SELECT m.FirstName, m.LastName, c.CName, c.StartDate, c.EndDate, c.Day"
 				+ " FROM Member m"
 				+ " JOIN Package p"
 				+ " ON p.PName = m.PName"
 				+ " JOIN Course c ON (c.CName = p.C1 OR c.CName = p.C2)"
-				+ " WHERE m.M# = " + mno
-				+ " AND TO_CHAR(c.StartDate, 'MM') <= '11'"
-				+ " AND TO_CHAR(c.EndDate, 'MM') >= '11'";
+				+ " WHERE m.M# = " + mno;
+				// + " AND TO_CHAR(c.StartDate, 'MM') <= '11'"		// not needed, will determine Novemeber schedule later
+				// + " AND TO_CHAR(c.EndDate, 'MM') >= '11'";		// not needed, will determine Novemeber schedule later
+		
+		// create the statement and result set
 		Statement stmt = null;
 		ResultSet answer = null;
+
+		// create variables to store data
+		String firstName = null;
+		String lastName = null;
+		LinkedList<Course> courses = new LinkedList<>();
+
+		// try to execute the query
 		try {
+
+			// execute the query and store the result
 			stmt = dbconn.createStatement();			
 			answer = stmt.executeQuery(query);
 
+			// determine if the result has data
 			if (answer == null) {
 				System.out.println("No Outputs");
 				return;
 			}
 
-			// Displaying the result
+			// retrieve the data from the result set
 			System.out.println("Class Schedule for Member ID " + mno + " in November:");
 			while (answer.next()) {
-				String firstName = answer.getString("FirstName");
-                String lastName = answer.getString("LastName");
-                String cname = answer.getString("CName");
-                Date startDate = answer.getDate("StartDate");
-                Date endDate = answer.getDate("EndDate");
-                String day = answer.getString("Day");
 
-                System.out.println("Member: " + firstName + " " + lastName);
-                System.out.println("Course: " + cname + ", Start Date: " + startDate + ", End Date: " + endDate + ", Day: " + day);
-            } 
+				// store the data for printing
+				Course newCourse = new Course();
+				firstName			= answer.getString("FirstName");
+                lastName			= answer.getString("LastName");
+                newCourse.cName 	= answer.getString("CName");
+                newCourse.startDate	= answer.getDate("StartDate");
+                newCourse.endDate	= answer.getDate("EndDate");
+                newCourse.day		= answer.getString("Day");
+
+				// add the new course to the list
+				courses.add(newCourse);
+
+                // System.out.println("Member: " + firstName + " " + lastName);
+                // System.out.println("Course: " + cname + ", Start Date: " + startDate + ", End Date: " + endDate + ", Day: " + day);
+
+            }// end while
+
+			// close the statement
 			stmt.close();
+
 		} catch (SQLException e) {
 			handleSQLException(e, query);
 		}
-	}
+
+		// print the data for each course
+		printSchedule(firstName, lastName, courses);
+
+	}// end query2
+
+	/**
+	 * This method takes the data from query2 and prints the members schedule 
+	 * 	for November.
+	 * 
+	 * @param firstName is the first name of the member.
+	 * 
+	 * @param lastName is the last name of the member.
+	 * 
+	 * @param courses is a linked list of courses the member is enrolled in.
+	 * 
+	 * @return nothing.
+	 */
+	private static void printSchedule(String firstName, String lastName, LinkedList<Course> courses) {
+		
+		// if the member isn't enrolled in any courses, print message and return
+		if (courses.size() == 0) {
+
+			System.out.println("The given Member ID is not enrolled in any courses.");
+			return;
+
+		}// end if
+
+		
+
+		// print the data for each course
+		for (Course course : courses) {
+
+			// determine if the courses are in November
+			LocalDateTime startDateTime	= Validation.dateToLocalDateTime(course.startDate);
+			LocalDateTime endDateTime	= Validation.dateToLocalDateTime(course.endDate);
+			LocalDate startDate			= startDateTime.toLocalDate();
+			LocalDate endDate			= endDateTime.toLocalDate();
+			LocalTime startTime			= startDateTime.toLocalTime();
+			LocalTime endTime			= endDateTime.toLocalTime();
+
+
+
+
+	// ***** TODO: NOT YET FINISHED *****
+			
+		
+		
+		
+			// print the member's name
+			System.out.println("The November Schedule for Member: " + firstName + " " + lastName + " is:");
+
+			System.out.println("Course: " + course.cName + ", Start Date: " + course.startDate + ", End Date: " + course.endDate + ", Day: " + course.day);
+
+// System.out.println("Member: " + firstName + " " + lastName);
+// System.out.println("Course: " + cname + ", Start Date: " + startDate + ", End Date: " + endDate + ", Day: " + day);
+
+		}// end for
+
+	}// end printSchedule
 	
 	protected static void query3(Connection dbconn) {
 		final String query =
@@ -117,11 +264,12 @@ public class QueryManager {
 	
 	protected static void query4(Connection dbconn, String eType) {
 		final String query =
-				"SELECT m.FirstName, m.LastName, x.XDate" 
+				"SELECT m.FirstName, m.LastName, x.XDate, xAmount" 
 				+ " FROM Transaction x"
 				+ " JOIN Member m"
 				+ " ON x.M# = m.M#"
-				+ " WHERE x.EType = '" + eType +"'";
+				+ " WHERE x.EType = '" + eType +"'"
+				+ " AND x.XType = 'Checkout'";
 		Statement stmt = null;
 		ResultSet answer = null;
 		try {
