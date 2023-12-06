@@ -3,13 +3,16 @@ import entities.Course;
 import entities.Member;
 import entities.Package;
 import entities.Trainer;
-import entities.Transaction;
 
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.TextStyle;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Locale;
+import java.util.Map;
 
 public class QueryManager {
 	
@@ -42,52 +45,11 @@ public class QueryManager {
 			handleSQLException(e, query);
 		}
 	}
+
 	
-// *************** original unchanged method (just in case) ***************
-	// protected static void query2(Connection dbconn, String mno) {
-	// 	final String query = 
-	// 			"SELECT m.FirstName, m.LastName, c.CName, c.StartDate, c.EndDate, c.Day"
-	// 			+ " FROM Member m"
-	// 			+ " JOIN Package p"
-	// 			+ " ON p.PName = m.PName"
-	// 			+ " JOIN Course c ON (c.CName = p.C1 OR c.CName = p.C2)"
-	// 			+ " WHERE m.M# = " + mno
-	// 			+ " AND TO_CHAR(c.StartDate, 'MM') <= '11'"
-	// 			+ " AND TO_CHAR(c.EndDate, 'MM') >= '11'";
-	// 	Statement stmt = null;
-	// 	ResultSet answer = null;
-	// 	try {
-	// 		stmt = dbconn.createStatement();			
-	// 		answer = stmt.executeQuery(query);
-
-	// 		if (answer == null) {
-	// 			System.out.println("No Outputs");
-	// 			return;
-	// 		}
-
-	// 		// Displaying the result
-	// 		System.out.println("Class Schedule for Member ID " + mno + " in November:");
-	// 		while (answer.next()) {
-	// 			String firstName = answer.getString("FirstName");
-    //             String lastName = answer.getString("LastName");
-    //             String cname = answer.getString("CName");
-    //             Date startDate = answer.getDate("StartDate");
-    //             Date endDate = answer.getDate("EndDate");
-    //             String day = answer.getString("Day");
-
-    //             System.out.println("Member: " + firstName + " " + lastName);
-    //             System.out.println("Course: " + cname + ", Start Date: " + startDate + ", End Date: " + endDate + ", Day: " + day);
-    //         } 
-	// 		stmt.close();
-	// 	} catch (SQLException e) {
-	// 		handleSQLException(e, query);
-	// 	}
-	// }
-// *************** original unchanged method (just in case) ***************
-
 	/**
 	 * This method takes a connection to the DB and a member ID and prints the
-	 * 	members schedule for November.
+	 * 	members schedule for November of the current year.
 	 * 
 	 * @param dbconn is the connection to the DB.
 	 * 
@@ -113,8 +75,6 @@ public class QueryManager {
 				+ " ON p.PName = m.PName"
 				+ " JOIN Course c ON (c.CName = p.C1 OR c.CName = p.C2)"
 				+ " WHERE m.M# = " + mno;
-				// + " AND TO_CHAR(c.StartDate, 'MM') <= '11'"		// not needed, will determine Novemeber schedule later
-				// + " AND TO_CHAR(c.EndDate, 'MM') >= '11'";		// not needed, will determine Novemeber schedule later
 		
 		// create the statement and result set
 		Statement stmt = null;
@@ -139,7 +99,6 @@ public class QueryManager {
 			}
 
 			// retrieve the data from the result set
-			System.out.println("Class Schedule for Member ID " + mno + " in November:");
 			while (answer.next()) {
 
 				// store the data for printing
@@ -154,26 +113,27 @@ public class QueryManager {
 				// add the new course to the list
 				courses.add(newCourse);
 
-                // System.out.println("Member: " + firstName + " " + lastName);
-                // System.out.println("Course: " + cname + ", Start Date: " + startDate + ", End Date: " + endDate + ", Day: " + day);
-
             }// end while
 
 			// close the statement
 			stmt.close();
 
 		} catch (SQLException e) {
-			handleSQLException(e, query);
-		}
 
-		// print the data for each course
+			// handle the exception
+			handleSQLException(e, query);
+
+		}// end try/catch
+
+		// print the schedule for each course
 		printSchedule(firstName, lastName, courses);
 
 	}// end query2
 
+
 	/**
 	 * This method takes the data from query2 and prints the members schedule 
-	 * 	for November.
+	 * 	for November of the current year.
 	 * 
 	 * @param firstName is the first name of the member.
 	 * 
@@ -188,17 +148,18 @@ public class QueryManager {
 		// if the member isn't enrolled in any courses, print message and return
 		if (courses.size() == 0) {
 
-			System.out.println("The given Member ID is not enrolled in any courses.");
+			System.out.println(firstName + " " + lastName + " is not enrolled in any courses.");
 			return;
 
 		}// end if
 
-		
-
 		// print the data for each course
 		for (Course course : courses) {
 
-			// determine if the courses are in November
+			// create date and time objects to determine if the course takes 
+			// place in November of the current year
+			LocalDate novemberStart		= LocalDate.of(LocalDate.now().getYear(), 11, 1);
+			LocalDate novemberEnd		= LocalDate.of(novemberStart.getYear(), 11, 30);
 			LocalDateTime startDateTime	= Validation.dateToLocalDateTime(course.startDate);
 			LocalDateTime endDateTime	= Validation.dateToLocalDateTime(course.endDate);
 			LocalDate startDate			= startDateTime.toLocalDate();
@@ -206,65 +167,282 @@ public class QueryManager {
 			LocalTime startTime			= startDateTime.toLocalTime();
 			LocalTime endTime			= endDateTime.toLocalTime();
 
+			// create a LinkedList to hold the dates to print in the schedule
+			LinkedList<LocalDate> printDates = new LinkedList<>();
 
-
-
-	// ***** TODO: NOT YET FINISHED *****
+			// create the two cases that determine if the course takes place in November of the current year
+			//	case1: if the course begins before November 1st and ends after November 1st, it is "in November"
+			boolean case1 = startDate.isBefore(novemberStart) && endDate.isAfter(novemberStart);
 			
-		
-		
-		
-			// print the member's name
-			System.out.println("The November Schedule for Member: " + firstName + " " + lastName + " is:");
+			//	case 2: if the course both begins after November 1st and ends before November 30th, it is "in November"
+			boolean case2 = startDate.isAfter(novemberStart) && startDate.isBefore(novemberEnd);
 
-			System.out.println("Course: " + course.cName + ", Start Date: " + course.startDate + ", End Date: " + course.endDate + ", Day: " + course.day);
+			// if the course takes place in November of the current year
+			if (case1 || case2) {
 
-// System.out.println("Member: " + firstName + " " + lastName);
-// System.out.println("Course: " + cname + ", Start Date: " + startDate + ", End Date: " + endDate + ", Day: " + day);
+				// create a temp date object
+				LocalDate tempDate;
+
+				// determine which date to set as the temp date
+				if (case1) {
+
+					// set to first day of November
+					tempDate = novemberStart;
+
+				} else {
+					
+					// set to first day of the course
+					tempDate = startDate;
+
+				}// end if
+
+				// loop through days until no longer in november
+				while (tempDate.getMonthValue() == 11) {
+
+					// if the day of the week matches the course day
+					if (tempDate.getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.US).equalsIgnoreCase(course.day)) {
+
+						// add the date to the list
+						printDates.add(tempDate);
+
+					}// end if
+
+					// increment the temp date
+					tempDate = tempDate.plusDays(1);
+
+				}// end while
+
+				// print the schedule header
+				System.out.println(firstName + " " + lastName + "'s November " + novemberStart.getYear() + " Schedule for " + course.cName + " is:");
+
+				// if no class days in November
+				if (printDates.isEmpty()) {
+
+					// print that there are no class days in November
+					System.out.println("*** No class days in November. ***");
+
+				} else {
+
+					// if there are, print the schedule for each day of class
+					for (LocalDate date : printDates) {
+
+						System.out.println(course.day + " " + date.toString() + " from " + startTime.toString() + " to " + endTime.toString() + ".");
+						System.out.println(date.getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.US) + " " + date.getMonthValue() + "/" + date.getDayOfMonth() + " " + startTime + " - " + endTime);
+
+					}// end for
+					
+
+				}// end if
+
+			}// end if
 
 		}// end for
 
 	}// end printSchedule
-	
+
+
 	/**
-	 * Prints the schedule of trainers for December.
-	 *
-	 * @param dbconn The database connection.
+	 * This method takes a connection to the DB and prints the trainers' working
+	 * 	hours for December of the current year.
+	 * 
+	 * @param dbconn is the connection to the DB.
+	 * 
+	 * @return nothing.
 	 */
 	protected static void query3(Connection dbconn) {
+
+		// create the query to fetch the data from the DB
 		final String query =
-				"SELECT t.FirstName, t.LastName, c.CName, c.StartDate, c.EndDate, c.Day" 
+				"SELECT t.T#, t.FirstName, t.LastName, c.CName, c.StartDate, c.EndDate, c.Day" 
 				+ " FROM Trainer t"
-				+ " JOIN Course c"
+				+ " LEFT OUTER JOIN Course c"
 				+ " ON t.T# = c.T#";
+				
+		// create the statement and result set
 		Statement stmt = null;
 		ResultSet answer = null;
+
+		// create variables to store data
+		Integer tNumber = 0;
+		String firstName = null;
+		String lastName = null;
+		HashMap<String, Integer> trainers = new HashMap<>();
+
+		// try to execute the query
 		try {
+
+			// execute the query and store the result
 			stmt = dbconn.createStatement();
 			answer = stmt.executeQuery(query);
 
+			// determine if the result has data
 			if (answer == null) {
 				System.out.println("No Outputs.");
 				return;
 			}
 
-			// Displaying the result
-			System.out.println("Trainers' Working Hours for December:");
+			// retrieve the data from the result set
 			while (answer.next()) {
-				String firstName = answer.getString("FirstName");
-				String lastName = answer.getString("LastName");
-				String cname = answer.getString("CName");
-				Date startDate = answer.getDate("StartDate");
-				Date endDate = answer.getDate("EndDate");
-				String day = answer.getString("Day");
-				System.out.println("Trainer: " + firstName + " " + lastName + ", Course: " + cname + ", Start Date: "
-						+ startDate + ", End Date: " + endDate + ", Day: " + day);
-			}
+
+				// store the data for printing
+				Course newCourse = new Course();
+				tNumber				= answer.getInt("T#");
+				firstName			= answer.getString("FirstName");
+				lastName			= answer.getString("LastName");
+				newCourse.cName		= answer.getString("CName");
+				newCourse.startDate	= answer.getDate("StartDate");
+				newCourse.endDate	= answer.getDate("EndDate");
+				newCourse.day		= answer.getString("Day");
+
+				// create the key for the hashmap
+				String key =  tNumber.toString() + " " + firstName + " " + lastName;
+
+				// get the number of course minutes for this course
+				int courseMinutes = getCourseMinutes(newCourse);
+
+				// determine if the trainer is already in the hashmap
+				if (trainers.containsKey(key)) {
+
+					// if so, add the course minutes to the hashmap
+					trainers.put(key, trainers.get(key) + courseMinutes);
+
+				} else {
+
+					// if not, add the trainer and the course minutes to the hashmap
+					trainers.put(key, courseMinutes);
+
+				}// end if
+				
+			}// end while
+
+			// close the statement
 			stmt.close();
+
 		} catch (SQLException e) {
+
+			// handle the exception
 			handleSQLException(e, query);
-		}
-	}
+
+		}// end try/catch
+
+		// print the header for trainers working hours in December
+		System.out.println("Trainers' Working Hours for December " + LocalDate.now().getYear() + ":");
+
+		for (Map.Entry<String, Integer> entry : trainers.entrySet()) {
+
+			// calculate the number of hours worked
+			double hours = entry.getValue() / 60.0;
+
+			// print the trainer's info i this format: "T# firstName LastName : Hours: hours"
+			System.out.printf("Trainer: " + entry.getKey() + " : Hours: %.2f\n", hours);
+
+		}// end for
+
+	}// end query3
+
+
+	/**
+	 * This method takes a course from query3 and returns the amount of 
+	 * 	minutes that take place in Decemberber of the current year.
+	 * 
+	 * @param course is the course to check.
+	 * 
+	 * @return the amount of course minutes that take place in Decemberber of 
+	 * 	the current year.
+	 */	
+	private static int getCourseMinutes(Course course) {
+
+		// create a variable to store the amount of course minutes to return
+		int courseMinutes = 0;
+		
+		// if the course info is empty, return 0 minutes
+		if (course.cName == null) {
+
+			return courseMinutes;
+
+		}// end if
+
+		// create date and time objects to determine if the course takes 
+		// place in December of the current year
+		LocalDate decemberStart		= LocalDate.of(LocalDate.now().getYear(), 12, 1);
+		LocalDate decemberEnd		= LocalDate.of(decemberStart.getYear(), 12, 31);
+		LocalDateTime startDateTime	= Validation.dateToLocalDateTime(course.startDate);
+		LocalDateTime endDateTime	= Validation.dateToLocalDateTime(course.endDate);
+		LocalDate startDate			= startDateTime.toLocalDate();
+		LocalDate endDate			= endDateTime.toLocalDate();
+		LocalTime startTime			= startDateTime.toLocalTime();
+		LocalTime endTime			= endDateTime.toLocalTime();
+
+		// create a counter for the number of class days in December
+		int classDays = 0;
+
+		// create the two cases that determine if the course takes place in December of the current year
+		//	case1: if the course begins before December 1st and ends after December 1st, it is "in December"
+		boolean case1 = startDate.isBefore(decemberStart) && endDate.isAfter(decemberStart);
+		
+		//	case 2: if the course both begins after December 1st and ends before December 31th, it is "in December"
+		boolean case2 = startDate.isAfter(decemberStart) && startDate.isBefore(decemberEnd);
+
+		// if the course takes place in December of the current year
+		if (case1 || case2) {
+
+			// create a temp date object
+			LocalDate tempDate;
+
+			// determine which date to set as the temp date
+			if (case1) {
+
+				// set to first day of December
+				tempDate = decemberStart;
+
+			} else {
+				
+				// set to first day of the course
+				tempDate = startDate;
+
+			}// end if
+
+			// loop through days until no longer in December
+			while (tempDate.getMonthValue() == 12) {
+
+				// if the day of the week matches the course day
+				if (tempDate.getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.US).equalsIgnoreCase(course.day)) {
+
+					// increment the class days counter
+					classDays++;
+
+				}// end if
+
+				// increment the temp date
+				tempDate = tempDate.plusDays(1);
+
+			}// end while
+			
+			// if no class days in December
+			if (classDays == 0) {
+
+				// return 0 minutes
+				return courseMinutes;
+
+			} else {
+
+				// if there are, determine the length of each class day in minutes
+				courseMinutes = (endTime.getHour() - startTime.getHour()) * 60;
+				courseMinutes += endTime.getMinute() - startTime.getMinute();
+
+				// calculate the total amount of course minutes
+				courseMinutes *= classDays;
+				
+			}// end if
+
+		}// end if
+
+		// return the amount of course minutes that take place in Decemberber of the current year
+		return courseMinutes;
+
+	}// end courseMinutes
+
+
 	
 	/**
 	 * Retrieves transaction details for a specific equipment type and prints them.
