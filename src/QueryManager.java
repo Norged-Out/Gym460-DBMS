@@ -153,7 +153,7 @@ public class QueryManager {
 		// if the member isn't enrolled in any courses, print message and return
 		if (courses.size() == 0) {
 
-			System.out.println(firstName + " " + lastName + " is not enrolled in any courses.");
+			System.out.println("\n" + firstName + " " + lastName + " is not enrolled in any courses.");
 			return;
 
 		}// end if
@@ -218,7 +218,7 @@ public class QueryManager {
 				}// end while
 
 				// print the schedule header
-				System.out.println(firstName + " " + lastName + "'s November " + novemberStart.getYear() + " Schedule for " + course.cName + " is:");
+				System.out.println("\n" + firstName + " " + lastName + "'s November " + novemberStart.getYear() + " Schedule for " + course.cName + " is:");
 
 				// if no class days in November
 				if (printDates.isEmpty()) {
@@ -231,8 +231,9 @@ public class QueryManager {
 					// if there are, print the schedule for each day of class
 					for (LocalDate date : printDates) {
 
-						System.out.println(course.day + " " + date.toString() + " from " + startTime.toString() + " to " + endTime.toString() + ".");
-						System.out.println(date.getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.US) + " " + date.getMonthValue() + "/" + date.getDayOfMonth() + " " + startTime + " - " + endTime);
+						System.out.println(date.getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.US) + " " 
+								+ date.getMonthValue() + "/" + date.getDayOfMonth() + "/" + date.getYear() + " " 
+								+ startTime.toString() + " - " + endTime.toString());
 
 					}// end for
 					
@@ -331,7 +332,7 @@ public class QueryManager {
 		}// end try/catch
 
 		// print the header for trainers working hours in December
-		System.out.println("Trainers' Working Hours for December " + LocalDate.now().getYear() + ":");
+		System.out.println("\nTrainers' Working Hours for December " + LocalDate.now().getYear() + ":");
 
 		for (Map.Entry<String, Integer> entry : trainers.entrySet()) {
 
