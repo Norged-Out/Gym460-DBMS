@@ -2,7 +2,6 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.LinkedList;
 
@@ -10,9 +9,6 @@ import entities.Course;
 import entities.Equipment;
 import entities.Member;
 import entities.Package;
-// import entities.Tier;
-// import entities.Trainer;
-// import entities.Transaction;
 
 
 public class Validation {
@@ -20,41 +16,6 @@ public class Validation {
 	/* ******************************
 	   ***** Member Validations *****
 	   ****************************** */
-	
-	/**
-	 * This method takes a list of equipment and a memberID and returns a list 
-	 * 	of equipment that was loaned to the member.
-	 * 
-	 * @param equipment is the list of all loaned equipment.
-	 * 
-	 * @param memberID is the memberID of the member.
-	 * 
-	 * @return a list of equipment that was loaned to the member or if none, 
-	 * 	return an empty list.
-	 */
-	protected static LinkedList<Equipment> equipmentCheck(LinkedList<Equipment> equipment, int memberID) {
-
-		// create a list to hold the lost equipment
-		LinkedList<Equipment> lostEquipment = new LinkedList<>();
-
-		// loop through the equipment objects
-		for (Equipment equip : equipment) {
-			
-			// if the equipment is loaned to the member
-			if (equip.m != null && equip.m == memberID) {
-
-				// add it to the lost equipment list
-				lostEquipment.add(equip);
-				
-			}// end if
-
-		}// end for
-
-		// return the list 
-		return null;
-
-	}// end equipmentCheck
-
 
 	/**
 	 * This method takes a member and returns true if the member has a 
@@ -460,7 +421,7 @@ public class Validation {
 	 */
 	protected static boolean canBorrow(LinkedList<Equipment> equipment, String quantityStr) {
 		
-		// if quantity is not a valid integer, return false		// TODO: possibly already validated
+		// if quantity is not a valid integer, return false
 		if (!validateInt(quantityStr)) {
 
 			return false;
