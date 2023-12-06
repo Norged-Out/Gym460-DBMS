@@ -46,6 +46,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.TextStyle;
 import java.util.TreeMap;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.Locale;
 import java.util.Map;
@@ -307,7 +308,23 @@ public class QueryManager {
 		Integer tNumber = 0;
 		String firstName = null;
 		String lastName = null;
-		TreeMap<String, Integer> trainers = new TreeMap<>();
+		// TreeMap<String, Integer> trainers = new TreeMap<>();
+		TreeMap<String, Integer> trainers = new TreeMap<>(new Comparator<String>() {
+
+					// create a custom comparator to sort the trainers by their T#
+					@Override
+					public int compare(String s1, String s2) {
+
+						// split the strings to separate just their T#s
+						String[] fst = s1.split(" ");
+						String[] snd = s2.split(" ");
+
+						// return the difference between the T#s as integers
+						return Integer.parseInt(fst[0]) - Integer.parseInt(snd[0]);
+
+					}// end compare
+					
+				});
 
 		// try to execute the query
 		try {
