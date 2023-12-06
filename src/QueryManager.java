@@ -290,6 +290,30 @@ public class QueryManager {
 				System.out.println("No Outputs.");
 				return;
 			}
+			
+					// Displaying the results
+			
+			
+			String mName = null,
+				   xDate = null;
+			int amount = 0,
+				   row = 0;
+			
+			while(answer.next()) {
+				if(row == 0) {
+					System.out.println(String.format("%-40s %-16s %-6s", "Name", "Date", "Amount"));
+				}
+				mName = answer.getString("FirstName") + " " + answer.getString("LastName");
+                xDate = Validation.dateToString(answer.getDate("XDate"));
+                amount = (int) answer.getFloat("Amount");
+                System.out.println(String.format("%-40s %-16s %-6d", mName, xDate, amount));
+                row++;
+			}
+			
+			if(row == 0) {
+				System.out.println("No one checked out the equipment");
+			}
+			
 			stmt.close();
 		} catch (SQLException e) {
 			handleSQLException(e, query);
@@ -706,7 +730,7 @@ public class QueryManager {
 	 * @param eType  The equipment type.
 	 * @return True if the equipment type exists, otherwise false.
 	 */
-	protected static Boolean checkEquipmentType(Connection dbconn, String eType) {
+	protected static boolean checkEquipmentType(Connection dbconn, String eType) {
 		if(eType.equals("")) {
 			return false;
 		}
@@ -717,7 +741,7 @@ public class QueryManager {
             stmt = dbconn.createStatement();
             answer = stmt.executeQuery(query);
 
-            if (answer != null) {
+            if (answer != null && answer.next()) {
                 return true;
             }
 

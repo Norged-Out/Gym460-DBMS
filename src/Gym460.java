@@ -747,6 +747,10 @@ public class Gym460 {
 				if(miCheck && mbCheck && etCheck && qtCheck && avCheck) {
 					break;
 				}
+				else if(!etCheck) {
+					System.out.println("\nChosen Equipment does not exist.");
+					return true;
+				}
 				else if(!avCheck) {
 					System.out.println("\nNot enough Equipment available");
 					return true;
@@ -871,7 +875,12 @@ public class Gym460 {
 			QueryManager.showAllEquipment(dbconn);
 			System.out.print("\nEnter the EType: ");
 			userInput = sc.nextLine().strip();
-			QueryManager.query4(dbconn, userInput);
+			if(QueryManager.checkEquipmentType(dbconn, userInput)) {
+				QueryManager.query4(dbconn, userInput);
+			}
+			else {
+				System.out.println("Chosen Equipment does not exist.");
+			}
 			break;
 		default:
 			return false;
