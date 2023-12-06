@@ -5,7 +5,6 @@ import entities.Package;
 import entities.Trainer;
 
 import java.sql.*;
-import java.lang.Enum;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
