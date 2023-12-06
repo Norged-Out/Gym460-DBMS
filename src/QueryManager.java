@@ -16,6 +16,11 @@ import java.util.Map;
 
 public class QueryManager {
 	
+	/**
+	 * Retrieves and displays members with a negative balance.
+	 *
+	 * @param dbconn The database connection.
+	 */
 	protected static void query1(Connection dbconn) {
 		final String query = 
 				"SELECT FirstName, LastName, Phone#, Balance"
@@ -457,7 +462,8 @@ public class QueryManager {
 				+ " JOIN Member m"
 				+ " ON x.M# = m.M#"
 				+ " WHERE x.EType = '" + eType +"'"
-				+ " AND x.XType = 'Checkout'";
+				+ " AND x.XType = 'Checkout'"
+				+ " AND TO_CHAR(x.XDate, 'YYYY') = TO_CHAR(SYSDATE, 'YYYY')";
 		Statement stmt = null;
 		ResultSet answer = null;
 		try {
@@ -484,7 +490,7 @@ public class QueryManager {
 				mName = answer.getString("FirstName") + " " + answer.getString("LastName");
                 xDate = Validation.dateToString(answer.getDate("XDate"));
                 amount = (int) answer.getFloat("Amount");
-                System.out.println(String.format("%-40s %-16s %-6d", mName, xDate, amount));
+                System.out.println(String.format("%-40s %-16s %6d", mName, xDate, amount));
                 row++;
 			}
 			
