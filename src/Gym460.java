@@ -109,8 +109,6 @@ public class Gym460 {
 				return true;
 			}
 			int m = Integer.parseInt(mno);
-			// LinkedList<Equipment> allEquipment = QueryManager.getEquipmentList(dbconn, "", true);
-			// LinkedList<Equipment> lostEquipment = Validation.equipmentCheck(allEquipment, m);
 			// Mark Equipment as Lost as needed
 			DataManipulation.deleteMember(dbconn, m);			
 			System.out.println("M# " + mno + " is deleted");
@@ -598,7 +596,7 @@ public class Gym460 {
 				qty = sc.nextLine().strip();
 				qtCheck = Validation.validateInt(qty);
 				if(etCheck) {
-					LinkedList<Equipment> list = QueryManager.getEquipmentList(dbconn, eType, false);
+					LinkedList<Equipment> list = QueryManager.getEquipmentList(dbconn, eType);
 					avCheck = Validation.canBorrow(list, qty);
 				}
 				// validate that enough quantity available

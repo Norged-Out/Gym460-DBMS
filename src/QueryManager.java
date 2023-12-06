@@ -711,18 +711,14 @@ public class QueryManager {
 	
 	// LinkedList can be empty but not null	
 	protected static LinkedList<Equipment> getEquipmentList(
-			Connection dbconn, String eType, boolean allData) {
-		String query = "SELECT * FROM Equipment";
-		String specific = " WHERE EType = '" + eType + "'";
+			Connection dbconn, String eType) {
+		String query = "SELECT * FROM Equipment WHERE EType = '" + eType + "'";
 		Statement stmt = null;
 		ResultSet answer = null;
 	    LinkedList<Equipment> equipmentList = new LinkedList<>();
-	    if(!allData && eType.equals("")) {
+	    if(eType.equals("")) {
 			return equipmentList;
 		}
-	    if(!allData) {
-	    	query = query.concat(specific);
-	    }
 	    try {
 	        stmt = dbconn.createStatement();
 	        answer = stmt.executeQuery(query);
