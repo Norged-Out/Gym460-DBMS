@@ -1,3 +1,41 @@
+/*
+ * Team:		Bhargav Gullipelli
+ * 				Nathan Lucero
+ * 				Priyansh Nayak
+ * 				Utkarsh Upadhyay
+ * 
+ * Authors:		Bhargav Gullipelli
+ * 				Nathan Lucero
+ * 				Priyansh Nayak
+ * 				Utkarsh Upadhyay
+ * 
+ * Course:		CSC-460 Fall 2023
+ * 
+ * Assignment:	Program #4: Creating a JDBC and SQL program that operates as 
+ * 					an interface with a Oracle DB for use by the staff at 
+ * 					Gyme460.
+ * 
+ * Due Date:	12/05/2023
+ * 
+ * File Name:	Validation.java
+ * 
+ * Instructor:	L. McCann
+ * Grad TA:		Zhenyu Qi
+ * Grad TA:		Danial Bazmandeh
+ * 
+ * Description: This file contains methods that operate between the user 
+ * 	interface program contained in Gym460.java and the DB as part of the 
+ * 	backend contained in DataManipulation.java and QueryManager.java. The 
+ * 	entity classes contained in the entities package/directory are used 
+ * 	throughout this program. The methods contained in this file take use a 
+ * 	connection to the Oracle DB and retreive and display the data that is 
+ * 	contained in the DB.
+ * 
+ * 
+ * About: This program must be executed from main method in Gym460.java file 
+ * 	and has Oracle DB username and password hard-coded for ease of use.
+ */
+
 import entities.Equipment;
 import entities.Course;
 import entities.Member;
@@ -236,7 +274,6 @@ public class QueryManager {
 								+ startTime.toString() + " - " + endTime.toString());
 
 					}// end for
-					
 
 				}// end if
 
