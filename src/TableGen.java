@@ -1,12 +1,34 @@
-/* 
- *  Author: Priyansh Nayak
- *  Course: CSC 460
- * Purpose: This Program generates the tables for the
- * 			Final Project on Priyansh's Oracle Database.
+/*
+ * Team:		Bhargav Gullipelli
+ * 				Nathan Lucero
+ * 				Priyansh Nayak
+ * 				Utkarsh Upadhyay
  * 
- * scp TableGen.java priyanshnayak@lectura.cs.arizona.edu:~/csc/460/p4
- *
- * */
+ * Authors:		Priyansh Nayak
+ * 
+ * Course:		CSC-460 Fall 2023
+ * 
+ * Assignment:	Program #4: Creating a JDBC and SQL program that operates as 
+ * 					an interface with a Oracle DB for use by the Gym460 staff.
+ * 
+ * Due Date:	12/05/2023
+ * 
+ * File Name:	TableGen.java
+ * 
+ * Instructor:	L. McCann
+ * Graduate TA:	Zhenyu Qi
+ * Graduate TA:	Danial Bazmandeh
+ * 
+ * Description: This Program generates the tables used for the Gym460 DBMS
+ *  project. It is a convenient way of storing the schema and recreating
+ *  specific tables whenever required, or even regenerating them all.
+ *  For simplicity, login details for the program are set to the student
+ *  Oracle account of priyanshnayak that houses all the tables.
+ *  
+ *  Note that this is the only method note used directly alongside the project.
+ *  It is but for the sake of convenience for testing and table creation.
+ * 
+ */
 
 import java.util.*;
 import java.sql.*;

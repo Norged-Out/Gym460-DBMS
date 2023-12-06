@@ -1,14 +1,36 @@
-/* 
- *  Author: Priyansh Nayak
- *  Course: CSC 460
- * Purpose: This Program acts as the UI presented to the user
- * 			to receive inputs and then communicates with all
- * 			other Classes to query or make changes to our
- * 			Database. For simplicity, login is set to my
- * 			personal Oracle account priyanshnayak
+/*
+ * Team:		Bhargav Gullipelli
+ * 				Nathan Lucero
+ * 				Priyansh Nayak
+ * 				Utkarsh Upadhyay
  * 
- *
- * */
+ * Authors:		Priyansh Nayak
+ * 
+ * Course:		CSC-460 Fall 2023
+ * 
+ * Assignment:	Program #4: Creating a JDBC and SQL program that operates as 
+ * 					an interface with a Oracle DB for use by the Gym460 staff.
+ * 
+ * Due Date:	12/05/2023
+ * 
+ * File Name:	Gym460.java
+ * 
+ * Instructor:	L. McCann
+ * Graduate TA:	Zhenyu Qi
+ * Graduate TA:	Danial Bazmandeh
+ * 
+ * Description: This Program acts as the user interface presented to the 
+ * 	staff in charge of handling the Gym460 DBMS. It allows them to manage
+ *  the database and make modifications based on validated input, and also
+ *  provides an option to query certain specific information regarding the
+ *  database. This Program acts as the frontend and communicates with all
+ *  other classes to facilitate the handling of the database. It obtains
+ *  information from QueryManager, validates and filters user inputs via
+ *  Validation, and updates the database through DataManipulation accordingly.
+ *  For simplicity, login details for the program are set to the student
+ *  Oracle account of priyanshnayak that houses all the tables.
+ * 
+ */
 import java.util.*;
 import entities.Course;
 import entities.Equipment;

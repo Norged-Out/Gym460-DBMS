@@ -1,3 +1,29 @@
+/*
+ * Team:		Bhargav Gullipelli
+ * 				Nathan Lucero
+ * 				Priyansh Nayak
+ * 				Utkarsh Upadhyay
+ * 
+ * Author:		
+ * 
+ * Course:		CSC-460 Fall 2023
+ * 
+ * Assignment:	Program #4: Creating a JDBC and SQL program that operates as 
+ * 					an interface with a Oracle DB for use by the Gym460 staff.
+ * 
+ * Due Date:	12/05/2023
+ * 
+ * File Name:	Validation.java
+ * 
+ * Instructor:	L. McCann
+ * Graduate TA:	Zhenyu Qi
+ * Graduate TA:	Danial Bazmandeh
+ * 
+ * Description: 
+ * 
+ * About: This program must be executed from main method in Gym460.java file 
+ * 	and has Oracle DB username and password hard-coded for ease of use.
+ */
 import java.sql.*;
 import java.util.*;
 

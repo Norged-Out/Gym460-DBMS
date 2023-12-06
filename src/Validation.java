@@ -9,22 +9,21 @@
  * Course:		CSC-460 Fall 2023
  * 
  * Assignment:	Program #4: Creating a JDBC and SQL program that operates as 
- * 					an interface with a Oracle DB for use by the staff at 
- * 					Gyme460.
+ * 					an interface with a Oracle DB for use by the Gym460 staff.
  * 
  * Due Date:	12/05/2023
  * 
  * File Name:	Validation.java
  * 
  * Instructor:	L. McCann
- * Grad TA:		Zhenyu Qi
- * Grad TA:		Danial Bazmandeh
+ * Graduate TA:	Zhenyu Qi
+ * Graduate TA:	Danial Bazmandeh
  * 
  * Description: This file contains validation methods for the user interface 
  * 	program contained in Gym460.java and the DB backend methods contained in 
  * 	DataManipulation.java and QueryManager.java. The entity classes contained 
  * 	in the entities package/directory are used throughout this program.
- * The methods contained in this file take entity objects and verify the data 
+ *  The methods contained in this file take entity objects and verify the data 
  * 	that they contain against the requirements set forth in the spec for this 
  * 	program.
  * 
