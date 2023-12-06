@@ -37,6 +37,8 @@ public class TableGen {
                 System.exit(-1);
 
         }
+        		
+        		// All the schemas
         
         String[] tables = {
                 "create table Trainer ("
@@ -125,8 +127,9 @@ public class TableGen {
         System.err.println("\tSQLState:  " + e.getSQLState());
         System.err.println("\tErrorCode: " + e.getErrorCode());
         System.exit(-1);
-
         }
+        
+        		// Generate tables as required
         
         System.out.println("LAUNCHING TABLE GENERATION PROCESS\n");
         System.out.println("Pick from the following options:");
