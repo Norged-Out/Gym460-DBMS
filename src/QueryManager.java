@@ -444,9 +444,15 @@ public class QueryManager {
 
 
 	
+	/**
+	 * Retrieves transaction details for a specific equipment type and prints them.
+	 *
+	 * @param dbconn The database connection.
+	 * @param eType  The equipment type.
+	 */
 	protected static void query4(Connection dbconn, String eType) {
 		final String query =
-				"SELECT m.FirstName, m.LastName, x.XDate, xAmount" 
+				"SELECT m.FirstName, m.LastName, x.XDate, x.Amount" 
 				+ " FROM Transaction x"
 				+ " JOIN Member m"
 				+ " ON x.M# = m.M#"
@@ -462,6 +468,30 @@ public class QueryManager {
 				System.out.println("No Outputs.");
 				return;
 			}
+			
+					// Displaying the results
+			
+			
+			String mName = null,
+				   xDate = null;
+			int amount = 0,
+				   row = 0;
+			
+			while(answer.next()) {
+				if(row == 0) {
+					System.out.println(String.format("%-40s %-16s %-6s", "Name", "Date", "Amount"));
+				}
+				mName = answer.getString("FirstName") + " " + answer.getString("LastName");
+                xDate = Validation.dateToString(answer.getDate("XDate"));
+                amount = (int) answer.getFloat("Amount");
+                System.out.println(String.format("%-40s %-16s %-6d", mName, xDate, amount));
+                row++;
+			}
+			
+			if(row == 0) {
+				System.out.println("No one checked out the equipment");
+			}
+			
 			stmt.close();
 		} catch (SQLException e) {
 			handleSQLException(e, query);
@@ -469,6 +499,11 @@ public class QueryManager {
 		
 	}
 	
+	/**
+	 * Lists and displays all members in the database.
+	 *
+	 * @param dbconn The database connection.
+	 */
 	protected static void showAllMembers(Connection dbconn) {
 		final String query = "SELECT M#, FirstName, LastName FROM Member";
 		Statement stmt = null;
@@ -499,6 +534,11 @@ public class QueryManager {
 		}
 	}
 
+	/**
+	 * Lists and displays all trainers in the database.
+	 *
+	 * @param dbconn The database connection.
+	 */
 	protected static void showAllTrainers(Connection dbconn) {
 		final String query = "SELECT T#, FirstName, LastName FROM Trainer";
 		Statement stmt = null;
@@ -526,6 +566,11 @@ public class QueryManager {
 		}
 	}
 
+	/**
+	 * Lists and displays all courses in the database.
+	 *
+	 * @param dbconn The database connection.
+	 */
 	protected static void showAllCourses(Connection dbconn) {
 		final String query = "SELECT CName FROM Course";
 		Statement stmt = null;
@@ -551,6 +596,11 @@ public class QueryManager {
 		}
 	}
 	
+	/**
+	 * Lists and displays all packages in the database.
+	 *
+	 * @param dbconn The database connection.
+	 */
 	protected static void showAllPackages(Connection dbconn) {
 		final String query = "SELECT PName, C1, C2 FROM Package";
 		Statement stmt = null;
@@ -579,6 +629,11 @@ public class QueryManager {
 		}
 	}
 
+	/**
+	 * Lists and displays all types of equipment in the database.
+	 *
+	 * @param dbconn The database connection.
+	 */
 	protected static void showAllEquipment(Connection dbconn) {
 		final String query = "SELECT DISTINCT EType FROM Equipment";
 		Statement stmt = null;
@@ -606,6 +661,12 @@ public class QueryManager {
 		}
 	}
 	
+	/**
+	 * Displays the members enrolled in a specified course.
+	 *
+	 * @param dbconn The database connection.
+	 * @param cName  The course name.
+	 */
 	protected static void showMembersEnrolled(Connection dbconn, String cName) {
         String query = "SELECT * FROM Member m"
         		+ " JOIN Package p"
@@ -636,7 +697,12 @@ public class QueryManager {
         }
     }
 	
-	
+	/**
+	 * Prints the details of a specific transaction.
+	 *
+	 * @param dbconn  The database connection.
+	 * @param xNumber The transaction number.
+	 */
 	protected static void printTransactionDetails(Connection dbconn, int xNumber) {
 		final String query = "SELECT * FROM Transaction WHERE X# = " + xNumber;
 		Statement stmt = null;
@@ -686,6 +752,13 @@ public class QueryManager {
         }
     }
 	
+	/**
+	 * Retrieves a specific course from the database.
+	 *
+	 * @param dbconn The database connection.
+	 * @param cName  The course name.
+	 * @return The course object.
+	 */
 	protected static Course getCourse(Connection dbconn, String cName) {
 		if(cName == null) {
 			return null;
@@ -717,6 +790,13 @@ public class QueryManager {
 	    return retval;
 	}
 	
+	/**
+	 * Retrieves a specific package from the database.
+	 *
+	 * @param dbconn The database connection.
+	 * @param pName  The package name.
+	 * @return The package object.
+	 */
 	protected static Package getPackage(Connection dbconn, String pName) {
 		if(pName.equals("")) {
 			return null;
@@ -747,6 +827,13 @@ public class QueryManager {
 	    return retval;
 	}
 
+	/**
+	 * Retrieves a specific member from the database.
+	 *
+	 * @param dbconn The database connection.
+	 * @param mno    The member number.
+	 * @return The member object.
+	 */
 	protected static Member getMember(Connection dbconn, String mno) {
 		if(mno.equals("")) {
 			return null;
@@ -779,6 +866,13 @@ public class QueryManager {
 	    return retval;
 	}
 
+	/**
+	 * Retrieves a specific trainer from the database.
+	 *
+	 * @param dbconn The database connection.
+	 * @param tNo    The trainer number.
+	 * @return The trainer object.
+	 */
 	protected static Trainer getTrainer(Connection dbconn, String tNo) {
 		if(tNo.equals("")) {
 			return null;
@@ -807,7 +901,14 @@ public class QueryManager {
         return retval;
     }
 	
-	protected static Boolean checkEquipmentType(Connection dbconn, String eType) {
+	/**
+	 * Checks if a certain equipment type exists in the database.
+	 *
+	 * @param dbconn The database connection.
+	 * @param eType  The equipment type.
+	 * @return True if the equipment type exists, otherwise false.
+	 */
+	protected static boolean checkEquipmentType(Connection dbconn, String eType) {
 		if(eType.equals("")) {
 			return false;
 		}
@@ -818,7 +919,7 @@ public class QueryManager {
             stmt = dbconn.createStatement();
             answer = stmt.executeQuery(query);
 
-            if (answer != null) {
+            if (answer != null && answer.next()) {
                 return true;
             }
 
@@ -829,7 +930,13 @@ public class QueryManager {
         }
     }
 	
-	// LinkedList can be empty but not null
+	/**
+	 * Retrieves a list of courses taught by a specific trainer.
+	 *
+	 * @param dbconn The database connection.
+	 * @param tNo    The trainer number.
+	 * @return The list of courses.
+	 */
 	protected static LinkedList<Course> getCoursesByTrainer(Connection dbconn, String tNo) {
         final String query = "SELECT * FROM Course WHERE T# = " + tNo;
         Statement stmt = null;
@@ -854,6 +961,13 @@ public class QueryManager {
         return coursesList;
     }
 	
+	/**
+	 * Retrieves a list of packages for a specific course.
+	 *
+	 * @param dbconn The database connection.
+	 * @param cName  The course name.
+	 * @return The list
+	 */
 	protected static LinkedList<Package> getPackagesForCourse(Connection dbconn, String cName) {
         String query = "SELECT * FROM Package"
         		+ " WHERE C1 = '" + cName
@@ -891,20 +1005,22 @@ public class QueryManager {
     }
 	
 	
-	// LinkedList can be empty but not null	
+	/**
+	 * Retrieves a list of equipments for a specific equipment type.
+	 *
+	 * @param dbconn The database connection.
+	 * @param eType  equipment type.
+	 * @return The list
+	 */
 	protected static LinkedList<Equipment> getEquipmentList(
-			Connection dbconn, String eType, boolean allData) {
-		String query = "SELECT * FROM Equipment";
-		String specific = " WHERE EType = '" + eType + "'";
+			Connection dbconn, String eType) {
+		String query = "SELECT * FROM Equipment WHERE EType = '" + eType + "'";
 		Statement stmt = null;
 		ResultSet answer = null;
 	    LinkedList<Equipment> equipmentList = new LinkedList<>();
-	    if(!allData && eType.equals("")) {
+	    if(eType.equals("")) {
 			return equipmentList;
 		}
-	    if(!allData) {
-	    	query = query.concat(specific);
-	    }
 	    try {
 	        stmt = dbconn.createStatement();
 	        answer = stmt.executeQuery(query);
@@ -935,6 +1051,12 @@ public class QueryManager {
 	    return equipmentList;
 	}
 
+	/**
+	 * Handles SQLExceptions by printing error details and terminating the program.
+	 * 
+	 * @param e     The SQLException object.
+	 * @param query The SQL query that caused the exception.
+	 */
 	private static void handleSQLException(SQLException e, String query) {
 		System.err.println("*** SQLException:  " + "Could not fetch query results.");
 		System.out.println("Query that crashed => " + query);

@@ -1,21 +1,37 @@
 /* 
  *  Author: Priyansh Nayak
  *  Course: CSC 460
- * Purpose: This Program generates the tables for the
- * 			Final Project on Priyansh's Oracle Database.
+ * Purpose: This Program acts as the UI presented to the user
+ * 			to receive inputs and then communicates with all
+ * 			other Classes to query or make changes to our
+ * 			Database. For simplicity, login is set to my
+ * 			personal Oracle account priyanshnayak
  * 
- * scp -r ./* priyanshnayak@lectura.cs.arizona.edu:~/csc/460/p4
  *
  * */
 import java.util.*;
 import entities.Course;
 import entities.Equipment;
 import entities.Package;
-
 import java.sql.*;
 
 public class Gym460 {
 	
+	/**
+	 * This method takes a scanner object, a string to obtain user input,
+	 *  and a database connection object to perform requests related to
+	 *  adding or deleting a member from our database.
+	 * 
+	 * @param sc is the scanner object for System.in.
+	 * 
+	 * @param userInput is the string used for storing user input.
+	 * 
+	 * @param dbconn is the connection to the database.
+	 * 
+	 * @return a boolean value indicating continual access to the DBMS.
+	 * 	returns true by default for all successful procedures and
+	 *  short-circuit returns due to errors, false for invalid choices.
+	 */	
 	private static boolean handleMember(
 			Scanner sc, String userInput, Connection dbconn) {
 		System.out.println("\nPlease choose from the following:");
@@ -23,7 +39,7 @@ public class Gym460 {
 		System.out.println("\t2. Delete a Member");
 		System.out.print("\nPlease enter your choice (1/2)"
 				+ "\nEnter any other key to quit: ");
-		userInput = sc.nextLine().strip();
+		userInput = sc.nextLine().strip();  // Used to determine chosen option
 		if(userInput.equals("1")) {
 			
 					// Strings to use for user input
@@ -35,7 +51,7 @@ public class Gym460 {
 			
 					// Series of Validation checks
 			
-			boolean phCheck = false, // phone number is 10 digit integer
+			boolean phCheck = false, // phone number is 10 digit number
 					pnCheck = false, // package actually exists
 					cfCheck = false; // courses have space for enrollment
 			
@@ -60,9 +76,15 @@ public class Gym460 {
 					Course c2 = QueryManager.getCourse(dbconn, p.c2);
 					cfCheck = !Validation.isCourseFull(c1) && !Validation.isCourseFull(c2);
 				}
+				
+						// Confirm all Validations
+				
 				if(phCheck && pnCheck && cfCheck) {
 					break;
 				}
+				
+						// If we get here, try again
+				
 				System.out.print("\n***Invalid Data Provided***\n"
 						+ "Press 'c' to retry, other keys to exit: ");
 				userInput = sc.nextLine().strip();
@@ -90,9 +112,15 @@ public class Gym460 {
 				System.out.print("\nEnter the M# to delete: ");
 				mno = sc.nextLine().strip();
 				miCheck = Validation.validateInt(mno); // m# is an integer
+				
+						// Confirm all Validations
+				
 				if(miCheck && QueryManager.getMember(dbconn, mno) != null) {
 					break;
 				}
+				
+						// If we get here, try again
+				
 				System.out.print("\n***Invalid Data Provided***\n"
 						+ "Press 'c' to retry, other keys to exit: ");
 				userInput = sc.nextLine().strip();
@@ -108,11 +136,11 @@ public class Gym460 {
 				System.out.println("\nBalance is not paid off, cannot delete");
 				return true;
 			}
-			int m = Integer.parseInt(mno);
-			// LinkedList<Equipment> allEquipment = QueryManager.getEquipmentList(dbconn, "", true);
-			// LinkedList<Equipment> lostEquipment = Validation.equipmentCheck(allEquipment, m);
-			// Mark Equipment as Lost as needed
-			DataManipulation.deleteMember(dbconn, m);			
+			
+					// Unreturned equipment will be marked as lost
+					// Can delete the member successfully 
+			
+			DataManipulation.deleteMember(dbconn, Integer.parseInt(mno));			
 			System.out.println("M# " + mno + " is deleted");
 		}
 		else {
@@ -121,6 +149,21 @@ public class Gym460 {
 		return true;
 	}
 	
+	/**
+	 * This method takes a scanner object, a string to obtain user input,
+	 *  and a database connection object to perform requests related to
+	 *  adding or deleting a course from our database.
+	 * 
+	 * @param sc is the scanner object for System.in.
+	 * 
+	 * @param userInput is the string used for storing user input.
+	 * 
+	 * @param dbconn is the connection to the database.
+	 * 
+	 * @return a boolean value indicating continual access to the DBMS.
+	 * 	returns true by default for all successful procedures and
+	 *  short-circuit returns due to errors, false for invalid choices.
+	 */	
 	private static boolean handleCourse(
 			Scanner sc, String userInput, Connection dbconn) {
 		System.out.println("\nPlease choose from the following:");
@@ -128,7 +171,7 @@ public class Gym460 {
 		System.out.println("\t2. Delete a Course");
 		System.out.print("\nPlease enter your choice (1/2)"
 				+ "\nEnter any other key to quit: ");
-		userInput = sc.nextLine().strip();
+		userInput = sc.nextLine().strip();  // Used to determine chosen option
 		if(userInput.equals("1")) {
 
 					// Strings to use for user input
@@ -146,14 +189,14 @@ public class Gym460 {
 
 					// Series of Validation checks
 						
-			boolean cpCheck = false,
-					sdCheck = false,
-					stCheck = false,
-					edCheck = false,
-					etCheck = false,
-					dwCheck = false,
-					tnCheck = false,
-					cfCheck = false;
+			boolean cpCheck = false, // capacity is a positive integer
+					sdCheck = false, // start date is valid
+					stCheck = false, // start time is valid
+					edCheck = false, // end date is valid
+					etCheck = false, // end time is valid
+					dwCheck = false, // day of the week is valid
+					tnCheck = false, // trainer exists
+					cfCheck = false; // trainer doesn't have scheduling conflicts
 			
 					// Loop until all input is approved
 			
@@ -190,6 +233,9 @@ public class Gym460 {
 				QueryManager.showAllTrainers(dbconn);
 				System.out.print("\nEnter T#: ");
 				tNo = sc.nextLine().strip();
+				
+						// Check all Validations and Conflicts
+				
 				if(Validation.validateInt(tNo)) {
 					if (QueryManager.getTrainer(dbconn, tNo) != null) {
 						tnCheck = true;
@@ -201,6 +247,9 @@ public class Gym460 {
 				if(cpCheck && sdCheck && edCheck && stCheck && etCheck && dwCheck && tnCheck && cfCheck) {
 					break;
 				}
+				
+						// If we get here, try again
+				
 				System.out.print("\n***Invalid Data Provided***\n"
 						+ "Press 'c' to retry, other keys to exit: ");
 				userInput = sc.nextLine().strip();
@@ -212,10 +261,8 @@ public class Gym460 {
 					// Add the Course to the Database
 			
 			int c = Integer.parseInt(capacity);
-			int t = Integer.parseInt(tNo);
-			
-			DataManipulation.insertCourse(dbconn, cName, t, c, start, end, day);
-			
+			int t = Integer.parseInt(tNo);			
+			DataManipulation.insertCourse(dbconn, cName, t, c, start, end, day);			
 			System.out.println("Added Course " + cName);
 		}
 		else if(userInput.equals("2")) {
@@ -232,8 +279,11 @@ public class Gym460 {
 				cName = sc.nextLine().strip();
 				c = QueryManager.getCourse(dbconn, cName);
 				if(c != null) {
-					break;
+					break;  // course exists
 				}
+				
+						// If we get here, try again
+				
 				System.out.print("\n***Invalid Data Provided***\n"
 						+ "Press 'c' to retry, other keys to exit: ");
 				userInput = sc.nextLine().strip();
@@ -242,7 +292,8 @@ public class Gym460 {
 				}
 			}
 			
-			// If course cannot be deleted, notify the members
+					// If course cannot be deleted, notify the members
+			
 			if(!Validation.canDeleteCourse(c)) {
 				System.out.println("\nThe following members are enrolled in this course");
 				QueryManager.showMembersEnrolled(dbconn, cName);
@@ -254,25 +305,28 @@ public class Gym460 {
 				}
 			}
 			
-			// Obtain a LinkedList of all packages having those courses
+					// Update all packages associated with the course
+			
 			LinkedList<Package> needUpdates = QueryManager.getPackagesForCourse(dbconn, cName);
-			// Update them to not have it anymore
 			for(Package p: needUpdates) {
 				String c1 = p.c1, c2 = p.c2;
 				String sd = (p.startDate == null) ? null : Validation.dateToString(p.startDate);
 				String ed = (p.endDate == null) ? null : Validation.dateToString(p.endDate);
 				if(c1 == null && c2 != null) {
-					DataManipulation.updatePackage(dbconn, p.pName, c1, c1, p.price, sd, ed);
+					c2 = c1;
 				}
 				else if(c1 != null && c2 == null) {
-					DataManipulation.updatePackage(dbconn, p.pName, c2, c2, p.price, sd, ed);
+					c1 = c2;
 				}
-				else if(c1 != null && c2 != null) {
+				else {
 					c1 = (c1.equals(cName)) ? c2 : c1;
-					c2 = null;
-					DataManipulation.updatePackage(dbconn, p.pName, c1, c2, p.price, sd, ed);
+					c2 = null;					
 				}
+				DataManipulation.updatePackage(dbconn, p.pName, c1, c2, p.price, sd, ed);
 			}
+			
+					// Delete the course
+			
 			System.out.println("Associated Packages Updated");
 			DataManipulation.deleteCourse(dbconn, cName);
 			System.out.println("Course " + cName + " is deleted");
@@ -283,16 +337,28 @@ public class Gym460 {
 		return true;
 	}
 	
+	/**
+	 * This method takes a scanner object, and a database connection
+	 *  object to provide assistance in obtaining relevant information
+	 *  for adding or updating a package from our database.
+	 * 
+	 * @param sc is the scanner object for System.in.
+	 * 
+	 * @param dbconn is the connection to the database.
+	 * 
+	 * @return a linked list of strings containing details about the
+	 * 	chosen courses and price for the package being edited.
+	 */	
 	private static LinkedList<String> packageHelper(
 			Scanner sc, Connection dbconn){
 		LinkedList<String> retval = null;
 		
 				// Series of Validation checks
 			
-		boolean c1Check = false,
-				c2Check = false,
-				prCheck = false,
-				cfCheck = false;
+		boolean c1Check = false, // course 1 is valid
+				c2Check = false, // course 2 is valid
+				prCheck = false, // price is a positive float
+				cfCheck = false; // courses don't have overlap
 		
 		System.out.println("\nChoose courses from the following");
 		QueryManager.showAllCourses(dbconn);			
@@ -303,6 +369,9 @@ public class Gym460 {
 		System.out.print("Enter a price for the package: ");
 		String price = sc.nextLine().strip();
 		prCheck = Validation.validateFloat(price);
+		
+				// Ensure that courses are selected properly
+				// A Package can have between 0-2 courses
 		
 		Course course1 = null, course2 = null;
 		
@@ -327,8 +396,10 @@ public class Gym460 {
 				c2Check = true;
 			}
 		}
-		cfCheck = Validation.noCourseScheduleConflict(course1, course2);
+			
+				// Check all Validations and Conflicts
 		
+		cfCheck = Validation.noCourseScheduleConflict(course1, course2);		
 		if(c1Check && c2Check && prCheck && cfCheck) {
 			retval = new LinkedList<String>();
 			retval.add(0, c1);
@@ -339,6 +410,21 @@ public class Gym460 {
 		return retval;
 	}
 	
+	/**
+	 * This method takes a scanner object, a string to obtain user input,
+	 *  and a database connection object to perform requests related to
+	 *  adding, updating, or deleting a package from our database.
+	 * 
+	 * @param sc is the scanner object for System.in.
+	 * 
+	 * @param userInput is the string used for storing user input.
+	 * 
+	 * @param dbconn is the connection to the database.
+	 * 
+	 * @return a boolean value indicating continual access to the DBMS.
+	 * 	returns true by default for all successful procedures and
+	 *  short-circuit returns due to errors, false for invalid choices.
+	 */	
 	private static boolean handlePackage(
 			Scanner sc, String userInput, Connection dbconn) {
 		System.out.println("\nPlease choose from the following:");
@@ -347,7 +433,7 @@ public class Gym460 {
 		System.out.println("\t3. Delete a Package");
 		System.out.print("\nPlease enter your choice (1/2/3)"
 				+ "\nEnter any other key to quit: ");
-		userInput = sc.nextLine().strip();
+		userInput = sc.nextLine().strip();  // Used to determine chosen option
 		if(userInput.equals("1")) {
 
 			String pName = null;			
@@ -362,10 +448,16 @@ public class Gym460 {
 					System.out.println("Package already exists");
 					continue;
 				}
+				
+						// Obtain relevant information
+				
 				info = packageHelper(sc, dbconn);
 				if(info != null) {
 					break;
-				}				
+				}
+				
+						// If we get here, try again
+				
 				System.out.print("\n***Invalid Data Provided***\n"
 						+ "Press 'c' to retry, other keys to exit: ");
 				userInput = sc.nextLine().strip();
@@ -374,7 +466,7 @@ public class Gym460 {
 				}
 			}
 			
-					// Get information from the helper
+					// Decipher information from the helper
 			
 			String c1 = info.get(0),
 				   c2 = info.get(1);
@@ -385,11 +477,13 @@ public class Gym460 {
 			Course course1 = QueryManager.getCourse(dbconn, c1),
 				   course2 = QueryManager.getCourse(dbconn, c2);
 			
-					// Add the Package to the Database
+					// Determine the start and end date of the package
 			
 			LinkedList<String> dates = Validation.courseToPackageDates(course1, course2);
 			String startDate = dates.get(0);
 			String endDate = dates.get(1);
+			
+					// Add the Package to the Database
 			
 			DataManipulation.insertPackage(dbconn, pName, c1, c2, pcost, startDate, endDate);			
 			System.out.println("Added Package " + pName);
@@ -409,8 +503,11 @@ public class Gym460 {
 				pName = sc.nextLine().strip();
 				p = QueryManager.getPackage(dbconn, pName);
 				if(p != null) {
-					break;
+					break; // package exists
 				}
+				
+						// If we get here, try again
+				
 				System.out.print("\n***Invalid Data Provided***\n"
 						+ "Press 'c' to retry, other keys to exit: ");
 				userInput = sc.nextLine().strip();
@@ -429,7 +526,7 @@ public class Gym460 {
 				return true;
 			}
 			
-					// Loop to obtain new details
+					// Loop to obtain new details using helper
 			
 			while(true) {
 				info = packageHelper(sc, dbconn);
@@ -444,7 +541,7 @@ public class Gym460 {
 				}
 			}
 			
-					// Get information from the helper
+					// Decipher information from the helper
 			
 			String c1 = info.get(0),
 				   c2 = info.get(1);
@@ -455,13 +552,14 @@ public class Gym460 {
 			Course course1 = QueryManager.getCourse(dbconn, c1),
 				   course2 = QueryManager.getCourse(dbconn, c2);
 			
-					// Add the Package to the Database
+					// Determine the start and end date of the package
 			
 			LinkedList<String> dates = Validation.courseToPackageDates(course1, course2);
 			String startDate = dates.get(0);
 			String endDate = dates.get(1);
 			
-			// Update the package
+					// Update the package with the new information
+			
 			DataManipulation.updatePackage(dbconn, pName, c1, c2, pcost, startDate, endDate);
 			System.out.println("Updated Package " + pName);
 		}
@@ -479,8 +577,11 @@ public class Gym460 {
 				pName = sc.nextLine().strip();
 				p = QueryManager.getPackage(dbconn, pName);
 				if(p != null) {
-					break;
+					break;  // package exists
 				}
+				
+						// If we get here, try again
+				
 				System.out.print("\n***Invalid Data Provided***\n"
 						+ "Press 'c' to retry, other keys to exit: ");
 				userInput = sc.nextLine().strip();
@@ -488,6 +589,9 @@ public class Gym460 {
 					return true;
 				}
 			}
+			
+					// Determine if package deletion is possible
+			
 			Course c1 = QueryManager.getCourse(dbconn, p.c1),
 				   c2 = QueryManager.getCourse(dbconn, p.c2);
 			if(Validation.canDeletePackage(p, c1, c2)) {
@@ -505,6 +609,21 @@ public class Gym460 {
 		return true;
 	}
 	
+	/**
+	 * This method takes a scanner object, a string to obtain user input,
+	 *  and a database connection object to perform requests related to
+	 *  making a payment by a member from our database.
+	 * 
+	 * @param sc is the scanner object for System.in.
+	 * 
+	 * @param userInput is the string used for storing user input.
+	 * 
+	 * @param dbconn is the connection to the database.
+	 * 
+	 * @return a boolean value indicating continual access to the DBMS.
+	 * 	returns true by default for all successful procedures and
+	 *  short-circuit returns due to errors, false for invalid choices.
+	 */	
 	private static boolean handlePayment(
 			Scanner sc, String userInput, Connection dbconn) {
 
@@ -515,9 +634,9 @@ public class Gym460 {
 		
 				// Series of Validation checks
 		
-		boolean miCheck = false,
-				pfCheck = false,
-				mbCheck = false;
+		boolean miCheck = false, // member id is positive integer
+				pfCheck = false, // amount is a positive float
+				mbCheck = false; // member exists
 		
 				// Loop until all input is approved
 		
@@ -530,12 +649,18 @@ public class Gym460 {
 			System.out.print("Enter Amount: ");
 			amount = sc.nextLine().strip();
 			pfCheck = Validation.validateFloat(amount);
+			
+					// Check all Validations
+			
 			if(miCheck && QueryManager.getMember(dbconn, mno) != null) {
 				mbCheck = true;
 			}
 			if(miCheck && pfCheck && mbCheck) {
 				break;
 			}
+			
+					// If we get here, try again
+			
 			System.out.print("\n***Invalid Data Provided***\n"
 					+ "Press 'c' to retry, other keys to exit: ");
 			userInput = sc.nextLine().strip();
@@ -544,7 +669,7 @@ public class Gym460 {
 			}
 		}
 		
-				// Make the payment
+				// Make the payment and print transaction details
 		
 		float pay = Float.parseFloat(amount);
 		int mid = Integer.parseInt(mno);
@@ -554,6 +679,21 @@ public class Gym460 {
 		return true;
 	}
 	
+	/**
+	 * This method takes a scanner object, a string to obtain user input,
+	 *  and a database connection object to perform requests related to
+	 *  borrowing or returning some equipment from our database.
+	 * 
+	 * @param sc is the scanner object for System.in.
+	 * 
+	 * @param userInput is the string used for storing user input.
+	 * 
+	 * @param dbconn is the connection to the database.
+	 * 
+	 * @return a boolean value indicating continual access to the DBMS.
+	 * 	returns true by default for all successful procedures and
+	 *  short-circuit returns due to errors, false for invalid choices.
+	 */	
 	private static boolean handleEquipment(
 			Scanner sc, String userInput, Connection dbconn) {
 		System.out.println("\nPlease choose from the following:");
@@ -561,7 +701,7 @@ public class Gym460 {
 		System.out.println("\t2. Return some Equipment");
 		System.out.print("\nPlease enter your choice (1/2)"
 				+ "\nEnter any other key to quit: ");
-		userInput = sc.nextLine().strip();
+		userInput = sc.nextLine().strip();  // Used to determine chosen option
 		if(userInput.equals("1")) {
 
 					// Strings to use for user input
@@ -572,11 +712,11 @@ public class Gym460 {
 			
 					// Series of Validation checks
 		
-			boolean miCheck = false,
-					mbCheck = false,
-					etCheck = false,
-					qtCheck = false,
-					avCheck = false;
+			boolean miCheck = false, // member id is positive integer
+					mbCheck = false, // member exists
+					etCheck = false, // equipment type exists
+					qtCheck = false, // quantity is positive integer
+					avCheck = false; // sufficient equipment is available
 			
 					// Loop until all input is approved
 			
@@ -597,13 +737,19 @@ public class Gym460 {
 				System.out.print("Enter the Quantity you would like to borrow: ");
 				qty = sc.nextLine().strip();
 				qtCheck = Validation.validateInt(qty);
+				
+						// Validate that enough equipment is available
+				
 				if(etCheck) {
-					LinkedList<Equipment> list = QueryManager.getEquipmentList(dbconn, eType, false);
+					LinkedList<Equipment> list = QueryManager.getEquipmentList(dbconn, eType);
 					avCheck = Validation.canBorrow(list, qty);
 				}
-				// validate that enough quantity available
 				if(miCheck && mbCheck && etCheck && qtCheck && avCheck) {
 					break;
+				}
+				else if(!etCheck) {
+					System.out.println("\nChosen Equipment does not exist.");
+					return true;
 				}
 				else if(!avCheck) {
 					System.out.println("\nNot enough Equipment available");
@@ -641,6 +787,8 @@ public class Gym460 {
 				if(Validation.validateInt(mno) && QueryManager.getMember(dbconn, mno) != null) {
 					break;
 				}
+						// If we get here, try again
+				
 				System.out.print("\n***Invalid Data Provided***\n"
 						+ "Press 'c' to retry, other keys to exit: ");
 				userInput = sc.nextLine().strip();
@@ -649,9 +797,9 @@ public class Gym460 {
 				}
 			}
 			
-			// return all equipment associated with them
-			int m = Integer.parseInt(mno);
-			LinkedList<Integer> xnos = DataManipulation.returnEquipment(dbconn, m);
+					// Return all equipment borrowed by the member
+			
+			LinkedList<Integer> xnos = DataManipulation.returnEquipment(dbconn, Integer.parseInt(mno));
 			System.out.println("\nEquipment returned");
 			System.out.println("\nDetails:");
 			for(int x : xnos) {
@@ -666,6 +814,21 @@ public class Gym460 {
 		return true;
 	}
 	
+	/**
+	 * This method takes a scanner object, a string to obtain user input,
+	 *  and a database connection object to perform requests related to
+	 *  querying information from our database.
+	 * 
+	 * @param sc is the scanner object for System.in.
+	 * 
+	 * @param userInput is the string used for storing user input.
+	 * 
+	 * @param dbconn is the connection to the database.
+	 * 
+	 * @return a boolean value indicating continual access to the DBMS.
+	 * 	returns true by default for all successful procedures and
+	 *  short-circuit returns due to errors, false for invalid choices.
+	 */	
 	private static boolean handleQueries(
 			Scanner sc, String userInput, Connection dbconn) {
 		System.out.println("\nHere are some queries you may use:");
@@ -673,13 +836,14 @@ public class Gym460 {
     			+ "\n   now has a negative balance.");
 		System.out.println("\n2. Check and see a member's class schedule for"
     			+ "\n   November.");
-		System.out.println("\n3. Check and see a trainer's working hours for"
+		System.out.println("\n3. Check and see all trainers' working hours for"
     			+ "\n   December.");
-		System.out.println("\n4. TODO");
-		
+		System.out.println("\n4. Provided an equipment type, display the"
+				+ "\n   members who borrowed it this year, the amount"
+				+ "\n   borrowed, and when they borrowed it.");		
 		System.out.print("\nPlease enter your choice (1/2/3/4)"
 				+ "\nEnter any other key to quit: ");
-		userInput = sc.nextLine().strip();
+		userInput = sc.nextLine().strip();  // Used to determine chosen option
 		switch (userInput) {
 		case "1":
 			System.out.println("\n-----------------");
@@ -691,7 +855,9 @@ public class Gym460 {
 			System.out.println("\n-----------------");
 			System.out.println("Exectuing Query 2");
 			System.out.println("-----------------\n");
-			System.out.print("Enter the member id: ");
+			System.out.println("\nList of all Members:");
+			QueryManager.showAllMembers(dbconn);
+			System.out.print("\nEnter the M#: ");
 			userInput = sc.nextLine().strip();
 			QueryManager.query2(dbconn, userInput);
 			break;
@@ -705,6 +871,16 @@ public class Gym460 {
 			System.out.println("\n-----------------");
 			System.out.println("Exectuing Query 4");
 			System.out.println("-----------------\n");
+			System.out.println("\nList of all Equipment Types:");
+			QueryManager.showAllEquipment(dbconn);
+			System.out.print("\nEnter the EType: ");
+			userInput = sc.nextLine().strip();
+			if(QueryManager.checkEquipmentType(dbconn, userInput)) {
+				QueryManager.query4(dbconn, userInput);
+			}
+			else {
+				System.out.println("Chosen Equipment does not exist.");
+			}
 			break;
 		default:
 			return false;
@@ -717,18 +893,17 @@ public class Gym460 {
 
 		final String oracleURL =   // Magic lectura -> aloe access spell
                 "jdbc:oracle:thin:@aloe.cs.arizona.edu:1521:oracle";
+		
+				// I am providing my own details for consistency
 
 		String username = "priyanshnayak",	// Oracle DBMS username
 		       password = "a9379";    		// Oracle DBMS password
-		
 				
-		
 		// load the (Oracle) JDBC driver by initializing its base
         // class, 'oracle.jdbc.OracleDriver'.
 
         try {
-
-                Class.forName("oracle.jdbc.OracleDriver");
+        	Class.forName("oracle.jdbc.OracleDriver");
 
         } catch (ClassNotFoundException e) {
         	System.err.println("*** ClassNotFoundException:  "
@@ -743,8 +918,7 @@ public class Gym460 {
 		
 		Connection dbconn = null;
 		
-		try {
-			
+		try {	
 			dbconn = DriverManager.getConnection
 	                           (oracleURL,username,password);
 			
@@ -758,6 +932,7 @@ public class Gym460 {
 			
 		}
 	    	    		
+				// Begin the GYM 460 DBMS Process
 		
 		Scanner sc = new Scanner(System.in);
 		String userInput = null;
@@ -783,6 +958,9 @@ public class Gym460 {
     		System.out.println("\t6. Investigate some general queries");
     		System.out.print("\nPlease enter your choice (1/2/3/4/5/6)"
     				+ "\nEnter any other key to quit: ");
+    		
+    				// Determine chosen option and perform action
+    		
         	userInput = sc.nextLine().strip();
         	switch (userInput) {
         	case "1":
@@ -819,6 +997,8 @@ public class Gym460 {
 	        		executeFlag = false;
 	        	}
         	}
+        	
+        			// Terminate process if required
         	
         	if(!executeFlag) {
         		System.out.println("\nThank you for using the management"
