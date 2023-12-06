@@ -552,7 +552,7 @@ public class Gym460 {
 			Course curr1 = QueryManager.getCourse(dbconn, p.c1),
 				   curr2 = QueryManager.getCourse(dbconn, p.c2);
 			if(!Validation.canDeletePackage(p, curr1, curr2)) {
-				System.out.println("\n***Cannot update this package***"
+				System.out.println("\n***Cannot update this package***\n"
 						+ "There are members currently enrolled in it");
 				return true;
 			}
