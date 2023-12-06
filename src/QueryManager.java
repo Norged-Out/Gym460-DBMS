@@ -9,7 +9,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.TextStyle;
-import java.util.HashMap;
+import java.util.TreeMap;
 import java.util.LinkedList;
 import java.util.Locale;
 import java.util.Map;
@@ -272,7 +272,7 @@ public class QueryManager {
 		Integer tNumber = 0;
 		String firstName = null;
 		String lastName = null;
-		HashMap<String, Integer> trainers = new HashMap<>();
+		TreeMap<String, Integer> trainers = new TreeMap<>();
 
 		// try to execute the query
 		try {
