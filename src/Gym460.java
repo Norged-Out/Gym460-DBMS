@@ -832,7 +832,7 @@ public class Gym460 {
     			+ "\n   now has a negative balance.");
 		System.out.println("\n2. Check and see a member's class schedule for"
     			+ "\n   November.");
-		System.out.println("\n3. Check and see a trainer's working hours for"
+		System.out.println("\n3. Check and see all trainers' working hours for"
     			+ "\n   December.");
 		System.out.println("\n4. Provided an equipment type, display the"
 				+ "\n   members who borrowed it this year, the amount"
@@ -861,11 +861,7 @@ public class Gym460 {
 			System.out.println("\n-----------------");
 			System.out.println("Exectuing Query 3");
 			System.out.println("-----------------\n");
-			System.out.println("\nList of all Trainers:");
-			QueryManager.showAllTrainers(dbconn);
-			System.out.print("\nEnter the T#: ");
-			userInput = sc.nextLine().strip();
-			QueryManager.query3(dbconn, userInput);
+			QueryManager.query3(dbconn);
 			break;
 		case "4":
 			System.out.println("\n-----------------");

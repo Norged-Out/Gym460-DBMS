@@ -231,13 +231,12 @@ public class QueryManager {
 	 *
 	 * @param dbconn The database connection.
 	 */
-	protected static void query3(Connection dbconn, String tno) {
+	protected static void query3(Connection dbconn) {
 		final String query =
 				"SELECT t.FirstName, t.LastName, c.CName, c.StartDate, c.EndDate, c.Day" 
 				+ " FROM Trainer t"
 				+ " JOIN Course c"
-				+ " ON t.T# = c.T#"
-				+ " WHERE t.T# = " + tno;
+				+ " ON t.T# = c.T#";
 		Statement stmt = null;
 		ResultSet answer = null;
 		try {
