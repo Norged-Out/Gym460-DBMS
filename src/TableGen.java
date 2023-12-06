@@ -1,8 +1,8 @@
 /*
- * Team:		Bhargav Gullipelli
- * 				Nathan Lucero
- * 				Priyansh Nayak
- * 				Utkarsh Upadhyay
+ * Team:		Nathan Lucero
+ * 				Priyansh Nayak
+ * 				Utkarsh Upadhyay
+ * 				Bhargav Gullipelli
  * 
  * Authors:		Priyansh Nayak
  * 

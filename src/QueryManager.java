@@ -1,12 +1,12 @@
 /*
- * Team:		Bhargav Gullipelli
- * 				Nathan Lucero
- * 				Priyansh Nayak
- * 				Utkarsh Upadhyay
+ * Team:		Nathan Lucero
+ * 				Priyansh Nayak
+ * 				Utkarsh Upadhyay
+ * 				Bhargav Gullipelli
  * 
- * Authors:		Bhargav Gullipelli
- * 				Nathan Lucero
+ * Authors:		Nathan Lucero
  * 				Priyansh Nayak
+ * 				Bhargav Gullipelli
  * 
  * Course:		CSC-460 Fall 2023
  * 

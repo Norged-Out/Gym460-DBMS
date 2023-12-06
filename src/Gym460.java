@@ -1,8 +1,8 @@
 /*
- * Team:		Bhargav Gullipelli
- * 				Nathan Lucero
- * 				Priyansh Nayak
- * 				Utkarsh Upadhyay
+ * Team:		Nathan Lucero
+ * 				Priyansh Nayak
+ * 				Utkarsh Upadhyay
+ * 				Bhargav Gullipelli
  * 
  * Authors:		Priyansh Nayak
  * 
@@ -91,6 +91,10 @@ public class Gym460 {
 				QueryManager.showAllPackages(dbconn);			
 				System.out.print("\nEnter Package Name to enroll into: ");
 				pName = sc.nextLine().strip();
+				
+						// Ensure that the package selected is valid
+						// and the courses have space to enroll
+				
 				Package p = QueryManager.getPackage(dbconn, pName);
 				if(p != null) {
 					pnCheck = true;
@@ -248,6 +252,9 @@ public class Gym460 {
 				System.out.print("Choose from (MON|TUE|WED|THU|FRI|SAT|SUN): ");
 				day = sc.nextLine().strip();
 				dwCheck = Validation.validateDay(day);
+				
+						// Sanitize the Day-of-Week and Date objects
+				
 				day = day.toUpperCase();
 				start = Validation.concatDateAndTime(startDate, startTime);
 				end = Validation.concatDateAndTime(endDate, endTime);
@@ -256,7 +263,7 @@ public class Gym460 {
 				System.out.print("\nEnter T#: ");
 				tNo = sc.nextLine().strip();
 				
-						// Check all Validations and Conflicts
+						// Ensure that there are no scheduling conflicts
 				
 				if(Validation.validateInt(tNo)) {
 					if (QueryManager.getTrainer(dbconn, tNo) != null) {
@@ -265,6 +272,8 @@ public class Gym460 {
 						cfCheck = Validation.noTrainerScheduleConflict(courses, day, start, end);
 					}
 				}
+				
+						// Check all Validations
 				
 				if(cpCheck && sdCheck && edCheck && stCheck && etCheck && dwCheck && tnCheck && cfCheck) {
 					break;
